@@ -388,39 +388,47 @@ class _CentreVisual extends StatelessWidget {
             ),
           ),
 
-          // Floating badge — top left
+          // Floating micro-badge — top left (tilted −3° in the design)
           Positioned(
-            left: 31,
-            top: 94,
-            child: _floatBadge(
-              width: 120,
-              height: 34,
-              icon: Icons.auto_awesome,
-              iconColor: const Color(0xFF7E5300),
-              label: '1% Better Daily',
+            left: 31.5,
+            top: 97,
+            child: Transform.rotate(
+              angle: -0.0523599,
+              child: _floatBadge(
+                width: 119,
+                height: 28,
+                icon: Icons.auto_awesome,
+                iconColor: const Color(0xFF7E5300),
+                label: '1% Better Daily',
+              ),
             ),
           ),
 
-          // Floating badge — right
+          // Floating micro-badge — right (tilted +3° in the design)
           Positioned(
-            left: 245,
-            top: 138,
-            child: _floatBadge(
-              width: 98,
-              height: 33,
-              icon: Icons.eco_rounded,
-              iconColor: const Color(0xFF3A6750),
-              label: 'Pure Focus',
+            left: 245.5,
+            top: 140.5,
+            child: Transform.rotate(
+              angle: 0.0523599,
+              child: _floatBadge(
+                width: 96.5,
+                height: 28,
+                icon: Icons.eco_rounded,
+                iconColor: const Color(0xFF3A6750),
+                label: 'Pure Focus',
+              ),
             ),
           ),
 
-          // Momentum pill
+          // Momentum pill (tilted +1° in the design)
           Positioned(
             left: 16,
-            top: 293,
-            child: Container(
+            top: 294,
+            child: Transform.rotate(
+              angle: 0.017453,
+              child: Container(
               width: 156,
-              height: 27,
+              height: 24.5,
               decoration: BoxDecoration(
                 color: const Color(0xFFFFF0E8),
                 borderRadius: BorderRadius.circular(9999),
@@ -447,6 +455,7 @@ class _CentreVisual extends StatelessWidget {
                   ),
                 ],
               ),
+            ),
             ),
           ),
         ],

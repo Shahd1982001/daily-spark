@@ -46,33 +46,39 @@ class StreakFlowCard extends StatelessWidget {
             child: _ring(240, 241),
           ),
 
-          // Top floating micro-badge
+          // Top floating micro-badge (tilted +2° in the design)
           Positioned(
-            left: 165,
-            top: 16,
-            child: _floatingBadge(
-              width: 143,
-              height: 33,
+            left: 165.45,
+            top: 18.5,
+            child: Transform.rotate(
+              angle: 0.0349066,
+              child: _floatingBadge(
+              width: 142.1,
+              height: 28,
               icon: Icons.local_fire_department_rounded,
               iconSize: 9,
               iconColor: _deepEmber,
               label: 'Day 7 · Streak Master',
               labelSize: 11,
             ),
+            ),
           ),
 
-          // Bottom floating micro-badge
+          // Bottom floating micro-badge (tilted −2° in the design)
           Positioned(
-            left: 76,
-            top: 273,
-            child: _floatingBadge(
-              width: 120,
-              height: 32,
+            left: 76.45,
+            top: 275,
+            child: Transform.rotate(
+              angle: -0.0349066,
+              child: _floatingBadge(
+              width: 119.1,
+              height: 27.9,
               icon: Icons.link_rounded,
               iconSize: 13,
               iconColor: const Color(0xFF3A6750),
               label: 'Unbroken chain',
               labelSize: 11,
+            ),
             ),
           ),
 

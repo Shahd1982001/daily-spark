@@ -43,33 +43,39 @@ class FirstSparkCard extends StatelessWidget {
             child: _circle(170, const Color(0x80E7E9E5)),
           ),
 
-          // Floating badge — momentum
+          // Floating badge — momentum (tilted +2° in the design)
           Positioned(
-            left: 177,
-            top: 19,
-            child: _badge(
-              width: 114,
-              height: 24,
+            left: 177.3,
+            top: 21,
+            child: Transform.rotate(
+              angle: 0.0349066,
+              child: _badge(
+              width: 113.4,
+              height: 20,
               background: const Color(0xFFD1FAE5),
               icon: Icons.trending_up_rounded,
               iconSize: 10,
               iconColor: const Color(0xFF3A6750),
               label: '+1% Momentum',
             ),
+            ),
           ),
 
-          // Floating badge — atomic scale
+          // Floating badge — atomic scale (tilted −3° in the design)
           Positioned(
-            left: 72,
-            top: 266,
-            child: _badge(
-              width: 101,
-              height: 25,
+            left: 72.45,
+            top: 268.6,
+            child: Transform.rotate(
+              angle: -0.0523599,
+              child: _badge(
+              width: 100.1,
+              height: 19.8,
               background: Colors.white,
               icon: Icons.bolt_rounded,
               iconSize: 13,
               iconColor: const Color(0xFF7E5300),
               label: 'Atomic scale',
+            ),
             ),
           ),
 
