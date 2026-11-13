@@ -59,6 +59,7 @@ class SparkPalette {
     required this.chipGreen,
     required this.chipGold,
     required this.chipEmber,
+    required this.goldBorder,
   });
 
   final bool dark;
@@ -131,6 +132,9 @@ class SparkPalette {
   final Color chipGold;
   final Color chipEmber;
 
+  /// Hairline around ochre chips (invisible in light: chips have no ring).
+  final Color goldBorder;
+
   static const light = SparkPalette(
     dark: false,
     canvas: Color(0xFFF8FAF6),
@@ -183,6 +187,7 @@ class SparkPalette {
     chipGreen: Color(0xFFBCEED1),
     chipGold: Color(0x4DFFDDB2),
     chipEmber: Color(0x66FFDBCF),
+    goldBorder: Color(0x00000000),
   );
 
   static const _dark = SparkPalette(
@@ -237,6 +242,7 @@ class SparkPalette {
     chipGreen: Color(0xFF0E3522),
     chipGold: Color(0xFF2E2419),
     chipEmber: Color(0xFF2A1913),
+    goldBorder: Color(0xFF523A25),
   );
 
   /// The dark palette instance (kept out of `const` list literals for clarity).

@@ -229,13 +229,19 @@ class _DetailsHeader extends StatelessWidget {
                     width: 32 * s,
                     height: 32 * s,
                     decoration: BoxDecoration(
-                      color: p.emberDeep,
+                      color: p.dark ? p.chipEmber : p.emberDeep,
                       shape: BoxShape.circle,
+                      border: p.dark
+                          ? Border.all(
+                              color: p.ember.withValues(alpha: 0.30),
+                              width: 1,
+                            )
+                          : null,
                     ),
                     child: Icon(
                       Icons.local_fire_department_rounded,
                       size: 16 * s,
-                      color: Colors.white,
+                      color: p.dark ? p.ember : Colors.white,
                     ),
                   ),
                 ),

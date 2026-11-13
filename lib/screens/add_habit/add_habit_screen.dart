@@ -148,7 +148,17 @@ class _AddHabitHeader extends StatelessWidget {
         filter: ImageFilter.blur(sigmaX: 12 * s, sigmaY: 12 * s),
         child: Container(
           height: 64 * s,
-          color: p.canvas.withValues(alpha: 0.8),
+          decoration: BoxDecoration(
+            color: p.canvas.withValues(alpha: p.dark ? 0.90 : 0.8),
+            border: p.dark
+                ? Border(
+                    bottom: BorderSide(
+                      color: p.container.withValues(alpha: 0.60),
+                      width: 1,
+                    ),
+                  )
+                : null,
+          ),
           child: Stack(
             children: [
               Positioned(
@@ -163,6 +173,9 @@ class _AddHabitHeader extends StatelessWidget {
                     decoration: BoxDecoration(
                       color: p.panel,
                       shape: BoxShape.circle,
+                      border: p.dark
+                          ? Border.all(color: p.container, width: 1)
+                          : null,
                     ),
                     child: Icon(
                       Icons.close_rounded,
@@ -204,13 +217,16 @@ class _AddHabitHeader extends StatelessWidget {
                     width: 32 * s,
                     height: 32 * s,
                     decoration: BoxDecoration(
-                      color: p.emberDeep,
+                      color: p.dark ? p.surface : p.emberDeep,
                       shape: BoxShape.circle,
+                      border: p.dark
+                          ? Border.all(color: p.container, width: 1)
+                          : null,
                     ),
                     child: Icon(
                       Icons.person_outline_rounded,
                       size: 16 * s,
-                      color: Colors.white,
+                      color: p.dark ? p.ember : Colors.white,
                     ),
                   ),
                 ),
@@ -292,6 +308,9 @@ class _SubBar extends StatelessWidget {
             decoration: BoxDecoration(
               color: p.chipGold,
               borderRadius: BorderRadius.all(Radius.circular(999)),
+              border: p.dark
+                  ? Border.all(color: p.goldBorder, width: 1)
+                  : null,
             ),
             child: Center(
               child: figmaText(
@@ -300,7 +319,7 @@ class _SubBar extends StatelessWidget {
                 weight: FontWeight.w600,
                 letterSpacing: 0.5 * s,
                 lineHeight: 12 * s,
-                color: p.dark ? p.ochre : p.onGold,
+                color: p.dark ? p.onEmberSoft : p.onGold,
               ),
             ),
           ),
