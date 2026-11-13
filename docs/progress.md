@@ -40,6 +40,18 @@ Gallery (all screens, thumbnails): `https://shahd1982001.github.io/daily-spark/g
 - Entry flow fixed: splash/onboarding timers start on the first painted frame, so opening the
   plain link shows Splash → Onboarding 1 → 2 → 3 (never jumps straight to Welcome).
 
+### Dark match pass (Figma 163:* frames vs app)
+Side-by-side evidence per screen: `review/dark_vs_app/*.png` (Figma dark | app `?theme=dark`).
+All 13 screens reviewed and corrected:
+- Weekly Rhythm keeps the artwork pigments (sage/gold/ember bars in cream wells) + cream "NOW" chip.
+- Chips split into washes instead of solid accents: `chipNeutral #212423 · chipGreen #0E3522 · chipGold #2E2419 · chipEmber #2A1913`
+  (light: `#F3F4F0 · #BCEED1 · #FFDDB2@30% · #FFDBCF@40%`).
+- Raised wells/plates: `raised #242725` (Add-habit title field, settings tiles, stepper).
+- Segmented control sits on canvas (`#121413`) with a hairline in dark.
+- Ember icon plates + "Mindful Builder" badge use dark ember tints, not solid ember.
+- Bottom nav frosted bar + glass chips read `p.surface` (no more white bar).
+- Light theme re-verified byte-close to the approved shots (login 0.0 %, welcome 0.02, home 0.05, progress 0.25, habits 0.52 mean-abs).
+
 ## Next (needs her decision)
 1. **Logic layer** — state management choice still open (Provider vs Riverpod).
 2. **Backend** — must stay last.
