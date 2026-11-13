@@ -37,8 +37,6 @@ class OnboardingScreen extends StatefulWidget {
 
 class _OnboardingScreenState extends State<OnboardingScreen>
     with SingleTickerProviderStateMixin {
-  late final PageController _controller =
-      PageController(initialPage: widget.initialPage);
   late int _index = widget.initialPage;
   late final AnimationController _timer = AnimationController(
     vsync: this,
@@ -58,7 +56,6 @@ class _OnboardingScreenState extends State<OnboardingScreen>
   @override
   void dispose() {
     _timer.dispose();
-    _controller.dispose();
     super.dispose();
   }
 
@@ -71,19 +68,19 @@ class _OnboardingScreenState extends State<OnboardingScreen>
       widget.onFinished?.call();
       return;
     }
-    _controller.animateToPage(
-      _index + 1,
-      duration: const Duration(milliseconds: 520),
-      curve: Curves.easeInOutCubic,
-    );
+    _goTo(_index + 1);
   }
 
-  void _onPageChanged(int index) {
+  void _previous() {
+    if (_index == 0) return;
+    _goTo(_index - 1);
+  }
+
+  /// Swaps the *content only* — the header and background never move.
+  void _goTo(int index) {
     setState(() => _index = index);
-    _timer
-      ..reset()
-      ..forward();
-    if (index >= 2) _timer.reset();
+    _timer.reset();
+    if (index < 2) _timer.forward();
   }
 
   void _pause() => _timer.stop();
@@ -103,33 +100,80 @@ class _OnboardingScreenState extends State<OnboardingScreen>
         onPointerDown: (_) => _pause(),
         onPointerUp: (_) => _resume(),
         onPointerCancel: (_) => _resume(),
-        child: AnimatedBuilder(
-          animation: _timer,
-          builder: (context, _) => PageView(
-            controller: _controller,
-            onPageChanged: _onPageChanged,
+        child: SafeArea(
+          child: Column(
             children: [
-              _PageOne(
-                scale: scale,
-                progress: _index == 0 ? _timer.value : 0,
-                onSkip: widget.onSkip,
-              ),
-              _PageTwo(
-                scale: scale,
-                progress: _index == 1 ? _timer.value : 0,
-                onSkip: widget.onSkip,
-              ),
-              _PageThree(
-                scale: scale,
-                onSkip: widget.onSkip,
-                onBegin: widget.onFinished,
-                onLogin: widget.onFooterLogin,
+              // ── Fixed frame: never animates ──────────────────────────
+              _Header(scale: scale, compact: true, onSkip: widget.onSkip),
+
+              // ── Only the content swaps ───────────────────────────────
+              Expanded(
+                child: GestureDetector(
+                  onHorizontalDragEnd: (details) {
+                    final v = details.primaryVelocity ?? 0;
+                    if (v < -250) {
+                      _next();
+                    } else if (v > 250) {
+                      _previous();
+                    }
+                  },
+                  child: AnimatedBuilder(
+                    animation: _timer,
+                    builder: (context, _) => AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 420),
+                      switchInCurve: Curves.easeOutCubic,
+                      switchOutCurve: Curves.easeInCubic,
+                      layoutBuilder: (current, previous) => Stack(
+                        fit: StackFit.expand,
+                        children: [
+                          ...previous,
+                          if (current != null) current,
+                        ],
+                      ),
+                      transitionBuilder: (child, animation) => FadeTransition(
+                        opacity: animation,
+                        child: SlideTransition(
+                          position: Tween<Offset>(
+                            begin: const Offset(0, 0.035),
+                            end: Offset.zero,
+                          ).animate(animation),
+                          child: child,
+                        ),
+                      ),
+                      child: KeyedSubtree(
+                        key: ValueKey<int>(_index),
+                        child: _buildContent(scale, _index),
+                      ),
+                    ),
+                  ),
+                ),
               ),
             ],
           ),
         ),
       ),
     );
+  }
+
+  Widget _buildContent(double scale, int index) {
+    return switch (index) {
+      0 => _PageOne(
+          scale: scale,
+          progress: _timer.value,
+          onSkip: widget.onSkip,
+        ),
+      1 => _PageTwo(
+          scale: scale,
+          progress: _timer.value,
+          onSkip: widget.onSkip,
+        ),
+      _ => _PageThree(
+          scale: scale,
+          onSkip: widget.onSkip,
+          onBegin: widget.onFinished,
+          onLogin: widget.onFooterLogin,
+        ),
+    };
   }
 }
 
@@ -539,7 +583,6 @@ class _MicroNote extends StatelessWidget {
 class _PageLayout extends StatelessWidget {
   const _PageLayout({
     required this.scale,
-    required this.header,
     required this.artwork,
     required this.copy,
     required this.dots,
@@ -550,7 +593,6 @@ class _PageLayout extends StatelessWidget {
   });
 
   final double scale;
-  final Widget header;
   final Widget? eyebrow;
   final Widget artwork;
   final Widget copy;
@@ -562,10 +604,8 @@ class _PageLayout extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final s = scale;
-    return SafeArea(
-      child: Column(
+    return Column(
         children: [
-          header,
           if (eyebrow != null) ...[
             SizedBox(height: 6 * s),
             eyebrow!,
@@ -589,7 +629,6 @@ class _PageLayout extends StatelessWidget {
           footer,
           SizedBox(height: 14 * s),
         ],
-      ),
     );
   }
 }
@@ -616,7 +655,6 @@ class _PageOne extends StatelessWidget {
       color: _Colors.canvas,
       child: _PageLayout(
         scale: s,
-        header: _Header(scale: s, onSkip: onSkip),
         artwork: const SizedBox(
           width: 342,
           height: 364,
@@ -685,7 +723,6 @@ class _PageTwo extends StatelessWidget {
       color: _Colors.canvas,
       child: _PageLayout(
         scale: s,
-        header: _Header(scale: s, compact: true, onSkip: onSkip),
         eyebrow: _StepEyebrow(
           scale: s,
           label: 'STEP 2 OF 3 · CONSISTENCY',
@@ -764,7 +801,6 @@ class _PageThree extends StatelessWidget {
       color: _Colors.canvas,
       child: _PageLayout(
         scale: s,
-        header: _Header(scale: s, compact: true, onSkip: onSkip),
         eyebrow: _StepEyebrow(
           scale: s,
           label: 'STEP 3 OF 3 · FINAL STEP',
