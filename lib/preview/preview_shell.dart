@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:daily_spark/design_system/theme/app_theme.dart';
 import 'package:daily_spark/screens/onboarding/onboarding_screen.dart';
 import 'package:daily_spark/screens/splash/splash_screen.dart';
+import 'package:daily_spark/screens/habit_details/habit_details_screen.dart';
 import 'package:daily_spark/screens/habits/habits_screen.dart';
 import 'package:daily_spark/screens/home/home_screen.dart';
 import 'package:daily_spark/screens/login/login_screen.dart';
@@ -26,7 +27,7 @@ class PreviewShell extends StatefulWidget {
   State<PreviewShell> createState() => _PreviewShellState();
 }
 
-enum _Stage { splash, onboarding, welcome, login, signUp, home, habits }
+enum _Stage { splash, onboarding, welcome, login, signUp, home, habits, habitDetails }
 
 class _PreviewShellState extends State<PreviewShell> {
   final _messengerKey = GlobalKey<ScaffoldMessengerState>();
@@ -48,6 +49,7 @@ class _PreviewShellState extends State<PreviewShell> {
         'signup' => _Stage.signUp,
         'home' => _Stage.home,
         'habits' => _Stage.habits,
+        'details' => _Stage.habitDetails,
         _ => _Stage.splash,
       };
 
@@ -122,7 +124,7 @@ class _PreviewShellState extends State<PreviewShell> {
         _Stage.home => HomeScreen(
             onProfile: () => _toast('Profile — later ✦'),
             onToggleHabit: (i) => _toast('Habit $i toggled ✦'),
-            onHabitTap: (i) => _toast('Habit $i — details later ✦'),
+            onHabitTap: (i) => _go(_Stage.habitDetails),
             onNewRitual: () => _toast('New Ritual — later ✦'),
             onFilterChanged: (i) => _toast('Filter $i ✦'),
             onNavTap: (i) => i == 1 ? _go(_Stage.habits) : _toast('Nav $i ✦'),
@@ -132,9 +134,21 @@ class _PreviewShellState extends State<PreviewShell> {
             onSort: () => _toast('Sort & filter ✦'),
             onFilterChanged: (i) => _toast('Filter $i ✦'),
             onToggleHabit: (i) => _toast('Habit $i toggled ✦'),
-            onHabitTap: (i) => _toast('Habit $i — details later ✦'),
+            onHabitTap: (i) => _go(_Stage.habitDetails),
             onCreateHabit: () => _toast('Create habit — later ✦'),
             onNavTap: (i) => i == 0 ? _go(_Stage.home) : _toast('Nav $i ✦'),
+          ),
+        _Stage.habitDetails => HabitDetailsScreen(
+            onBack: () => _go(_Stage.habits),
+            onEdit: () => _toast('Edit habit ✦'),
+            onAvatar: () => _toast('Profile ✦'),
+            onDecrement: () => _toast('−5 pages ✦'),
+            onPlusFive: () => _toast('+5 pages ✦'),
+            onPlusTen: () => _toast('+10 pages ✦'),
+            onToggleComplete: () => _toast('Toggle complete ✦'),
+            onEditRitual: () => _toast('Edit ritual ✦'),
+            onArchive: () => _toast('Archive ✦'),
+            onDelete: () => _toast('Delete ✦'),
           ),
       },
     );
