@@ -1,151 +1,348 @@
 import 'package:flutter/material.dart';
 
-import 'package:daily_spark/design_system/theme/app_colors.dart';
-import 'package:daily_spark/design_system/theme/app_spacing.dart';
-import 'package:daily_spark/design_system/theme/app_typography.dart';
-import 'package:daily_spark/design_system/widgets/app_pill.dart';
+import 'package:daily_spark/design_system/widgets/design_canvas.dart' show figmaText;
 
-/// Onboarding step 2 visual — "7-Day Streak in Flow".
+/// PAGE 2 visual — "7-Day Streak In Flow" card with orbit badges.
+/// Figma: node 126:13517, visual area 358 × 356 at (16, 96).
 class StreakFlowCard extends StatelessWidget {
   const StreakFlowCard({super.key});
 
-  static const _days = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
-  static const _completed = [true, true, true, true, true, false, false];
+  static const _ink = Color(0xFF191C1A);
+  static const _brown = Color(0xFF57423B);
+  static const _ember = Color(0xFFFF6B2C);
+  static const _deepEmber = Color(0xFF9F3C16);
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final cardColor = isDark ? AppColors.darkSurface : Colors.white;
-    final hairline = isDark ? AppColors.darkOutline : AppColors.surfaceContainer;
-    final muted = isDark ? AppColors.darkTextMuted : AppColors.outlineWarm;
-    final ink = isDark ? AppColors.darkTextPrimary : AppColors.onSurfaceVariant;
-
     return SizedBox(
-      width: 342,
-      child: Container(
-        padding: const EdgeInsets.all(AppSpacing.s16),
-        decoration: BoxDecoration(
-          color: cardColor,
-          borderRadius: BorderRadius.circular(AppRadius.card),
-          border: Border.all(color: hairline),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: isDark ? 0.28 : 0.05),
-              blurRadius: 6,
-              offset: const Offset(0, 3),
+      width: 358,
+      height: 356,
+      child: Stack(
+        clipBehavior: Clip.none,
+        children: [
+          // Warm ambient glow
+          Positioned(
+            left: 59,
+            top: 58,
+            child: Container(
+              width: 240,
+              height: 240,
+              decoration: const BoxDecoration(
+                color: Color(0x4DFFDBCF),
+                shape: BoxShape.circle,
+              ),
             ),
-          ],
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Text('7-Day Streak in Flow', style: AppText.titlePrimary.copyWith(color: ink)),
-                const Spacer(),
-                const AppPill('+18% vs last wk', tone: PillTone.sage, icon: Icons.trending_up_rounded),
-              ],
+          ),
+
+          // Concentric orbit rings (hairline borders)
+          Positioned(
+            left: 24,
+            top: 22,
+            child: _ring(310, 311),
+          ),
+          Positioned(
+            left: 59,
+            top: 58,
+            child: _ring(240, 241),
+          ),
+
+          // Top floating micro-badge
+          Positioned(
+            left: 165,
+            top: 16,
+            child: _floatingBadge(
+              width: 143,
+              height: 33,
+              icon: Icons.local_fire_department_rounded,
+              iconSize: 9,
+              iconColor: _deepEmber,
+              label: 'Day 7 · Streak Master',
+              labelSize: 11,
             ),
-            const SizedBox(height: AppSpacing.s16),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: List.generate(_days.length, (i) {
-                return _DayDot(
-                  label: _days[i],
-                  state: _completed[i]
-                      ? _DayState.done
-                      : (i == 5 ? _DayState.today : _DayState.pending),
-                  isDark: isDark,
-                );
-              }),
+          ),
+
+          // Bottom floating micro-badge
+          Positioned(
+            left: 76,
+            top: 273,
+            child: _floatingBadge(
+              width: 120,
+              height: 32,
+              icon: Icons.link_rounded,
+              iconSize: 13,
+              iconColor: const Color(0xFF3A6750),
+              label: 'Unbroken chain',
+              labelSize: 11,
             ),
-            const SizedBox(height: AppSpacing.s16),
-            Divider(color: hairline),
-            const SizedBox(height: AppSpacing.s12),
-            Row(
-              children: [
-                Container(
-                  width: 30,
-                  height: 30,
-                  decoration: BoxDecoration(
-                    color: AppColors.sparkOrange.withValues(alpha: isDark ? 0.18 : 0.10),
-                    borderRadius: BorderRadius.circular(AppRadius.sm),
+          ),
+
+          // Main card
+          Positioned(
+            left: 21,
+            top: 81,
+            child: Container(
+              width: 316,
+              height: 194,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(12),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.06),
+                    blurRadius: 12,
+                    offset: const Offset(0, 6),
                   ),
-                  child: const Icon(Icons.nights_stay_outlined, size: 15, color: AppColors.sparkOrange),
-                ),
-                const SizedBox(width: AppSpacing.s12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Evening Reading & Wind-down',
-                        style: AppText.captionMain.copyWith(
-                          color: ink,
-                          fontWeight: FontWeight.w600,
-                        ),
+                ],
+              ),
+              child: Stack(
+                children: [
+                  // Header tags
+                  Positioned(
+                    left: 16,
+                    top: 18,
+                    child: Container(
+                      width: 143,
+                      height: 20,
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFFFDBCF),
+                        borderRadius: BorderRadius.circular(9999),
                       ),
-                      const SizedBox(height: 2),
-                      Text('Target: 10 pages', style: AppText.bodySmall.copyWith(color: muted)),
-                    ],
+                      child: Row(
+                        children: [
+                          const SizedBox(width: 10),
+                          const Icon(Icons.local_fire_department_rounded,
+                              size: 10, color: _deepEmber),
+                          const SizedBox(width: 5),
+                          figmaText(
+                            '7-Day Streak In Flow',
+                            size: 10,
+                            weight: FontWeight.w600,
+                            letterSpacing: 0.4,
+                            lineHeight: 12,
+                            color: const Color(0xFF390C00),
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
-                ),
-                Icon(Icons.lock_outline_rounded, size: 14, color: muted),
-              ],
+                  Positioned(
+                    right: 16,
+                    top: 16,
+                    child: Container(
+                      width: 109,
+                      height: 24,
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFD1FAE5),
+                        borderRadius: BorderRadius.circular(9999),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Icon(Icons.trending_up_rounded,
+                              size: 10, color: Color(0xFF3A6750)),
+                          const SizedBox(width: 4),
+                          figmaText(
+                            '+18% vs Last Wk',
+                            size: 10,
+                            weight: FontWeight.w600,
+                            lineHeight: 20,
+                            color: const Color(0xFF10B981),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+
+                  // Week timeline
+                  const Positioned(left: 16, top: 60, child: _WeekRow()),
+
+                  // Ritual strip
+                  Positioned(
+                    left: 16,
+                    top: 132,
+                    child: Row(
+                      children: [
+                        Container(
+                          width: 28,
+                          height: 28,
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFEDEEEB),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: const Icon(Icons.nightlight_round,
+                              size: 15, color: _deepEmber),
+                        ),
+                        const SizedBox(width: 8),
+                        SizedBox(
+                          width: 186,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              figmaText(
+                                'Evening Reading & Wind-down',
+                                size: 12,
+                                weight: FontWeight.w600,
+                                letterSpacing: 0.24,
+                                lineHeight: 15,
+                                color: _ink,
+                              ),
+                              figmaText(
+                                'Daily ritual · 20 mins complete',
+                                size: 11,
+                                weight: FontWeight.w400,
+                                lineHeight: 20,
+                                color: _brown,
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 10),
+                          child: figmaText(
+                            'Locked',
+                            size: 11,
+                            weight: FontWeight.w600,
+                            lineHeight: 20,
+                            color: const Color(0xFF3A6750),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
-            const SizedBox(height: AppSpacing.s12),
-            AppPill('0d · Unbroken chain', tone: PillTone.soft),
-          ],
-        ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _ring(double width, double height) {
+    return Container(
+      width: width,
+      height: height,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        border: Border.all(color: const Color(0x228A726A), width: 1),
+      ),
+    );
+  }
+
+  Widget _floatingBadge({
+    required double width,
+    required double height,
+    required IconData icon,
+    required double iconSize,
+    required Color iconColor,
+    required String label,
+    required double labelSize,
+  }) {
+    return Container(
+      width: width,
+      height: height,
+      padding: const EdgeInsets.symmetric(horizontal: 10),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(9999),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.06),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(icon, size: iconSize, color: iconColor),
+          const SizedBox(width: 5),
+          figmaText(
+            label,
+            size: labelSize,
+            weight: FontWeight.w500,
+            lineHeight: 20,
+            color: _brown,
+          ),
+        ],
       ),
     );
   }
 }
 
-enum _DayState { done, today, pending }
+/// Seven day nodes: 28 px ember circles with white checks, "Today" last.
+class _WeekRow extends StatelessWidget {
+  const _WeekRow();
 
-class _DayDot extends StatelessWidget {
-  const _DayDot({required this.label, required this.state, required this.isDark});
-
-  final String label;
-  final _DayState state;
-  final bool isDark;
+  static const _letters = ['M', 'T', 'W', 'T', 'F', 'S'];
 
   @override
   Widget build(BuildContext context) {
-    final muted = isDark ? AppColors.darkTextMuted : AppColors.outlineWarm;
-
-    Color bg;
-    Color fg;
-    Border? border;
-    switch (state) {
-      case _DayState.done:
-        bg = isDark ? AppColors.sageDark : AppColors.sageSoft;
-        fg = isDark ? AppColors.darkSuccess : AppColors.sage;
-      case _DayState.today:
-        bg = Colors.transparent;
-        fg = AppColors.sparkOrange;
-        border = Border.all(color: AppColors.sparkOrange);
-      case _DayState.pending:
-        bg = isDark ? AppColors.darkSurfaceHigh : AppColors.surfaceLow;
-        fg = muted;
-    }
-
-    return Column(
-      children: [
-        Text(label, style: AppText.eyebrow.copyWith(color: muted, fontSize: 9)),
-        const SizedBox(height: 6),
-        Container(
-          width: 30,
-          height: 30,
-          decoration: BoxDecoration(color: bg, shape: BoxShape.circle, border: border),
-          child: Icon(
-            state == _DayState.done ? Icons.check_rounded : Icons.circle_outlined,
-            size: state == _DayState.done ? 15 : 9,
-            color: fg,
+    return SizedBox(
+      width: 284,
+      height: 68,
+      child: Stack(
+        children: [
+          // Connector line
+          Positioned(
+            left: 14,
+            top: 50,
+            child: Container(width: 256, height: 2, color: const Color(0xFFEDEEEB)),
           ),
-        ),
-      ],
+          for (var i = 0; i < 7; i++)
+            Positioned(
+              left: i * 41.0,
+              top: 0,
+              child: SizedBox(
+                width: 37,
+                child: Column(
+                  children: [
+                    if (i == 6)
+                      Text(
+                        'Today',
+                        style: const TextStyle(
+                          fontFamily: 'PlusJakartaSans',
+                          fontSize: 10,
+                          fontWeight: FontWeight.w700,
+                          height: 2,
+                          color: Color(0xFF9F3C16),
+                          decoration: TextDecoration.none,
+                        ),
+                      )
+                    else
+                      Text(
+                        _letters[i],
+                        style: const TextStyle(
+                          fontFamily: 'PlusJakartaSans',
+                          fontSize: 10,
+                          fontWeight: FontWeight.w500,
+                          height: 2,
+                          color: Color(0xFF57423B),
+                          decoration: TextDecoration.none,
+                        ),
+                      ),
+                    const SizedBox(height: 4),
+                    Container(
+                      width: 28,
+                      height: 28,
+                      decoration: const BoxDecoration(
+                        color: Color(0xFFFF6B2C),
+                        shape: BoxShape.circle,
+                      ),
+                      child: i == 6
+                          ? const Icon(Icons.arrow_forward_rounded,
+                              size: 13, color: Colors.white)
+                          : const Icon(Icons.check_rounded,
+                              size: 13, color: Colors.white),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+        ],
+      ),
     );
   }
 }
