@@ -1,7 +1,7 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 
+import 'package:daily_spark/design_system/widgets/app_bottom_nav.dart';
+import 'package:daily_spark/design_system/widgets/app_top_bar.dart';
 import 'package:daily_spark/design_system/widgets/design_canvas.dart' show figmaText;
 import 'package:daily_spark/screens/home/widgets/habit_card.dart';
 import 'package:daily_spark/screens/home/widgets/pulse_card.dart';
@@ -91,7 +91,7 @@ class HomeScreen extends StatelessWidget {
             top: 0,
             left: 0,
             right: 0,
-            child: _HomeHeader(scale: s, onProfile: onProfile),
+            child: AppTopBar(scale: s, title: 'Home', onProfile: onProfile),
           ),
 
           // ── Floating bottom navigation ─────────────────────────────
@@ -99,7 +99,12 @@ class HomeScreen extends StatelessWidget {
             left: 16 * s,
             right: 16 * s,
             bottom: 20 * s,
-            child: _BottomNav(scale: s, onNavTap: onNavTap),
+            child: AppBottomNav(
+              scale: s,
+              selectedIndex: 0,
+              selectedWidth: 81,
+              onTap: onNavTap,
+            ),
           ),
         ],
       ),
@@ -434,206 +439,6 @@ class _ClarityNote extends StatelessWidget {
               width: 270 * s,
             ),
           ),
-        ],
-      ),
-    );
-  }
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Floating top bar
-// ─────────────────────────────────────────────────────────────────────────────
-class _HomeHeader extends StatelessWidget {
-  const _HomeHeader({required this.scale, this.onProfile});
-
-  final double scale;
-  final VoidCallback? onProfile;
-
-  @override
-  Widget build(BuildContext context) {
-    final s = scale;
-    return ClipRect(
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 12 * s, sigmaY: 12 * s),
-        child: Container(
-          height: 64 * s,
-          color: const Color(0xFFF8FAF6).withValues(alpha: 0.85),
-          child: Stack(
-            children: [
-              Positioned(
-                left: 16 * s,
-                top: 16 * s,
-                child: Image.asset(
-                  'assets/brand/home_logo.png',
-                  width: 32 * s,
-                  height: 32 * s,
-                  filterQuality: FilterQuality.high,
-                ),
-              ),
-              Positioned(
-                left: 56 * s,
-                top: 15 * s,
-                child: figmaText(
-                  'DAILY SPARK',
-                  size: 10 * s,
-                  weight: FontWeight.w600,
-                  letterSpacing: 0.5 * s,
-                  lineHeight: 12 * s,
-                  color: const Color(0xFF57423B),
-                ),
-              ),
-              Positioned(
-                left: 56 * s,
-                top: 27 * s,
-                child: figmaText(
-                  'Home',
-                  size: 16 * s,
-                  weight: FontWeight.w600,
-                  letterSpacing: -0.08 * s,
-                  lineHeight: 22 * s,
-                  color: const Color(0xFF191C1A),
-                ),
-              ),
-              Positioned(
-                left: 330 * s,
-                top: 10 * s,
-                child: GestureDetector(
-                  onTap: onProfile,
-                  behavior: HitTestBehavior.opaque,
-                  child: SizedBox(
-                    width: 44 * s,
-                    height: 44 * s,
-                    child: Stack(
-                      children: [
-                        Positioned(
-                          left: 6 * s,
-                          top: 6 * s,
-                          child: ClipOval(
-                            child: Image.asset(
-                              'assets/brand/avatar_shahd.png',
-                              width: 32 * s,
-                              height: 32 * s,
-                              filterQuality: FilterQuality.high,
-                            ),
-                          ),
-                        ),
-                        Positioned(
-                          left: 28 * s,
-                          top: 6 * s,
-                          child: Container(
-                            width: 10 * s,
-                            height: 10 * s,
-                            decoration: BoxDecoration(
-                              color: const Color(0xFF9F3C16),
-                              shape: BoxShape.circle,
-                              border: Border.all(color: Colors.white, width: 1.5 * s),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Floating bottom navigation
-// ─────────────────────────────────────────────────────────────────────────────
-class _BottomNav extends StatelessWidget {
-  const _BottomNav({required this.scale, this.onNavTap});
-
-  final double scale;
-  final ValueChanged<int>? onNavTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final s = scale;
-    return Container(
-      height: 56 * s,
-      decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.95),
-        borderRadius: BorderRadius.circular(999),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.08),
-            blurRadius: 16 * s,
-            offset: Offset(0, 4 * s),
-          ),
-        ],
-      ),
-      child: Stack(
-        children: [
-          // Selected item
-          Positioned(
-            left: 6 * s,
-            top: 6 * s,
-            child: GestureDetector(
-              onTap: () => onNavTap?.call(0),
-              behavior: HitTestBehavior.opaque,
-              child: Container(
-                width: 81 * s,
-                height: 44 * s,
-                decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [Color(0xFFFF8A54), Color(0xFFFF6B2C)],
-                  ),
-                  borderRadius: BorderRadius.circular(999),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.local_fire_department_rounded,
-                      size: 15 * s,
-                      color: Colors.white,
-                    ),
-                    SizedBox(width: 5 * s),
-                    figmaText(
-                      'Home',
-                      size: 10 * s,
-                      weight: FontWeight.w600,
-                      letterSpacing: 0.25 * s,
-                      lineHeight: 12 * s,
-                      color: Colors.white,
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-          for (final item in const [
-            (132.0, Icons.checklist_rounded),
-            (220.0, Icons.insights_rounded),
-            (308.0, Icons.person_outline_rounded),
-          ])
-            Positioned(
-              left: item.$1 * s,
-              top: 6 * s,
-              child: GestureDetector(
-                onTap: () => onNavTap?.call(
-                  item.$1 == 132.0 ? 1 : (item.$1 == 220.0 ? 2 : 3),
-                ),
-                behavior: HitTestBehavior.opaque,
-                child: SizedBox(
-                  width: 44 * s,
-                  height: 44 * s,
-                  child: Icon(
-                    item.$2,
-                    size: 21 * s,
-                    color: const Color(0xFF57423B),
-                  ),
-                ),
-              ),
-            ),
         ],
       ),
     );

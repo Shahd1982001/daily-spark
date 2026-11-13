@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:daily_spark/design_system/theme/app_theme.dart';
 import 'package:daily_spark/screens/onboarding/onboarding_screen.dart';
 import 'package:daily_spark/screens/splash/splash_screen.dart';
+import 'package:daily_spark/screens/habits/habits_screen.dart';
 import 'package:daily_spark/screens/home/home_screen.dart';
 import 'package:daily_spark/screens/login/login_screen.dart';
 import 'package:daily_spark/screens/sign_up/sign_up_screen.dart';
@@ -25,7 +26,7 @@ class PreviewShell extends StatefulWidget {
   State<PreviewShell> createState() => _PreviewShellState();
 }
 
-enum _Stage { splash, onboarding, welcome, login, signUp, home }
+enum _Stage { splash, onboarding, welcome, login, signUp, home, habits }
 
 class _PreviewShellState extends State<PreviewShell> {
   final _messengerKey = GlobalKey<ScaffoldMessengerState>();
@@ -46,6 +47,7 @@ class _PreviewShellState extends State<PreviewShell> {
         'login' => _Stage.login,
         'signup' => _Stage.signUp,
         'home' => _Stage.home,
+        'habits' => _Stage.habits,
         _ => _Stage.splash,
       };
 
@@ -123,7 +125,16 @@ class _PreviewShellState extends State<PreviewShell> {
             onHabitTap: (i) => _toast('Habit $i — details later ✦'),
             onNewRitual: () => _toast('New Ritual — later ✦'),
             onFilterChanged: (i) => _toast('Filter $i ✦'),
-            onNavTap: (i) => _toast('Nav $i ✦'),
+            onNavTap: (i) => i == 1 ? _go(_Stage.habits) : _toast('Nav $i ✦'),
+          ),
+        _Stage.habits => HabitsScreen(
+            onProfile: () => _toast('Profile — later ✦'),
+            onSort: () => _toast('Sort & filter ✦'),
+            onFilterChanged: (i) => _toast('Filter $i ✦'),
+            onToggleHabit: (i) => _toast('Habit $i toggled ✦'),
+            onHabitTap: (i) => _toast('Habit $i — details later ✦'),
+            onCreateHabit: () => _toast('Create habit — later ✦'),
+            onNavTap: (i) => i == 0 ? _go(_Stage.home) : _toast('Nav $i ✦'),
           ),
       },
     );
