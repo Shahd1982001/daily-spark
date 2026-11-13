@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:daily_spark/design_system/theme/app_theme.dart';
 import 'package:daily_spark/screens/onboarding/onboarding_screen.dart';
 import 'package:daily_spark/screens/splash/splash_screen.dart';
+import 'package:daily_spark/screens/add_habit/add_habit_screen.dart';
 import 'package:daily_spark/screens/habit_details/habit_details_screen.dart';
 import 'package:daily_spark/screens/habits/habits_screen.dart';
 import 'package:daily_spark/screens/home/home_screen.dart';
@@ -27,7 +28,7 @@ class PreviewShell extends StatefulWidget {
   State<PreviewShell> createState() => _PreviewShellState();
 }
 
-enum _Stage { splash, onboarding, welcome, login, signUp, home, habits, habitDetails }
+enum _Stage { splash, onboarding, welcome, login, signUp, home, habits, habitDetails, addHabit }
 
 class _PreviewShellState extends State<PreviewShell> {
   final _messengerKey = GlobalKey<ScaffoldMessengerState>();
@@ -50,6 +51,7 @@ class _PreviewShellState extends State<PreviewShell> {
         'home' => _Stage.home,
         'habits' => _Stage.habits,
         'details' => _Stage.habitDetails,
+        'add' => _Stage.addHabit,
         _ => _Stage.splash,
       };
 
@@ -135,7 +137,7 @@ class _PreviewShellState extends State<PreviewShell> {
             onFilterChanged: (i) => _toast('Filter $i ✦'),
             onToggleHabit: (i) => _toast('Habit $i toggled ✦'),
             onHabitTap: (i) => _go(_Stage.habitDetails),
-            onCreateHabit: () => _toast('Create habit — later ✦'),
+            onCreateHabit: () => _go(_Stage.addHabit),
             onNavTap: (i) => i == 0 ? _go(_Stage.home) : _toast('Nav $i ✦'),
           ),
         _Stage.habitDetails => HabitDetailsScreen(
@@ -146,9 +148,24 @@ class _PreviewShellState extends State<PreviewShell> {
             onPlusFive: () => _toast('+5 pages ✦'),
             onPlusTen: () => _toast('+10 pages ✦'),
             onToggleComplete: () => _toast('Toggle complete ✦'),
-            onEditRitual: () => _toast('Edit ritual ✦'),
+            onEditRitual: () => _go(_Stage.addHabit),
             onArchive: () => _toast('Archive ✦'),
             onDelete: () => _toast('Delete ✦'),
+          ),
+        _Stage.addHabit => AddHabitScreen(
+            onClose: () => _go(_Stage.habits),
+            onAvatar: () => _toast('Profile ✦'),
+            onIconSelected: (i) => _toast('Icon $i ✦'),
+            onAccentSelected: (i) => _toast('Accent $i ✦'),
+            onRhythmSelected: (i) => _toast('Rhythm $i ✦'),
+            onDayToggled: (i) => _toast('Day $i ✦'),
+            onDecrement: () => _toast('−5 ✦'),
+            onIncrement: () => _toast('+5 ✦'),
+            onPresetSelected: (i) => _toast('Preset $i ✦'),
+            onReminderToggled: () => _toast('Reminder toggled ✦'),
+            onTimeTap: () => _toast('Time picker ✦'),
+            onIgnite: () => _toast('Habit created ✦'),
+            onDiscard: () => _go(_Stage.habits),
           ),
       },
     );
