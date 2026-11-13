@@ -31,6 +31,7 @@ Gallery (all screens, thumbnails): `https://shahd1982001.github.io/daily-spark/g
   `SparkThemeScope`, `context.spark`, global `p`). Light values are byte-identical to the approved
   artboards (verified: home 1.7 / details 1.56 / progress 1.74 / profile 1.44 mean-abs vs approved shots).
 - All 13 screens + the shared kit read tokens only — no hardcoded theme colours left.
+- Frosted bottom nav + glass chip now read `p.surface` (they were stuck white under alpha).
 - Toggle: **Profile → Preferences → Appearance & Theme** flips light ↔ dark live
   (row shows "Warm Light" / "Midnight" with sun / moon icon).
 - `?theme=dark` also forces dark on any route for review/QA.
