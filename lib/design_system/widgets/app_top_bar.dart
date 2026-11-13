@@ -10,11 +10,17 @@ class AppTopBar extends StatelessWidget {
     super.key,
     required this.scale,
     required this.title,
+    this.brandColor = const Color(0xFF57423B),
+    this.showBell = false,
+    this.onBell,
     this.onProfile,
   });
 
   final double scale;
   final String title;
+  final Color brandColor;
+  final bool showBell;
+  final VoidCallback? onBell;
   final VoidCallback? onProfile;
 
   @override
@@ -47,7 +53,7 @@ class AppTopBar extends StatelessWidget {
                   weight: FontWeight.w600,
                   letterSpacing: 0.5 * s,
                   lineHeight: 12 * s,
-                  color: const Color(0xFF57423B),
+                  color: brandColor,
                 ),
               ),
               Positioned(
@@ -62,6 +68,24 @@ class AppTopBar extends StatelessWidget {
                   color: const Color(0xFF191C1A),
                 ),
               ),
+              if (showBell)
+                Positioned(
+                  left: 282 * s,
+                  top: 10 * s,
+                  child: GestureDetector(
+                    onTap: onBell,
+                    behavior: HitTestBehavior.opaque,
+                    child: SizedBox(
+                      width: 44 * s,
+                      height: 44 * s,
+                      child: Icon(
+                        Icons.notifications_none_rounded,
+                        size: 20 * s,
+                        color: const Color(0xFF57423B),
+                      ),
+                    ),
+                  ),
+                ),
               Positioned(
                 left: 330 * s,
                 top: 10 * s,

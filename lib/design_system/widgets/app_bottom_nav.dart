@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 
 import 'package:daily_spark/design_system/widgets/design_canvas.dart' show figmaText;
@@ -11,6 +13,12 @@ class AppBottomNav extends StatelessWidget {
     required this.selectedIndex,
     this.labels = const ['Home', 'Habits', 'Progress', 'Profile'],
     this.selectedWidth = 88,
+    this.height = 56,
+    this.horizontalPadding = 6,
+    this.selectedHeight = 44,
+    this.labelSize = 10,
+    this.iconSize = 21,
+    this.frosted = false,
     this.onTap,
   });
 
@@ -18,6 +26,12 @@ class AppBottomNav extends StatelessWidget {
   final int selectedIndex;
   final List<String> labels;
   final double selectedWidth;
+  final double height;
+  final double horizontalPadding;
+  final double selectedHeight;
+  final double labelSize;
+  final double iconSize;
+  final bool frosted;
   final ValueChanged<int>? onTap;
 
   static const _icons = [
@@ -30,10 +44,16 @@ class AppBottomNav extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final s = scale;
-    return Container(
-      height: 56 * s,
+    final card = Container(
+      height: height * s,
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.95),
+        color: Colors.white.withValues(alpha: frosted ? 0.90 : 0.95),
+        border: frosted
+            ? Border.all(
+                color: const Color(0xFFDEC0B5).withValues(alpha: 0.10),
+                width: 1 * s,
+              )
+            : null,
         borderRadius: BorderRadius.circular(999),
         boxShadow: [
           BoxShadow(
@@ -43,7 +63,7 @@ class AppBottomNav extends StatelessWidget {
           ),
         ],
       ),
-      padding: EdgeInsets.symmetric(horizontal: 6 * s),
+      padding: EdgeInsets.symmetric(horizontal: horizontalPadding * s),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -54,7 +74,7 @@ class AppBottomNav extends StatelessWidget {
               child: i == selectedIndex
                   ? Container(
                       width: selectedWidth * s,
-                      height: 44 * s,
+                      height: selectedHeight * s,
                       decoration: BoxDecoration(
                         gradient: const LinearGradient(
                           begin: Alignment.topLeft,
@@ -70,10 +90,10 @@ class AppBottomNav extends StatelessWidget {
                           SizedBox(width: 5 * s),
                           figmaText(
                             labels[i],
-                            size: 10 * s,
-                            weight: FontWeight.w600,
-                            letterSpacing: 0.25 * s,
-                            lineHeight: 12 * s,
+                            size: labelSize * s,
+                            weight: labelSize >= 12 ? FontWeight.w500 : FontWeight.w600,
+                            letterSpacing: (labelSize >= 12 ? 0 : 0.25) * s,
+                            lineHeight: (labelSize >= 12 ? 16 : 12) * s,
                             color: Colors.white,
                           ),
                         ],
@@ -84,12 +104,20 @@ class AppBottomNav extends StatelessWidget {
                       height: 44 * s,
                       child: Icon(
                         _icons[i],
-                        size: 21 * s,
+                        size: iconSize * s,
                         color: const Color(0xFF57423B),
                       ),
                     ),
             ),
         ],
+      ),
+    );
+    if (!frosted) return card;
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(999),
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 12 * s, sigmaY: 12 * s),
+        child: card,
       ),
     );
   }

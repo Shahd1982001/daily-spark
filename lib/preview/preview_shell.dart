@@ -9,6 +9,7 @@ import 'package:daily_spark/screens/habit_details/habit_details_screen.dart';
 import 'package:daily_spark/screens/habits/habits_screen.dart';
 import 'package:daily_spark/screens/home/home_screen.dart';
 import 'package:daily_spark/screens/login/login_screen.dart';
+import 'package:daily_spark/screens/progress/progress_screen.dart';
 import 'package:daily_spark/screens/sign_up/sign_up_screen.dart';
 import 'package:daily_spark/screens/welcome/welcome_screen.dart';
 
@@ -28,7 +29,18 @@ class PreviewShell extends StatefulWidget {
   State<PreviewShell> createState() => _PreviewShellState();
 }
 
-enum _Stage { splash, onboarding, welcome, login, signUp, home, habits, habitDetails, addHabit }
+enum _Stage {
+  splash,
+  onboarding,
+  welcome,
+  login,
+  signUp,
+  home,
+  habits,
+  habitDetails,
+  addHabit,
+  progress,
+}
 
 class _PreviewShellState extends State<PreviewShell> {
   final _messengerKey = GlobalKey<ScaffoldMessengerState>();
@@ -52,6 +64,7 @@ class _PreviewShellState extends State<PreviewShell> {
         'habits' => _Stage.habits,
         'details' => _Stage.habitDetails,
         'add' => _Stage.addHabit,
+        'progress' => _Stage.progress,
         _ => _Stage.splash,
       };
 
@@ -129,7 +142,11 @@ class _PreviewShellState extends State<PreviewShell> {
             onHabitTap: (i) => _go(_Stage.habitDetails),
             onNewRitual: () => _toast('New Ritual — later ✦'),
             onFilterChanged: (i) => _toast('Filter $i ✦'),
-            onNavTap: (i) => i == 1 ? _go(_Stage.habits) : _toast('Nav $i ✦'),
+            onNavTap: (i) => switch (i) {
+              1 => _go(_Stage.habits),
+              2 => _go(_Stage.progress),
+              _ => _toast('Nav $i ✦'),
+            },
           ),
         _Stage.habits => HabitsScreen(
             onProfile: () => _toast('Profile — later ✦'),
@@ -138,7 +155,11 @@ class _PreviewShellState extends State<PreviewShell> {
             onToggleHabit: (i) => _toast('Habit $i toggled ✦'),
             onHabitTap: (i) => _go(_Stage.habitDetails),
             onCreateHabit: () => _go(_Stage.addHabit),
-            onNavTap: (i) => i == 0 ? _go(_Stage.home) : _toast('Nav $i ✦'),
+            onNavTap: (i) => switch (i) {
+              0 => _go(_Stage.home),
+              2 => _go(_Stage.progress),
+              _ => _toast('Nav $i ✦'),
+            },
           ),
         _Stage.habitDetails => HabitDetailsScreen(
             onBack: () => _go(_Stage.habits),
@@ -166,6 +187,17 @@ class _PreviewShellState extends State<PreviewShell> {
             onTimeTap: () => _toast('Time picker ✦'),
             onIgnite: () => _toast('Habit created ✦'),
             onDiscard: () => _go(_Stage.habits),
+          ),
+        _Stage.progress => ProgressScreen(
+            onProfile: () => _toast('Profile ✦'),
+            onBell: () => _toast('Notifications ✦'),
+            onTimeframeSelected: (i) => _toast('Timeframe $i ✦'),
+            onShare: () => _toast('Share achievement ✦'),
+            onNavTap: (i) => switch (i) {
+              0 => _go(_Stage.home),
+              1 => _go(_Stage.habits),
+              _ => _toast('Nav $i ✦'),
+            },
           ),
       },
     );
