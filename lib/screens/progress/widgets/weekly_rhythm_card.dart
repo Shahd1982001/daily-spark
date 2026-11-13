@@ -179,6 +179,7 @@ class _Column extends StatelessWidget {
           width: 39 * s,
           height: 128 * s,
           child: Stack(
+            clipBehavior: Clip.none,
             children: [
               if (isToday)
                 Positioned(
@@ -188,9 +189,12 @@ class _Column extends StatelessWidget {
                     width: 47 * s,
                     height: 136 * s,
                     decoration: BoxDecoration(
-                      color: const Color(0xFF9F3C16),
                       borderRadius: BorderRadius.vertical(
                         top: Radius.circular(23.5 * s),
+                      ),
+                      border: Border.all(
+                        color: const Color(0xFF9F3C16),
+                        width: 2.5 * s,
                       ),
                     ),
                   ),
