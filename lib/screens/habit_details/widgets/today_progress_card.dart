@@ -223,7 +223,7 @@ class TodayProgressCard extends StatelessWidget {
               width: 310 * s,
               height: 48 * s,
               decoration: BoxDecoration(
-                color: p.panel,
+                color: p.dark ? p.chipGreen : p.panel,
                 borderRadius: BorderRadius.circular(12 * s),
               ),
               child: Row(
