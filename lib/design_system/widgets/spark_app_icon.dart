@@ -2,6 +2,8 @@ import 'dart:ui' show ImageFilter;
 
 import 'package:flutter/material.dart';
 
+import 'package:daily_spark/design_system/theme/spark_palette.dart';
+
 
 /// The layered Daily Spark app mark used on the splash screen.
 ///
@@ -17,6 +19,7 @@ class SparkAppIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final p = context.spark;
     final unit = size / 144;
     final radius = 24.0 * unit;
 
@@ -35,10 +38,10 @@ class SparkAppIcon extends StatelessWidget {
                 height: 144 * unit,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(radius),
-                  gradient: const LinearGradient(
+                  gradient: LinearGradient(
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
-                    colors: [Color(0x0D9F3C16), Color(0x0A7E5300)],
+                    colors: [p.iconHaloStart, p.iconHaloEnd],
                   ),
                 ),
               ),
@@ -48,7 +51,9 @@ class SparkAppIcon extends StatelessWidget {
               width: 128 * unit,
               height: 128 * unit,
               decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.92),
+                color: p.dark
+                    ? p.iconPlateSoft
+                    : Colors.white.withValues(alpha: 0.92),
                 borderRadius: BorderRadius.circular(radius),
               ),
             ),
@@ -57,8 +62,14 @@ class SparkAppIcon extends StatelessWidget {
               width: 112 * unit,
               height: 112 * unit,
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: p.iconPlate,
                 borderRadius: BorderRadius.circular(radius),
+                border: p.dark
+                    ? Border.all(
+                        color: p.iconBorder,
+                        width: 1 * (unit < 0.6 ? 0.6 : unit),
+                      )
+                    : null,
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black.withValues(alpha: 0.07),

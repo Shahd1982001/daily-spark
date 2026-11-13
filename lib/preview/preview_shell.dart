@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:daily_spark/design_system/theme/app_theme.dart';
+import 'package:daily_spark/design_system/theme/spark_palette.dart';
 import 'package:daily_spark/screens/onboarding/onboarding_screen.dart';
 import 'package:daily_spark/screens/splash/splash_screen.dart';
 import 'package:daily_spark/screens/add_habit/add_habit_screen.dart';
@@ -48,6 +49,7 @@ class _PreviewShellState extends State<PreviewShell> {
   final _messengerKey = GlobalKey<ScaffoldMessengerState>();
   late _Stage _stage = _initialStage();
   late final int _initialPage = _intParam('p', 0);
+  late bool _isDark = _param('theme') == 'dark';
   Timer? _timer;
   bool _obscurePassword = false;
 
@@ -100,13 +102,18 @@ class _PreviewShellState extends State<PreviewShell> {
 
   @override
   Widget build(BuildContext context) {
+    final palette = _isDark ? SparkPalette.darkPalette : SparkPalette.light;
     return MaterialApp(
       title: 'Daily Spark',
       debugShowCheckedModeBanner: false,
       scaffoldMessengerKey: _messengerKey,
       theme: AppTheme.light,
       darkTheme: AppTheme.dark,
-      themeMode: ThemeMode.light,
+      themeMode: _isDark ? ThemeMode.dark : ThemeMode.light,
+      builder: (context, child) => SparkThemeScope(
+        palette: palette,
+        child: child ?? const SizedBox.shrink(),
+      ),
       home: switch (_stage) {
         _Stage.splash => SplashScreen(onTap: () => _go(_Stage.onboarding)),
         _Stage.onboarding => OnboardingScreen(
