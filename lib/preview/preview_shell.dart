@@ -87,7 +87,6 @@ class _PreviewShellState extends State<PreviewShell> {
             onFooterLogin: () => _go(_Stage.welcome),
           ),
         _Stage.welcome => WelcomeScreen(
-            onBack: () => _go(_Stage.onboarding),
             onGetStarted: () => _toast('Sign Up — الشاشة الجاية ✦'),
             onLogin: () => _toast('Login — الشاشة الجاية ✦'),
             onGuest: () => _toast('Guest mode — الشاشة الجاية ✦'),
