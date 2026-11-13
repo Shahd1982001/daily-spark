@@ -5,13 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:daily_spark/design_system/theme/spark_palette.dart';
 
 
-/// The layered Daily Spark app mark used on the splash screen.
+/// The Daily Spark app mark used on the splash screen.
 ///
-/// Figma spec (node 126:13378):
-///  • 144 × 144 blurred ember gradient plate  (radius 24)
-///  • 128 × 128 white plate at 80% opacity     (radius 24)
-///  • 112 × 112 pure white plate + shadow      (radius 24)
-///  •  72 ×  72  spark glyph on top
+/// The brand logo now sits directly on the page background (no white plate in
+/// either theme), with only the soft ember halo behind it.
 class SparkAppIcon extends StatelessWidget {
   const SparkAppIcon({super.key, this.size = 144});
 
@@ -21,79 +18,36 @@ class SparkAppIcon extends StatelessWidget {
   Widget build(BuildContext context) {
     final p = context.spark;
     final unit = size / 144;
-    final radius = 24.0 * unit;
 
     return SizedBox(
       width: size,
       height: size,
-      child: Center(
-        child: Stack(
-          alignment: Alignment.center,
-          children: [
-            // Ember halo plate
-            ImageFiltered(
-              imageFilter: ImageFilter.blur(sigmaX: 16 * unit, sigmaY: 16 * unit),
-              child: Container(
-                width: 144 * unit,
-                height: 144 * unit,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(radius),
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [p.iconHaloStart, p.iconHaloEnd],
-                  ),
-                ),
-              ),
-            ),
-            // Soft white plate
-            Container(
-              width: 128 * unit,
-              height: 128 * unit,
-              decoration: BoxDecoration(
-                color: p.dark
-                    ? p.iconPlateSoft
-                    : Colors.white.withValues(alpha: 0.92),
-                borderRadius: BorderRadius.circular(radius),
-              ),
-            ),
-            // Main white tile
-            Container(
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          // Ember halo bleeding out from behind the mark
+          ImageFiltered(
+            imageFilter: ImageFilter.blur(sigmaX: 22 * unit, sigmaY: 22 * unit),
+            child: Container(
               width: 112 * unit,
               height: 112 * unit,
               decoration: BoxDecoration(
-                color: p.iconPlate,
-                borderRadius: BorderRadius.circular(radius),
-                border: p.dark
-                    ? Border.all(
-                        color: p.iconBorder,
-                        width: 1 * (unit < 0.6 ? 0.6 : unit),
-                      )
-                    : null,
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.07),
-                    blurRadius: 10 * unit,
-                    offset: Offset(0, 8 * unit),
-                  ),
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.06),
-                    blurRadius: 25 * unit,
-                    offset: Offset(0, 20 * unit),
-                  ),
-                ],
-              ),
-              child: Center(
-                child: Image.asset(
-                  'assets/brand/spark_mark.png',
-                  width: 72 * unit,
-                  height: 72 * unit,
-                  filterQuality: FilterQuality.high,
+                shape: BoxShape.circle,
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [p.iconHaloStart, p.iconHaloEnd],
                 ),
               ),
             ),
-          ],
-        ),
+          ),
+          Image.asset(
+            'assets/brand/spark_logo.png',
+            width: size,
+            height: size,
+            filterQuality: FilterQuality.high,
+          ),
+        ],
       ),
     );
   }

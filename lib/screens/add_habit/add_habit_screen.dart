@@ -187,11 +187,11 @@ class _AddHabitHeader extends StatelessWidget {
               ),
               Positioned(
                 left: 68 * s,
-                top: 16 * s,
+                top: 17 * s,
                 child: Image.asset(
-                  'assets/brand/home_logo.png',
-                  width: 32 * s,
-                  height: 32 * s,
+                  'assets/brand/spark_logo.png',
+                  width: 30 * s,
+                  height: 30 * s,
                   filterQuality: FilterQuality.high,
                 ),
               ),
