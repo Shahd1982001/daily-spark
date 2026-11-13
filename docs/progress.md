@@ -52,6 +52,32 @@ All 13 screens reviewed and corrected:
 - Bottom nav frosted bar + glass chips read `p.surface` (no more white bar).
 - Light theme re-verified byte-close to the approved shots (login 0.0 %, welcome 0.02, home 0.05, progress 0.25, habits 0.52 mean-abs).
 
+## Link restore + deploy pipeline fix (2026-11-13)
+Her link `shahd1982001.github.io` was showing GitHub's 404 and `gallery.html` had vanished.
+Root cause: the CI workflow (`.github/workflows/deploy-web.yml`) publishes only `./build/web` on every
+push to `main`, so the gallery (`web_extra/`) was dropped from gh-pages each time it ran.
+
+Fixed:
+- Workflow now copies `web_extra/` into `build/web`, runs `tool/patch_index.py` (sw + cache bust),
+  writes `.nojekyll`, then publishes. `tool/patch_index.py` is committed so CI does not depend on `.cache`.
+- `Shahd1982001.github.io` repo created → the bare host now serves an on-brand dark landing card that
+  forwards to `daily-spark/gallery.html` (plus "All screens" / "Open the app" buttons). Her old root
+  bookmark works again.
+- gh-pages re-deployed manually first (instant restore), then CI run on `e53fa61` re-deployed successfully.
+
+Verified (Playwright, 390×844, service workers blocked):
+`https://shahd1982001.github.io/` → redirects → gallery, 0 page errors ·
+`/daily-spark/` 200 · `/daily-spark/gallery.html` 200 · `main.dart.js` 200 · screens + screens_dark 200 ·
+`?s=progress|profile|home|add&theme=dark` render the dark frames, 0 page errors.
+
+## Local preview (port 20241)
+- Killed leftovers: orphan `http.server 8082` (cwd `/tmp/site`, deleted) and a stale `cloudflared`
+  that was holding `127.0.0.1:20241`.
+- Rebuilt with `--base-href /` (the deployed build uses `/daily-spark/`, which 404s its assets at a root URL),
+  copied `web_extra/`, patched index → served with
+  `python3 -m http.server 20241 --bind 0.0.0.0 --directory build/web`.
+- 0 page errors on gallery, `?s=progress|profile|home|details|add&theme=dark`.
+
 ## Next (needs her decision)
 1. **Logic layer** — state management choice still open (Provider vs Riverpod).
 2. **Backend** — must stay last.
