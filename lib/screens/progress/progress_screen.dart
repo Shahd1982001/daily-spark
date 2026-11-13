@@ -90,6 +90,12 @@ class ProgressScreen extends StatelessWidget {
                 labelSize: 12,
                   iconSize: 21,
                   frosted: true,
+                  icons: const [
+                    Icons.home_outlined,
+                    Icons.checklist_rounded,
+                    Icons.insights_rounded,
+                    Icons.person_outline_rounded,
+                  ],
                   onTap: onNavTap,
                 ),
               ),

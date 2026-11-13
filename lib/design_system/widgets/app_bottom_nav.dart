@@ -19,6 +19,7 @@ class AppBottomNav extends StatelessWidget {
     this.labelSize = 10,
     this.iconSize = 21,
     this.frosted = false,
+    this.icons,
     this.onTap,
   });
 
@@ -32,9 +33,10 @@ class AppBottomNav extends StatelessWidget {
   final double labelSize;
   final double iconSize;
   final bool frosted;
+  final List<IconData>? icons;
   final ValueChanged<int>? onTap;
 
-  static const _icons = [
+  static const _defaultIcons = [
     Icons.local_fire_department_rounded,
     Icons.checklist_rounded,
     Icons.insights_rounded,
@@ -44,6 +46,7 @@ class AppBottomNav extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final s = scale;
+    final navIcons = icons ?? _defaultIcons;
     final card = Container(
       height: height * s,
       decoration: BoxDecoration(
@@ -86,7 +89,7 @@ class AppBottomNav extends StatelessWidget {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(_icons[i], size: 16 * s, color: Colors.white),
+                          Icon(navIcons[i], size: 16 * s, color: Colors.white),
                           SizedBox(width: 5 * s),
                           figmaText(
                             labels[i],
@@ -103,7 +106,7 @@ class AppBottomNav extends StatelessWidget {
                       width: 44 * s,
                       height: 44 * s,
                       child: Icon(
-                        _icons[i],
+                        navIcons[i],
                         size: iconSize * s,
                         color: const Color(0xFF57423B),
                       ),
