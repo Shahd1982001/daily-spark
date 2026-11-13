@@ -9,6 +9,7 @@ import 'package:daily_spark/screens/habit_details/habit_details_screen.dart';
 import 'package:daily_spark/screens/habits/habits_screen.dart';
 import 'package:daily_spark/screens/home/home_screen.dart';
 import 'package:daily_spark/screens/login/login_screen.dart';
+import 'package:daily_spark/screens/profile/profile_screen.dart';
 import 'package:daily_spark/screens/progress/progress_screen.dart';
 import 'package:daily_spark/screens/sign_up/sign_up_screen.dart';
 import 'package:daily_spark/screens/welcome/welcome_screen.dart';
@@ -40,6 +41,7 @@ enum _Stage {
   habitDetails,
   addHabit,
   progress,
+  profile,
 }
 
 class _PreviewShellState extends State<PreviewShell> {
@@ -65,6 +67,7 @@ class _PreviewShellState extends State<PreviewShell> {
         'details' => _Stage.habitDetails,
         'add' => _Stage.addHabit,
         'progress' => _Stage.progress,
+        'profile' => _Stage.profile,
         _ => _Stage.splash,
       };
 
@@ -145,6 +148,7 @@ class _PreviewShellState extends State<PreviewShell> {
             onNavTap: (i) => switch (i) {
               1 => _go(_Stage.habits),
               2 => _go(_Stage.progress),
+              3 => _go(_Stage.profile),
               _ => _toast('Nav $i ✦'),
             },
           ),
@@ -158,6 +162,7 @@ class _PreviewShellState extends State<PreviewShell> {
             onNavTap: (i) => switch (i) {
               0 => _go(_Stage.home),
               2 => _go(_Stage.progress),
+              3 => _go(_Stage.profile),
               _ => _toast('Nav $i ✦'),
             },
           ),
@@ -188,6 +193,27 @@ class _PreviewShellState extends State<PreviewShell> {
             onIgnite: () => _toast('Habit created ✦'),
             onDiscard: () => _go(_Stage.habits),
           ),
+        _Stage.profile => ProfileScreen(
+            onSettings: () => _toast('Settings ✦'),
+            onShare: () => _toast('Share summary ✦'),
+            onEdit: () => _toast('Edit profile ✦'),
+            onStatTap: (i) => _toast('Stat $i ✦'),
+            onPersonalDetails: () => _toast('Personal details ✦'),
+            onCloudSync: () => _toast('Cloud sync ✦'),
+            onToggleReminders: (v) => _toast('Reminders ${v ? 'on' : 'off'} ✦'),
+            onToggleSound: (v) => _toast('Sound ${v ? 'on' : 'off'} ✦'),
+            onAppearance: () => _toast('Appearance ✦'),
+            onLanguage: () => _toast('Language ✦'),
+            onGuide: () => _toast('Ritual guide ✦'),
+            onAbout: () => _toast('About ✦'),
+            onLogOut: () => _go(_Stage.welcome),
+            onNavTap: (i) => switch (i) {
+              0 => _go(_Stage.home),
+              1 => _go(_Stage.habits),
+              2 => _go(_Stage.progress),
+              _ => _toast('Nav $i ✦'),
+            },
+          ),
         _Stage.progress => ProgressScreen(
             onProfile: () => _toast('Profile ✦'),
             onBell: () => _toast('Notifications ✦'),
@@ -196,6 +222,7 @@ class _PreviewShellState extends State<PreviewShell> {
             onNavTap: (i) => switch (i) {
               0 => _go(_Stage.home),
               1 => _go(_Stage.habits),
+              3 => _go(_Stage.profile),
               _ => _toast('Nav $i ✦'),
             },
           ),

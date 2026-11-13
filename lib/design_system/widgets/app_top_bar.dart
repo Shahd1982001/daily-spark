@@ -13,6 +13,8 @@ class AppTopBar extends StatelessWidget {
     this.brandColor = const Color(0xFF57423B),
     this.showBell = false,
     this.onBell,
+    this.showSettings = false,
+    this.onSettings,
     this.onProfile,
   });
 
@@ -21,6 +23,8 @@ class AppTopBar extends StatelessWidget {
   final Color brandColor;
   final bool showBell;
   final VoidCallback? onBell;
+  final bool showSettings;
+  final VoidCallback? onSettings;
   final VoidCallback? onProfile;
 
   @override
@@ -86,7 +90,26 @@ class AppTopBar extends StatelessWidget {
                     ),
                   ),
                 ),
-              Positioned(
+              if (showSettings)
+                Positioned(
+                  left: 334 * s,
+                  top: 15 * s,
+                  child: GestureDetector(
+                    onTap: onSettings,
+                    behavior: HitTestBehavior.opaque,
+                    child: SizedBox(
+                      width: 40 * s,
+                      height: 40 * s,
+                      child: Icon(
+                        Icons.settings_rounded,
+                        size: 21 * s,
+                        color: const Color(0xFF57423B),
+                      ),
+                    ),
+                  ),
+                ),
+              if (!showSettings)
+                Positioned(
                 left: 330 * s,
                 top: 10 * s,
                 child: GestureDetector(
