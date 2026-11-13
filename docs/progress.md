@@ -26,11 +26,23 @@ Gallery (all screens, thumbnails): `https://shahd1982001.github.io/daily-spark/g
 - Shared kit: `lib/design_system/{theme,widgets}`.
 - Preview shell: `lib/preview/preview_shell.dart` (`?s=` route switch, no visible UI).
 
+## Dark mode — done (review pending)
+- Token layer: `lib/design_system/theme/spark_palette.dart` (`SparkPalette.light` / `.darkPalette`,
+  `SparkThemeScope`, `context.spark`, global `p`). Light values are byte-identical to the approved
+  artboards (verified: home 1.7 / details 1.56 / progress 1.74 / profile 1.44 mean-abs vs approved shots).
+- All 13 screens + the shared kit read tokens only — no hardcoded theme colours left.
+- Toggle: **Profile → Preferences → Appearance & Theme** flips light ↔ dark live
+  (row shows "Warm Light" / "Midnight" with sun / moon icon).
+- `?theme=dark` also forces dark on any route for review/QA.
+- Dark thumbnails + new gallery section: `gallery.html` → "الوضع الليلي".
+- `review/dark_mode_all_screens.png` — all 13 screens in dark.
+- Entry flow fixed: splash/onboarding timers start on the first painted frame, so opening the
+  plain link shows Splash → Onboarding 1 → 2 → 3 (never jumps straight to Welcome).
+
 ## Next (needs her decision)
-1. **Dark mode** — Figma dark frames exist (`163:2560 · 2915 · 3185 · 3411 · 3760 · 4073 · 4304 · 2826 · 2604 · 2263 · 2348 · 2474 · 2727`).
-2. **Logic layer** — state management choice still open (Provider vs Riverpod).
-3. **Backend** — must stay last.
-4. **i18n / RTL Arabic** — after logic.
+1. **Logic layer** — state management choice still open (Provider vs Riverpod).
+2. **Backend** — must stay last.
+3. **i18n / RTL Arabic** — after logic.
 
 ## Deploy recipe
 ```
