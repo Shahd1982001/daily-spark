@@ -290,7 +290,7 @@ class _SubBar extends StatelessWidget {
             height: 20 * s,
             padding: EdgeInsets.symmetric(horizontal: 10 * s),
             decoration: BoxDecoration(
-              color: p.goldSoft,
+              color: p.chipGold,
               borderRadius: BorderRadius.all(Radius.circular(999)),
             ),
             child: Center(
@@ -300,7 +300,7 @@ class _SubBar extends StatelessWidget {
                 weight: FontWeight.w600,
                 letterSpacing: 0.5 * s,
                 lineHeight: 12 * s,
-                color: p.onGold,
+                color: p.dark ? p.ochre : p.onGold,
               ),
             ),
           ),
@@ -333,11 +333,11 @@ class _IdentitySection extends StatelessWidget {
     Icons.local_fire_department_rounded,
   ];
 
-  static get _accents => [
+  static List<Color> get _accents => [
     p.emberDeep,
     p.sage,
     p.ochre,
-    p.slate,
+    p.dark ? const Color(0xFF8E8A85) : p.slate,
   ];
 
   @override
@@ -367,7 +367,7 @@ class _IdentitySection extends StatelessWidget {
               width: 56 * s,
               height: 56 * s,
               decoration: BoxDecoration(
-                color: p.emberSoft,
+                color: p.chipEmber,
                 borderRadius: BorderRadius.circular(16 * s),
               ),
               child: Icon(
@@ -397,6 +397,22 @@ class _IdentitySection extends StatelessWidget {
                   ),
                   child: Icon(Icons.edit, size: 8 * s, color: Colors.white),
                 ),
+              ),
+            ),
+          ),
+          // input well (dark frame keeps a raised field here)
+          Positioned(
+            left: 16 * s,
+            top: 20 * s,
+            child: Container(
+              width: 326 * s,
+              height: 76 * s,
+              decoration: BoxDecoration(
+                color: p.dark ? p.raised : Colors.transparent,
+                borderRadius: BorderRadius.circular(16 * s),
+                border: p.dark
+                    ? Border.all(color: p.bone.withValues(alpha: 0.55), width: 1 * s)
+                    : null,
               ),
             ),
           ),
@@ -506,9 +522,17 @@ class _IdentitySection extends StatelessWidget {
                       decoration: BoxDecoration(
                         color: _accents[i],
                         shape: BoxShape.circle,
+                        border: i == 0
+                            ? Border.all(
+                                color: p.dark
+                                    ? const Color(0xFFF5F3EF)
+                                    : p.emberDeep,
+                                width: 2 * s)
+                            : null,
                       ),
                       child: i == 0
-                          ? Icon(Icons.check_rounded, size: 12 * s, color: Colors.white)
+                          ? Icon(Icons.check_rounded,
+                              size: 11 * s, color: Colors.white)
                           : null,
                     ),
                   ),
@@ -576,7 +600,7 @@ class _RhythmSection extends StatelessWidget {
               height: 16 * s,
               padding: EdgeInsets.symmetric(horizontal: 8 * s),
               decoration: BoxDecoration(
-                color: p.mint,
+                color: p.chipGreen,
                 borderRadius: BorderRadius.all(Radius.circular(999)),
               ),
               child: Center(
@@ -660,8 +684,13 @@ class _RhythmSection extends StatelessWidget {
                       width: 43 * s,
                       height: 37 * s,
                       decoration: BoxDecoration(
-                        color: p.success,
+                        color: p.dark ? p.chipGreen : p.success,
                         borderRadius: BorderRadius.circular(12 * s),
+                        border: p.dark
+                            ? Border.all(
+                                color: p.sage.withValues(alpha: 0.35),
+                                width: 1 * s)
+                            : null,
                       ),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -672,10 +701,12 @@ class _RhythmSection extends StatelessWidget {
                             weight: FontWeight.w600,
                             letterSpacing: 0.4 * s,
                             lineHeight: 12 * s,
-                            color: p.surface,
+                            color: p.dark ? p.sage : p.surface,
                           ),
                           SizedBox(height: 2 * s),
-                          Icon(Icons.check_rounded, size: 10 * s, color: Colors.white),
+                          Icon(Icons.check_rounded,
+                              size: 10 * s,
+                              color: p.dark ? p.sage : Colors.white),
                         ],
                       ),
                     ),
@@ -746,7 +777,7 @@ class _TargetSection extends StatelessWidget {
               height: 24 * s,
               padding: EdgeInsets.symmetric(horizontal: 10 * s),
               decoration: BoxDecoration(
-                color: p.goldSoft,
+                color: p.chipGold,
                 borderRadius: BorderRadius.all(Radius.circular(999)),
               ),
               child: Center(
@@ -950,7 +981,7 @@ class _ReminderSection extends StatelessWidget {
               width: 40 * s,
               height: 40 * s,
               decoration: BoxDecoration(
-                color: p.mint,
+                color: p.chipGreen,
                 borderRadius: BorderRadius.circular(12 * s),
               ),
               child: Icon(
@@ -1111,7 +1142,7 @@ class _SparkTip extends StatelessWidget {
       height: 111 * s,
       padding: EdgeInsets.fromLTRB(16 * s, 16 * s, 16 * s, 16 * s),
       decoration: BoxDecoration(
-        color: p.goldSoft.withValues(alpha: 0.4),
+        color: p.chipGold,
         borderRadius: BorderRadius.circular(16 * s),
       ),
       child: Row(
@@ -1121,7 +1152,7 @@ class _SparkTip extends StatelessWidget {
             width: 32 * s,
             height: 32 * s,
             decoration: BoxDecoration(
-              color: p.goldSoft,
+              color: p.chipGold,
               borderRadius: BorderRadius.circular(8 * s),
             ),
             child: Icon(

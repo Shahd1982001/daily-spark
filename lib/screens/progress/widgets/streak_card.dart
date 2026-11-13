@@ -35,7 +35,7 @@ class StreakCard extends StatelessWidget {
                 height: 160 * s,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: p.gold.withValues(alpha: 0.302),
+                  color: p.chipGold,
                 ),
               ),
             ),

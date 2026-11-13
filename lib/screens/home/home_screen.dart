@@ -405,7 +405,7 @@ class _ClarityNote extends StatelessWidget {
               width: 32 * s,
               height: 32 * s,
               decoration: BoxDecoration(
-                color: p.goldSoft,
+                color: p.chipGold,
                 shape: BoxShape.circle,
               ),
               child: Icon(

@@ -54,6 +54,11 @@ class SparkPalette {
     required this.slate,
     required this.error,
     required this.warmBorder,
+    required this.raised,
+    required this.chipNeutral,
+    required this.chipGreen,
+    required this.chipGold,
+    required this.chipEmber,
   });
 
   final bool dark;
@@ -117,6 +122,15 @@ class SparkPalette {
   final Color error;
   final Color warmBorder;
 
+  /// Raised plates / input wells (white in light, #242725 in dark).
+  final Color raised;
+
+  /// Tinted chips: neutral, green, gold and ember washes.
+  final Color chipNeutral;
+  final Color chipGreen;
+  final Color chipGold;
+  final Color chipEmber;
+
   static const light = SparkPalette(
     dark: false,
     canvas: Color(0xFFF8FAF6),
@@ -164,6 +178,11 @@ class SparkPalette {
     slate: Color(0xFF2E312F),
     error: Color(0xFFBA1A1A),
     warmBorder: Color(0xFFDEC0B7),
+    raised: Color(0xFFFFFFFF),
+    chipNeutral: Color(0xFFF3F4F0),
+    chipGreen: Color(0xFFBCEED1),
+    chipGold: Color(0x4DFFDDB2),
+    chipEmber: Color(0x66FFDBCF),
   );
 
   static const _dark = SparkPalette(
@@ -203,8 +222,8 @@ class SparkPalette {
     iconHaloStart: Color(0x33FF6B2C),
     iconHaloEnd: Color(0x1A10B981),
     iconBorder: Color(0xFF2A2E2C),
-    emberTile: Color(0x26FF6B2C),
-    goldSoft: Color(0x33FDBA54),
+    emberTile: Color(0xFF33201A),
+    goldSoft: Color(0xFF2E2419),
     onGold: Color(0xFF121413),
     onEmberSoft: Color(0xFFFFB59A),
     pineDark: Color(0xFF4EDEA3),
@@ -213,6 +232,11 @@ class SparkPalette {
     slate: Color(0xFFE7E9E5),
     error: Color(0xFFFF9E6C),
     warmBorder: Color(0xFF3A3F3C),
+    raised: Color(0xFF242725),
+    chipNeutral: Color(0xFF212423),
+    chipGreen: Color(0xFF0E3522),
+    chipGold: Color(0xFF2E2419),
+    chipEmber: Color(0xFF2A1913),
   );
 
   /// The dark palette instance (kept out of `const` list literals for clarity).

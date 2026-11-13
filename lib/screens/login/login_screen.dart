@@ -330,7 +330,7 @@ class _StreakBanner extends StatelessWidget {
     return Container(
       height: 60 * s,
       decoration: BoxDecoration(
-        color: p.goldSoft.withValues(alpha: 0.302),
+        color: p.chipGold,
         borderRadius: BorderRadius.circular(16 * s),
       ),
       padding: EdgeInsets.symmetric(horizontal: 14 * s),

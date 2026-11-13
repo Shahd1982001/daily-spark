@@ -265,7 +265,7 @@ class _ChipRow extends StatelessWidget {
           height: 20 * s,
           padding: EdgeInsets.symmetric(horizontal: 8 * s),
           decoration: BoxDecoration(
-            color: p.emberSoft,
+            color: p.chipEmber,
             borderRadius: BorderRadius.all(Radius.circular(999)),
           ),
           child: Row(

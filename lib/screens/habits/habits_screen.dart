@@ -143,7 +143,7 @@ class HabitsScreen extends StatelessWidget {
         'streak': '3d',
         'icon': Icons.translate_rounded,
         'fg': p.ochre,
-        'bg': p.goldSoft.withValues(alpha: 0.6),
+        'bg': p.chipGold,
         'done': false,
       },
       {
@@ -304,7 +304,7 @@ class _SnapshotCard extends StatelessWidget {
                 width: 32 * s,
                 height: 32 * s,
                 decoration: BoxDecoration(
-                  color: p.emberSoft,
+                  color: p.chipEmber,
                   borderRadius: BorderRadius.circular(8 * s),
                 ),
                 child: Icon(
@@ -609,7 +609,7 @@ class _CreateHabitCta extends StatelessWidget {
               size: 16 * s,
               weight: FontWeight.w400,
               lineHeight: 20 * s,
-              color: p.emberSoft,
+              color: p.chipEmber,
             ),
           ],
         ),

@@ -136,7 +136,7 @@ class ProgressScreen extends StatelessWidget {
                 height: 16 * s,
                 padding: EdgeInsets.only(left: 8 * s, right: 8 * s),
                 decoration: BoxDecoration(
-                  color: p.emberSoft,
+                  color: p.chipEmber,
                   borderRadius: BorderRadius.circular(999 * s),
                   boxShadow: [
                     BoxShadow(
@@ -185,8 +185,12 @@ class ProgressScreen extends StatelessWidget {
                 height: 36 * s,
                 padding: EdgeInsets.symmetric(horizontal: 4 * s),
                 decoration: BoxDecoration(
-                  color: p.container,
+                  color: p.dark ? p.canvas : p.container,
                   borderRadius: BorderRadius.circular(999 * s),
+                  border: p.dark
+                      ? Border.all(
+                          color: p.bone.withValues(alpha: 0.35), width: 1 * s)
+                      : null,
                 ),
                 child: Row(
                   children: [
@@ -264,7 +268,7 @@ class ProgressScreen extends StatelessWidget {
                     height: 16 * s,
                     alignment: Alignment.center,
                     decoration: BoxDecoration(
-                      color: p.mint,
+                      color: p.chipGreen,
                       borderRadius: BorderRadius.circular(999 * s),
                     ),
                     child: figmaText(

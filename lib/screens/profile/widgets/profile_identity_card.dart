@@ -147,7 +147,9 @@ class ProfileIdentityCard extends StatelessWidget {
                 height: 20.5 * s,
                 padding: EdgeInsets.symmetric(horizontal: 12 * s),
                 decoration: BoxDecoration(
-                  color: p.emberSoft.withValues(alpha: 0.50),
+                  color: p.dark
+                      ? p.ember.withValues(alpha: 0.16)
+                      : p.emberSoft.withValues(alpha: 0.50),
                   borderRadius: BorderRadius.circular(999 * s),
                 ),
                 child: Row(

@@ -30,7 +30,7 @@ class StreakFlowCard extends StatelessWidget {
               width: 240,
               height: 240,
               decoration: BoxDecoration(
-                color: p.emberSoft.withValues(alpha: 0.302),
+                color: p.chipEmber,
                 shape: BoxShape.circle,
               ),
             ),
@@ -112,7 +112,7 @@ class StreakFlowCard extends StatelessWidget {
                       width: 143,
                       height: 20,
                       decoration: BoxDecoration(
-                        color: p.emberSoft,
+                        color: p.chipEmber,
                         borderRadius: BorderRadius.circular(9999),
                       ),
                       child: Row(

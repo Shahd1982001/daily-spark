@@ -97,7 +97,7 @@ class HabitTile extends StatelessWidget {
                       height: 16 * s,
                       padding: EdgeInsets.symmetric(horizontal: 6 * s),
                       decoration: BoxDecoration(
-                        color: p.goldSoft,
+                        color: p.chipGold,
                         borderRadius: BorderRadius.circular(999),
                       ),
                       child: Row(
@@ -127,7 +127,7 @@ class HabitTile extends StatelessWidget {
                       height: 16 * s,
                       padding: EdgeInsets.symmetric(horizontal: 5 * s),
                       decoration: BoxDecoration(
-                        color: p.mint,
+                        color: p.chipGreen,
                         borderRadius: BorderRadius.circular(999),
                       ),
                       child: Center(

@@ -68,8 +68,8 @@ class SettingsRow extends StatelessWidget {
     this.subtitle,
     this.height = 70,
     this.showDivider = true,
-    this.iconColor = const Color(0xFF57423B),
-    this.tileColor = const Color(0xFFF3F4F0),
+    this.iconColor,
+    this.tileColor,
     this.value,
     this.valuePill,
     this.valuePillColor,
@@ -85,8 +85,8 @@ class SettingsRow extends StatelessWidget {
   final String? subtitle;
   final double height;
   final bool showDivider;
-  final Color iconColor;
-  final Color tileColor;
+  final Color? iconColor;
+  final Color? tileColor;
   final String? value;
   final String? valuePill;
   final Color? valuePillColor;
@@ -118,10 +118,10 @@ class SettingsRow extends StatelessWidget {
                 width: 36 * s,
                 height: 36 * s,
                 decoration: BoxDecoration(
-                  color: tileColor,
+                  color: tileColor ?? p.panel,
                   borderRadius: BorderRadius.circular(12 * s),
                 ),
-                child: Icon(icon, size: 17 * s, color: iconColor),
+                child: Icon(icon, size: 17 * s, color: iconColor ?? p.body),
               ),
             ),
             Positioned(

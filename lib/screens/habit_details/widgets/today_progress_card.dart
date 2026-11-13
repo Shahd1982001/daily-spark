@@ -76,7 +76,7 @@ class TodayProgressCard extends StatelessWidget {
               width: 99 * s,
               height: 24 * s,
               decoration: BoxDecoration(
-                color: p.mint,
+                color: p.chipGreen,
                 borderRadius: BorderRadius.all(Radius.circular(999)),
               ),
               child: Row(

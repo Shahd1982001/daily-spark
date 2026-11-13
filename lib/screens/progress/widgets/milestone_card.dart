@@ -30,7 +30,7 @@ class MilestoneCard extends StatelessWidget {
               width: 48 * s,
               height: 48 * s,
               decoration: BoxDecoration(
-                color: p.goldSoft,
+                color: p.chipGold,
                 borderRadius: BorderRadius.circular(16 * s),
               ),
               child: Icon(Icons.emoji_events_rounded,
@@ -57,7 +57,7 @@ class MilestoneCard extends StatelessWidget {
               height: 15 * s,
               alignment: Alignment.center,
               decoration: BoxDecoration(
-                color: p.goldSoft,
+                color: p.chipGold,
                 borderRadius: BorderRadius.circular(999 * s),
               ),
               child: figmaText(

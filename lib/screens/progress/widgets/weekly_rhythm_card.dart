@@ -14,18 +14,27 @@ class WeeklyRhythmCard extends StatelessWidget {
   static Color get _ink => p.ink;
 
   // label, fill height, fill colour, weekday letter, letter weight
+  // Bar artwork keeps the same pigment in both themes (dark frame 163:3760).
+  static const _barSage = Color(0xFF3A6750);
+  static const _barGold = Color(0xFF9F6A00);
+  static const _barEmber = Color(0xFF9F3C16);
+
+  /// Light cream wells in dark mode, warm grey wells in light mode.
+  static Color get _well => p.dark ? const Color(0xFFEDEEEB) : p.container;
+  static Color get _wellToday => p.dark ? const Color(0xFFFFDBCF) : p.emberSoft;
+
   static List<_BarData> get _bars => <_BarData>[
-    _BarData('85%', 105, p.sage, 'M', FontWeight.w500,
+    _BarData('85%', 105, _barSage, 'M', FontWeight.w500,
         p.body),
-    _BarData('70%', 87, p.sage, 'T', FontWeight.w500,
+    _BarData('70%', 87, _barSage, 'T', FontWeight.w500,
         p.body),
-    _BarData('100%', 124, p.ochre, 'W', FontWeight.w700, _ink),
-    _BarData('90%', 112, p.sage, 'T', FontWeight.w500,
+    _BarData('100%', 124, _barGold, 'W', FontWeight.w700, p.ink),
+    _BarData('90%', 112, _barSage, 'T', FontWeight.w500,
         p.body),
-    _BarData('80%', 99, p.emberDeep, 'F', FontWeight.w700,
-        p.emberDeep),
-    _BarData('60%', 74, p.bone, 'S', FontWeight.w500, _brown),
-    _BarData('75%', 93, p.bone, 'S', FontWeight.w500, _brown),
+    _BarData('80%', 99, _barEmber, 'F', FontWeight.w700,
+        _barEmber),
+    _BarData('60%', 74, _well, 'S', FontWeight.w500, p.body),
+    _BarData('75%', 93, _well, 'S', FontWeight.w500, p.body),
   ];
 
   static const _columnLeft = <double>[4, 51, 97, 144, 190, 237, 283];
@@ -65,7 +74,7 @@ class WeeklyRhythmCard extends StatelessWidget {
               height: 13 * s,
               alignment: Alignment.center,
               decoration: BoxDecoration(
-                color: p.emberDeep,
+                color: p.dark ? const Color(0xFFF5F3EF) : p.emberDeep,
                 borderRadius: BorderRadius.circular(4 * s),
               ),
               child: figmaText(
@@ -74,7 +83,7 @@ class WeeklyRhythmCard extends StatelessWidget {
                 weight: FontWeight.w400,
                 letterSpacing: 0.45 * s,
                 lineHeight: 11 * s,
-                color: p.surface,
+                color: p.dark ? _barEmber : p.surface,
               ),
             ),
           ),
@@ -209,8 +218,8 @@ class _Column extends StatelessWidget {
                   height: 128 * s,
                   decoration: BoxDecoration(
                     color: isToday
-                        ? p.emberSoft
-                        : p.container,
+                        ? WeeklyRhythmCard._wellToday
+                        : WeeklyRhythmCard._well,
                     borderRadius: BorderRadius.vertical(
                       top: Radius.circular(19.5 * s),
                     ),

@@ -174,7 +174,7 @@ class _Emblem extends StatelessWidget {
                 width: 80,
                 height: 80,
                 decoration: BoxDecoration(
-                  color: p.emberSoft.withValues(alpha: 0.4),
+                  color: p.chipEmber,
                   shape: BoxShape.circle,
                 ),
               ),

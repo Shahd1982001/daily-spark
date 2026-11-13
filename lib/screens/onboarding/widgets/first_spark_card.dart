@@ -109,7 +109,7 @@ class FirstSparkCard extends StatelessWidget {
                       width: 146,
                       height: 20,
                       decoration: BoxDecoration(
-                        color: p.emberSoft,
+                        color: p.chipEmber,
                         borderRadius: BorderRadius.circular(9999),
                       ),
                       child: Row(
@@ -242,7 +242,7 @@ class FirstSparkCard extends StatelessWidget {
             height: 40,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              border: Border.all(color: p.emberSoft, width: 2),
+              border: Border.all(color: p.chipEmber, width: 2),
             ),
           ),
           Icon(Icons.menu_book_rounded, size: 18, color: _deepEmber),
