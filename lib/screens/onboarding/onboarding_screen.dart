@@ -36,8 +36,16 @@ class OnboardingScreen extends StatefulWidget {
 }
 
 class _OnboardingScreenState extends State<OnboardingScreen>
-    with SingleTickerProviderStateMixin {
+    with TickerProviderStateMixin {
   late int _index = widget.initialPage;
+  late int _previousIndex = widget.initialPage;
+  int _direction = 1;
+
+  /// Side-slide between steps (the frame itself never moves).
+  late final AnimationController _swap = AnimationController(
+    vsync: this,
+    duration: const Duration(milliseconds: 420),
+  );
   late final AnimationController _timer = AnimationController(
     vsync: this,
     duration: widget.pageDuration,
@@ -49,6 +57,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
   @override
   void initState() {
     super.initState();
+    _swap.value = 1; // start settled (no pending slide)
     _timer.addStatusListener(_onTimerStatus);
     if (_autoAdvances) _timer.forward();
   }
@@ -56,6 +65,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
   @override
   void dispose() {
     _timer.dispose();
+    _swap.dispose();
     super.dispose();
   }
 
@@ -76,9 +86,16 @@ class _OnboardingScreenState extends State<OnboardingScreen>
     _goTo(_index - 1);
   }
 
-  /// Swaps the *content only* — the header and background never move.
+  /// Swaps the *content only* with a horizontal slide — the header and
+  /// background never move.
   void _goTo(int index) {
-    setState(() => _index = index);
+    if (index == _index) return;
+    setState(() {
+      _direction = index > _index ? 1 : -1;
+      _previousIndex = _index;
+      _index = index;
+    });
+    _swap.forward(from: 0);
     _timer.reset();
     if (index < 2) _timer.forward();
   }
@@ -117,33 +134,38 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                       _previous();
                     }
                   },
-                  child: AnimatedBuilder(
-                    animation: _timer,
-                    builder: (context, _) => AnimatedSwitcher(
-                      duration: const Duration(milliseconds: 420),
-                      switchInCurve: Curves.easeOutCubic,
-                      switchOutCurve: Curves.easeInCubic,
-                      layoutBuilder: (current, previous) => Stack(
-                        fit: StackFit.expand,
-                        children: [
-                          ...previous,
-                          if (current != null) current,
-                        ],
-                      ),
-                      transitionBuilder: (child, animation) => FadeTransition(
-                        opacity: animation,
-                        child: SlideTransition(
-                          position: Tween<Offset>(
-                            begin: const Offset(0, 0.035),
-                            end: Offset.zero,
-                          ).animate(animation),
-                          child: child,
-                        ),
-                      ),
-                      child: KeyedSubtree(
-                        key: ValueKey<int>(_index),
-                        child: _buildContent(scale, _index),
-                      ),
+                  child: LayoutBuilder(
+                    builder: (context, constraints) => AnimatedBuilder(
+                      animation: Listenable.merge([_swap, _timer]),
+                      builder: (context, _) {
+                        final t = Curves.easeOutCubic
+                            .transform(_swap.value.clamp(0.0, 1.0));
+                        final w = constraints.maxWidth;
+                        final showPrevious = _swap.value < 1 &&
+                            _previousIndex != _index;
+
+                        return ClipRect(
+                          child: Stack(
+                            fit: StackFit.expand,
+                            children: [
+                              // Outgoing content slides out to the far side
+                              if (showPrevious)
+                                Transform.translate(
+                                  offset: Offset(-_direction * w * 0.35 * t, 0),
+                                  child: Opacity(
+                                    opacity: (1 - t * 0.7).clamp(0.0, 1.0),
+                                    child: _buildContent(scale, _previousIndex),
+                                  ),
+                                ),
+                              // Incoming content slides in from the near side
+                              Transform.translate(
+                                offset: Offset(_direction * w * (1 - t), 0),
+                                child: _buildContent(scale, _index),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
                     ),
                   ),
                 ),
