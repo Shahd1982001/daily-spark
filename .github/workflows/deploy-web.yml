@@ -37,6 +37,15 @@ jobs:
             -O2 \
             --base-href /daily-spark/
 
+      # The gallery (gallery.html + screens/) lives in web_extra and must ship with
+      # every deploy, otherwise the published site loses it and links 404.
+      - name: Add gallery + patch index
+        run: |
+          cp -r web_extra/. build/web/
+          python3 tool/patch_index.py build/web
+          touch build/web/.nojekyll
+          ls build/web | sort
+
       - name: Deploy to gh-pages
         uses: peaceiris/actions-gh-pages@v4
         with:
