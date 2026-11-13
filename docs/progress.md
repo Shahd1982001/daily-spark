@@ -112,6 +112,18 @@ Note: the uploaded file has no red outline in its pixels — its edges are an or
 (the red ring is an artefact of some viewers). If a hard ember ring is wanted on the logo it has to be drawn.
 Verified live: splash light/dark, home dark header, gallery — 0 page errors; analyze 0 errors.
 
+## Logo: white plate removed (her follow-up)
+She asked for the logo to sit directly on the background in both themes ("الخلفية البيضاء متع اللوقو
+حولها خلي لوقو بس"). Done:
+- Splash `SparkAppIcon`: the two white plates + the 112 white tile (and its borders/shadows) are gone —
+  the mark is drawn at full size over a soft ember halo only.
+- Shared `AppTopBar` + Add-habit header: `home_logo.png` (white squircle) replaced by the bare
+  `spark_logo.png` at 30 px. The white tile asset is now unused in-app.
+- Brand pills (login `Daily Spark`, welcome badge) keep their own surfaces — they follow `p.panel` /
+  `p.surface`, so they are dark in dark mode, never white.
+- Favicon + PWA icons keep the cream plate on purpose (a transparent tab/OS icon has no contrast).
+- All 26 gallery thumbnails regenerated again.
+
 ## Next (needs her decision)
 1. **Logic layer** — state management choice still open (Provider vs Riverpod).
 2. **Backend** — must stay last.
