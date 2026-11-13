@@ -1,20 +1,17 @@
 import 'package:flutter/material.dart';
-
 import 'package:daily_spark/design_system/theme/app_colors.dart';
 
 /// The signature Daily Spark background: warm cream canvas with a soft
-/// ember glow bleeding from the top of the screen.
+/// ember glow bleeding from the top of the screen (no hard edges).
 class AppBackground extends StatelessWidget {
   const AppBackground({
     super.key,
     required this.child,
     this.glow = true,
-    this.glowAlignment = Alignment.topCenter,
   });
 
   final Widget child;
   final bool glow;
-  final Alignment glowAlignment;
 
   @override
   Widget build(BuildContext context) {
@@ -38,23 +35,17 @@ class AppBackground extends StatelessWidget {
         if (glow)
           Positioned.fill(
             child: IgnorePointer(
-              child: Align(
-                alignment: glowAlignment,
-                child: FractionallySizedBox(
-                  heightFactor: 0.45,
-                  widthFactor: 1.4,
-                  child: DecoratedBox(
-                    decoration: BoxDecoration(
-                      gradient: RadialGradient(
-                        radius: 0.75,
-                        colors: [
-                          AppColors.sparkOrange.withValues(alpha: isDark ? 0.14 : 0.11),
-                          AppColors.peachSoft.withValues(alpha: isDark ? 0.05 : 0.18),
-                          Colors.transparent,
-                        ],
-                        stops: const [0.0, 0.45, 1.0],
-                      ),
-                    ),
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  gradient: RadialGradient(
+                    center: const Alignment(0, -1.15),
+                    radius: 1.45,
+                    colors: [
+                      AppColors.sparkOrange.withValues(alpha: isDark ? 0.16 : 0.13),
+                      AppColors.peachSoft.withValues(alpha: isDark ? 0.06 : 0.16),
+                      Colors.transparent,
+                    ],
+                    stops: const [0.0, 0.42, 1.0],
                   ),
                 ),
               ),

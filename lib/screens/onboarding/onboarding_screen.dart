@@ -229,97 +229,109 @@ class _PageShell extends StatelessWidget {
     final align = centered ? CrossAxisAlignment.center : CrossAxisAlignment.start;
     final textAlign = centered ? TextAlign.center : TextAlign.start;
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        // Kicker + badge (steps 2 & 3 only)
-        SizedBox(
-          height: 28,
-          child: kicker == null
-              ? null
-              : Row(
-                  children: [
-                    Text(kicker!, style: AppText.kicker.copyWith(color: muted)),
-                    const Spacer(),
-                    if (badge != null)
-                      AppPill(
-                        badge!,
-                        tone: PillTone.ember,
-                        icon: badgeIcon,
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 10,
-                          vertical: 5,
-                        ),
-                      ),
-                  ],
-                ),
-        ),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        // Ratio-based rhythm taken from the Figma spec (390 × 844):
+        // the visual owns the upper band, the copy sits at ~56% height.
+        final visualSlot = constraints.maxHeight * 0.44;
+        final visualGap = constraints.maxHeight * 0.05;
 
-        // Visual
-        Expanded(
-          child: Center(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: AppSpacing.s8),
-              child: FittedBox(fit: BoxFit.scaleDown, child: visual),
-            ),
-          ),
-        ),
-
-        const SizedBox(height: AppSpacing.s20),
-
-        // Copy block
-        Column(
-          crossAxisAlignment: align,
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            AppPill(
-              chip,
-              tone: PillTone.outline,
-              icon: Icons.auto_awesome,
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+            // Kicker + badge (steps 2 & 3 only)
+            SizedBox(
+              height: 28,
+              child: kicker == null
+                  ? null
+                  : Row(
+                      children: [
+                        Text(kicker!, style: AppText.kicker.copyWith(color: muted)),
+                        const Spacer(),
+                        if (badge != null)
+                          AppPill(
+                            badge!,
+                            tone: PillTone.ember,
+                            icon: badgeIcon,
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 10,
+                              vertical: 5,
+                            ),
+                          ),
+                      ],
+                    ),
             ),
-            const SizedBox(height: AppSpacing.s12),
-            Text(
-              headline,
-              textAlign: textAlign,
-              style: AppText.displayL.copyWith(color: ink, height: 1.22),
-            ),
-            const SizedBox(height: AppSpacing.s12),
-            Text(
-              body,
-              textAlign: textAlign,
-              style: AppText.bodySmall.copyWith(
-                color: muted,
-                fontSize: 12.5,
-                height: 1.6,
+
+            // Visual — bottom-aligned inside its band
+            SizedBox(
+              height: visualSlot,
+              child: Align(
+                alignment: Alignment.bottomCenter,
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  alignment: Alignment.bottomCenter,
+                  child: visual,
+                ),
               ),
             ),
+
+            SizedBox(height: visualGap),
+
+            // Copy block
+            Column(
+              crossAxisAlignment: align,
+              children: [
+                AppPill(
+                  chip,
+                  tone: PillTone.outline,
+                  icon: Icons.auto_awesome,
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                ),
+                const SizedBox(height: AppSpacing.s12),
+                Text(
+                  headline,
+                  textAlign: textAlign,
+                  style: AppText.displayL.copyWith(color: ink, height: 1.22),
+                ),
+                const SizedBox(height: AppSpacing.s12),
+                Text(
+                  body,
+                  textAlign: textAlign,
+                  style: AppText.bodySmall.copyWith(
+                    color: muted,
+                    fontSize: 12.5,
+                    height: 1.6,
+                  ),
+                ),
+              ],
+            ),
+
+            const SizedBox(height: AppSpacing.s16),
+            PageDots(count: pageCount, index: index),
+            const Spacer(),
+
+            AppButton(
+              label: ctaLabel,
+              trailingIcon: ctaIcon,
+              onPressed: onCta,
+            ),
+            const SizedBox(height: AppSpacing.s12),
+
+            if (footer != null)
+              GestureDetector(
+                onTap: onFooterTap,
+                behavior: HitTestBehavior.opaque,
+                child: Center(
+                  child: Text(
+                    footer!,
+                    style: AppText.captionMain.copyWith(color: muted),
+                  ),
+                ),
+              ),
+            const SizedBox(height: AppSpacing.s16),
           ],
-        ),
-
-        const SizedBox(height: AppSpacing.s20),
-        PageDots(count: pageCount, index: index),
-        const SizedBox(height: AppSpacing.s20),
-
-        AppButton(
-          label: ctaLabel,
-          trailingIcon: ctaIcon,
-          onPressed: onCta,
-        ),
-        const SizedBox(height: AppSpacing.s12),
-
-        if (footer != null)
-          GestureDetector(
-            onTap: onFooterTap,
-            behavior: HitTestBehavior.opaque,
-            child: Center(
-              child: Text(
-                footer!,
-                style: AppText.captionMain.copyWith(color: muted),
-              ),
-            ),
-          ),
-        const SizedBox(height: AppSpacing.s16),
-      ],
+        );
+      },
     );
   }
 }

@@ -66,14 +66,14 @@ class _SparkGlyphPainter extends CustomPainter {
     final h = size.height;
     final cx = w / 2;
     final cy = h / 2;
-    final pinch = w * 0.14;
 
+    // Signature 4-point sparkle: straight tips on the axes, concave sides.
     final path = Path()
       ..moveTo(cx, 0)
-      ..quadraticBezierTo(cx + pinch, cy - pinch, w, cy)
-      ..quadraticBezierTo(cx + pinch, cy + pinch, cx, h)
-      ..quadraticBezierTo(cx - pinch, cy + pinch, 0, cy)
-      ..quadraticBezierTo(cx - pinch, cy - pinch, cx, 0)
+      ..cubicTo(cx + w * 0.085, cy - h * 0.24, cx + w * 0.26, cy - h * 0.085, w, cy)
+      ..cubicTo(cx + w * 0.26, cy + h * 0.085, cx + w * 0.085, cy + h * 0.24, cx, h)
+      ..cubicTo(cx - w * 0.085, cy + h * 0.24, cx - w * 0.26, cy + h * 0.085, 0, cy)
+      ..cubicTo(cx - w * 0.26, cy - h * 0.085, cx - w * 0.085, cy - h * 0.24, cx, 0)
       ..close();
 
     canvas.drawPath(
