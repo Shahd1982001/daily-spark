@@ -5,6 +5,7 @@ import 'package:daily_spark/design_system/theme/app_theme.dart';
 import 'package:daily_spark/screens/onboarding/onboarding_screen.dart';
 import 'package:daily_spark/screens/splash/splash_screen.dart';
 import 'package:daily_spark/screens/login/login_screen.dart';
+import 'package:daily_spark/screens/sign_up/sign_up_screen.dart';
 import 'package:daily_spark/screens/welcome/welcome_screen.dart';
 
 /// ⚠️ TEMPORARY PREVIEW SHELL — scaffolding only, zero business logic.
@@ -23,7 +24,7 @@ class PreviewShell extends StatefulWidget {
   State<PreviewShell> createState() => _PreviewShellState();
 }
 
-enum _Stage { splash, onboarding, welcome, login }
+enum _Stage { splash, onboarding, welcome, login, signUp }
 
 class _PreviewShellState extends State<PreviewShell> {
   final _messengerKey = GlobalKey<ScaffoldMessengerState>();
@@ -42,6 +43,7 @@ class _PreviewShellState extends State<PreviewShell> {
         'onboarding' => _Stage.onboarding,
         'welcome' => _Stage.welcome,
         'login' => _Stage.login,
+        'signup' => _Stage.signUp,
         _ => _Stage.splash,
       };
 
@@ -90,7 +92,7 @@ class _PreviewShellState extends State<PreviewShell> {
             onFooterLogin: () => _go(_Stage.welcome),
           ),
         _Stage.welcome => WelcomeScreen(
-            onGetStarted: () => _toast('Sign Up — الشاشة الجاية ✦'),
+            onGetStarted: () => _go(_Stage.signUp),
             onLogin: () => _go(_Stage.login),
             onGuest: () => _toast('Guest mode — الشاشة الجاية ✦'),
           ),
@@ -102,7 +104,16 @@ class _PreviewShellState extends State<PreviewShell> {
                 setState(() => _obscurePassword = !_obscurePassword),
             onLogin: () => _toast('Log In — الشاشة الجاية ✦'),
             onGuest: () => _toast('Guest mode — الشاشة الجاية ✦'),
-            onSignUp: () => _toast('Sign Up — الشاشة الجاية ✦'),
+            onSignUp: () => _go(_Stage.signUp),
+          ),
+        _Stage.signUp => SignUpScreen(
+            obscurePassword: _obscurePassword,
+            onBack: () => _go(_Stage.welcome),
+            onTogglePasswordVisibility: () =>
+                setState(() => _obscurePassword = !_obscurePassword),
+            onCreateAccount: () => _toast('Create Account — الشاشة الجاية ✦'),
+            onGuest: () => _toast('Guest mode — الشاشة الجاية ✦'),
+            onLogIn: () => _go(_Stage.login),
           ),
       },
     );
