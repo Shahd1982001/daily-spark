@@ -76,7 +76,8 @@ class _PreviewShellState extends State<PreviewShell> {
   @override
   void initState() {
     super.initState();
-    if (_stage == _Stage.splash) {
+    // Only auto-advance when the splash was reached naturally (no ?s= route).
+    if (_stage == _Stage.splash && _param('s') == null) {
       _timer = Timer(const Duration(milliseconds: 2600), () {
         if (mounted) setState(() => _stage = _Stage.onboarding);
       });
