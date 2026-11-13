@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:daily_spark/design_system/theme/spark_palette.dart';
 
 
-/// Daily Spark brand mark: a soft squircle holding the ember spark glyph.
+/// Daily Spark brand mark: a soft squircle holding the spark logo artwork
+/// (`assets/brand/spark_logo.png`, supplied by the brand owner).
 class SparkLogo extends StatelessWidget {
   const SparkLogo({
     super.key,
@@ -18,11 +19,11 @@ class SparkLogo extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    final glyph = CustomPaint(
-      size: Size(size * 0.42, size * 0.42),
-      painter: _SparkGlyphPainter(
-        color: p.ember,
-      ),
+    final glyph = Image.asset(
+      'assets/brand/spark_logo.png',
+      width: size * 0.62,
+      height: size * 0.62,
+      filterQuality: FilterQuality.high,
     );
 
     if (!showTile) return glyph;
@@ -53,42 +54,4 @@ class SparkLogo extends StatelessWidget {
       child: Center(child: glyph),
     );
   }
-}
-
-/// A four-point concave star — the "spark".
-class _SparkGlyphPainter extends CustomPainter {
-  const _SparkGlyphPainter({required this.color});
-
-  final Color color;
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final w = size.width;
-    final h = size.height;
-    final cx = w / 2;
-    final cy = h / 2;
-
-    // Signature 4-point sparkle: straight tips on the axes, concave sides.
-    final path = Path()
-      ..moveTo(cx, 0)
-      ..cubicTo(cx + w * 0.085, cy - h * 0.24, cx + w * 0.26, cy - h * 0.085, w, cy)
-      ..cubicTo(cx + w * 0.26, cy + h * 0.085, cx + w * 0.085, cy + h * 0.24, cx, h)
-      ..cubicTo(cx - w * 0.085, cy + h * 0.24, cx - w * 0.26, cy + h * 0.085, 0, cy)
-      ..cubicTo(cx - w * 0.26, cy - h * 0.085, cx - w * 0.085, cy - h * 0.24, cx, 0)
-      ..close();
-
-    canvas.drawPath(
-      path,
-      Paint()
-        ..shader = LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [p.ember, p.emberDeep],
-        ).createShader(Rect.fromLTWH(0, 0, w, h))
-        ..isAntiAlias = true,
-    );
-  }
-
-  @override
-  bool shouldRepaint(covariant _SparkGlyphPainter oldDelegate) => oldDelegate.color != color;
 }
