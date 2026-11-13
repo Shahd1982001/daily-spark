@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'package:daily_spark/design_system/theme/spark_palette.dart';
+
 import 'package:daily_spark/design_system/widgets/design_canvas.dart' show figmaText;
 
 /// Progress · Habit Consistency row — Figma 358 × 88, r16.
@@ -32,7 +34,7 @@ class ConsistencyRow extends StatelessWidget {
       width: 358 * s,
       height: 88 * s,
       decoration: BoxDecoration(
-        color: const Color(0xFFF3F4F0),
+        color: p.panel,
         borderRadius: BorderRadius.circular(16 * s),
       ),
       child: Stack(
@@ -44,7 +46,7 @@ class ConsistencyRow extends StatelessWidget {
               width: 40 * s,
               height: 40 * s,
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: p.surface,
                 borderRadius: BorderRadius.circular(12 * s),
                 boxShadow: [
                   BoxShadow(
@@ -66,7 +68,7 @@ class ConsistencyRow extends StatelessWidget {
               weight: FontWeight.w600,
               letterSpacing: -0.08 * s,
               lineHeight: 22 * s,
-              color: const Color(0xFF191C1A),
+              color: p.ink,
             ),
           ),
           Positioned(
@@ -78,7 +80,7 @@ class ConsistencyRow extends StatelessWidget {
               weight: FontWeight.w400,
               letterSpacing: 0.12 * s,
               lineHeight: 16 * s,
-              color: const Color(0xFF57423B),
+              color: p.body,
             ),
           ),
           Positioned(
@@ -100,7 +102,7 @@ class ConsistencyRow extends StatelessWidget {
               width: 326 * s,
               height: 8 * s,
               decoration: BoxDecoration(
-                color: const Color(0xFFEDEEEB),
+                color: p.container,
                 borderRadius: BorderRadius.circular(999 * s),
               ),
               child: Align(

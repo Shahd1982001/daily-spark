@@ -2,6 +2,8 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 
+import 'package:daily_spark/design_system/theme/spark_palette.dart';
+
 import 'package:daily_spark/design_system/widgets/design_canvas.dart' show figmaText;
 
 /// Profile · Habit statistics tile — Figma 114 × 96, r16.
@@ -30,7 +32,7 @@ class StatTile extends StatelessWidget {
       width: 114 * s,
       height: 96 * s,
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: p.surface,
         borderRadius: BorderRadius.circular(16 * s),
         boxShadow: [
           BoxShadow(
@@ -66,7 +68,7 @@ class StatTile extends StatelessWidget {
                 weight: FontWeight.w700,
                 letterSpacing: -0.18 * s,
                 lineHeight: 22 * s,
-                color: const Color(0xFF191C1A),
+                color: p.ink,
               ),
             ),
           ),
@@ -81,7 +83,7 @@ class StatTile extends StatelessWidget {
                 weight: FontWeight.w600,
                 letterSpacing: 0.4 * s,
                 lineHeight: 12 * s,
-                color: const Color(0xFF57423B),
+                color: p.body,
               ),
             ),
           ),
@@ -104,7 +106,7 @@ class LevelCard extends StatelessWidget {
       width: 358 * s,
       height: 88 * s,
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: p.surface,
         borderRadius: BorderRadius.circular(16 * s),
         boxShadow: [
           BoxShadow(
@@ -123,7 +125,7 @@ class LevelCard extends StatelessWidget {
               width: 48 * s,
               height: 48 * s,
               decoration: BoxDecoration(
-                color: const Color(0xFFFFF0E8),
+                color: p.emberTile,
                 borderRadius: BorderRadius.circular(12 * s),
               ),
               child: Center(
@@ -132,7 +134,7 @@ class LevelCard extends StatelessWidget {
                   height: 24.5 * s,
                   child: CustomPaint(
                     painter:
-                        StarburstBadgePainter(color: const Color(0xFFFF6B2C)),
+                        StarburstBadgePainter(color: p.ember),
                   ),
                 ),
               ),
@@ -147,7 +149,7 @@ class LevelCard extends StatelessWidget {
               weight: FontWeight.w600,
               letterSpacing: -0.08 * s,
               lineHeight: 22 * s,
-              color: const Color(0xFF191C1A),
+              color: p.ink,
             ),
           ),
           Positioned(
@@ -159,7 +161,7 @@ class LevelCard extends StatelessWidget {
               weight: FontWeight.w600,
               letterSpacing: 0.4 * s,
               lineHeight: 12 * s,
-              color: const Color(0xFF9F3C16),
+              color: p.emberDeep,
             ),
           ),
           Positioned(
@@ -169,7 +171,7 @@ class LevelCard extends StatelessWidget {
               width: 262 * s,
               height: 8 * s,
               decoration: BoxDecoration(
-                color: const Color(0xFFE7E9E5),
+                color: p.bone,
                 borderRadius: BorderRadius.circular(999 * s),
               ),
               child: Align(
@@ -178,7 +180,7 @@ class LevelCard extends StatelessWidget {
                   width: 246.3 * s,
                   height: 8 * s,
                   decoration: BoxDecoration(
-                    color: const Color(0xFFFF6B2C),
+                    color: p.ember,
                     borderRadius: BorderRadius.circular(999 * s),
                   ),
                 ),
@@ -194,7 +196,7 @@ class LevelCard extends StatelessWidget {
               weight: FontWeight.w400,
               letterSpacing: 0.12 * s,
               lineHeight: 16 * s,
-              color: const Color(0xFF57423B),
+              color: p.body,
             ),
           ),
           Positioned(
@@ -206,7 +208,7 @@ class LevelCard extends StatelessWidget {
               weight: FontWeight.w500,
               letterSpacing: 0.4 * s,
               lineHeight: 12 * s,
-              color: const Color(0xFF9F3C16),
+              color: p.emberDeep,
             ),
           ),
         ],

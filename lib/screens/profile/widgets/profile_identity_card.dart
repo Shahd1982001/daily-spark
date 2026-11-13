@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'package:daily_spark/design_system/theme/spark_palette.dart';
+
 import 'package:daily_spark/design_system/widgets/design_canvas.dart' show figmaText;
 
 /// Profile · Identity card — Figma 358 × 264.5, r16.
@@ -17,7 +19,7 @@ class ProfileIdentityCard extends StatelessWidget {
   final String bio;
   final String status;
 
-  static const _brown = Color(0xFF57423B);
+  static Color get _brown => p.body;
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +28,7 @@ class ProfileIdentityCard extends StatelessWidget {
       width: 358 * s,
       height: 264.5 * s,
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: p.surface,
         borderRadius: BorderRadius.circular(16 * s),
         boxShadow: [
           BoxShadow(
@@ -47,9 +49,9 @@ class ProfileIdentityCard extends StatelessWidget {
               top: 0,
               child: Container(
                 height: 6 * s,
-                decoration: const BoxDecoration(
+                decoration: BoxDecoration(
                   gradient: LinearGradient(
-                    colors: [Color(0xFFFF6B2C), Color(0xFFFF8550)],
+                    colors: [p.ember, Color(0xFFFF8550)],
                   ),
                 ),
               ),
@@ -62,7 +64,7 @@ class ProfileIdentityCard extends StatelessWidget {
                 width: 80 * s,
                 height: 80 * s,
                 decoration: BoxDecoration(
-                  color: const Color(0xFFF3F4F0),
+                  color: p.panel,
                   shape: BoxShape.circle,
                   boxShadow: [
                     BoxShadow(
@@ -94,11 +96,11 @@ class ProfileIdentityCard extends StatelessWidget {
                 width: 24 * s,
                 height: 24 * s,
                 decoration: BoxDecoration(
-                  color: const Color(0xFFFF6B2C),
+                  color: p.ember,
                   shape: BoxShape.circle,
                   boxShadow: [
                     BoxShadow(
-                      color: const Color(0xFFFF6B2C).withValues(alpha: 0.35),
+                      color: p.ember.withValues(alpha: 0.35),
                       blurRadius: 6 * s,
                       offset: Offset(0, 2 * s),
                     ),
@@ -119,7 +121,7 @@ class ProfileIdentityCard extends StatelessWidget {
                   weight: FontWeight.w600,
                   letterSpacing: -0.55 * s,
                   lineHeight: 28 * s,
-                  color: const Color(0xFF191C1A),
+                  color: p.ink,
                 ),
               ),
             ),
@@ -145,14 +147,14 @@ class ProfileIdentityCard extends StatelessWidget {
                 height: 20.5 * s,
                 padding: EdgeInsets.symmetric(horizontal: 12 * s),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFFFDBCF).withValues(alpha: 0.50),
+                  color: p.emberSoft.withValues(alpha: 0.50),
                   borderRadius: BorderRadius.circular(999 * s),
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Icon(Icons.bolt_rounded,
-                        size: 13 * s, color: const Color(0xFF822801)),
+                        size: 13 * s, color: p.emberDeep),
                     SizedBox(width: 6 * s),
                     figmaText(
                       status,
@@ -160,7 +162,7 @@ class ProfileIdentityCard extends StatelessWidget {
                       weight: FontWeight.w600,
                       letterSpacing: 0.25 * s,
                       lineHeight: 12 * s,
-                      color: const Color(0xFF822801),
+                      color: p.emberDeep,
                     ),
                   ],
                 ),

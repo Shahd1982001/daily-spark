@@ -42,7 +42,7 @@ class SplashScreen extends StatelessWidget {
                             color: p.metaText,
                           ),
                         ),
-                        const Spacer(),
+                        Spacer(),
                         Container(
                           width: 6,
                           height: 6,
@@ -87,7 +87,7 @@ class SplashScreen extends StatelessWidget {
                                   color: p.ink,
                                 ),
                               ),
-                              const SizedBox(height: 8),
+                              SizedBox(height: 8),
                               Text(
                                 'Small steps compound daily.',
                                 style: TextStyle(
@@ -155,7 +155,7 @@ class _SplashBackdrop extends StatelessWidget {
       decoration: BoxDecoration(
         color: p.canvas,
         gradient: RadialGradient(
-          center: const Alignment(-0.40, 0.05),
+          center: Alignment(-0.40, 0.05),
           radius: 0.62,
           colors: [p.haloStart, p.haloMid, p.haloEnd],
           stops: const [0.0, 0.55, 1.0],
@@ -164,7 +164,7 @@ class _SplashBackdrop extends StatelessWidget {
       child: DecoratedBox(
         decoration: BoxDecoration(
           gradient: RadialGradient(
-            center: const Alignment(0.64, -0.11),
+            center: Alignment(0.64, -0.11),
             radius: 0.55,
             colors: [p.hazeStart, p.hazeEnd],
             stops: const [0.0, 1.0],
@@ -184,9 +184,9 @@ class _StreakPill extends StatelessWidget {
     final p = context.spark;
     return Container(
       height: 26,
-      padding: const EdgeInsets.symmetric(horizontal: 12),
+      padding: EdgeInsets.symmetric(horizontal: 12),
       decoration: BoxDecoration(
-        color: p.dark ? p.panel : const Color(0xFFF3F4F0),
+        color: p.dark ? p.panel : p.panel,
         borderRadius: BorderRadius.circular(9999),
         border: p.dark ? Border.all(color: p.border) : null,
         boxShadow: [
@@ -234,7 +234,7 @@ class _BootProgress extends StatelessWidget {
       width: 128,
       height: 6,
       decoration: BoxDecoration(
-        color: p.dark ? p.panel : const Color(0xFFE1E3DF),
+        color: p.dark ? p.panel : p.bone,
         borderRadius: BorderRadius.circular(9999),
       ),
       child: Align(

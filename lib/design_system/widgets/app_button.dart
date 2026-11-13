@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
-import 'package:daily_spark/design_system/theme/app_colors.dart';
+import 'package:daily_spark/design_system/theme/spark_palette.dart';
+
 import 'package:daily_spark/design_system/theme/app_spacing.dart';
 import 'package:daily_spark/design_system/theme/app_typography.dart';
 
@@ -39,22 +40,22 @@ class AppButton extends StatelessWidget {
 
     switch (variant) {
       case AppButtonVariant.primary:
-        bg = AppColors.sparkOrange;
+        bg = p.ember;
         fg = Colors.white;
-        shadow = [
+        final shadow = [
           BoxShadow(
-            color: AppColors.sparkOrange.withValues(alpha: isDark ? 0.28 : 0.32),
+            color: p.ember.withValues(alpha: isDark ? 0.28 : 0.32),
             blurRadius: 18,
             offset: const Offset(0, 8),
           ),
         ];
       case AppButtonVariant.soft:
-        bg = isDark ? AppColors.darkSurfaceHigh : AppColors.warmBone;
-        fg = isDark ? AppColors.darkTextPrimary : AppColors.onBackground;
+        bg = isDark ? p.panel : p.bone;
+        fg = isDark ? p.ink : p.ink;
       case AppButtonVariant.ghost:
         bg = Colors.transparent;
-        fg = isDark ? AppColors.darkTextSecondary : AppColors.onSurfaceVariant;
-        border = Border.all(color: isDark ? AppColors.darkOutline : AppColors.surfaceContainer);
+        fg = isDark ? p.body : p.body;
+        border = Border.all(color: isDark ? p.bone : p.container);
     }
 
     return Opacity(

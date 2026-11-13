@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'package:daily_spark/design_system/theme/spark_palette.dart';
+
 import 'package:daily_spark/design_system/widgets/app_bottom_nav.dart';
 import 'package:daily_spark/design_system/widgets/app_top_bar.dart';
 import 'package:daily_spark/design_system/widgets/design_canvas.dart' show figmaText;
@@ -27,9 +29,9 @@ class HomeScreen extends StatelessWidget {
   final ValueChanged<int>? onFilterChanged;
   final ValueChanged<int>? onNavTap;
 
-  static const _canvas = Color(0xFFF8FAF6);
-  static const _ink = Color(0xFF191C1A);
-  static const _brown = Color(0xFF57423B);
+  static Color get _canvas => p.canvas;
+  static Color get _ink => p.ink;
+  static Color get _brown => p.body;
 
   @override
   Widget build(BuildContext context) {
@@ -118,8 +120,8 @@ class HomeScreen extends StatelessWidget {
         'meta': ['10 mins', '8:00 AM'],
         'streak': '12d',
         'icon': Icons.self_improvement,
-        'iconColor': const Color(0xFF059669),
-        'bg': const Color(0xFFD1FAE5),
+        'iconColor': p.success,
+        'bg': p.mintSoft,
         'done': true,
       },
       {
@@ -127,8 +129,8 @@ class HomeScreen extends StatelessWidget {
         'meta': ['Goal: 2.5L', 'Anytime'],
         'streak': '8d',
         'icon': Icons.water_drop_outlined,
-        'iconColor': const Color(0xFF059669),
-        'bg': const Color(0xFFD1FAE5),
+        'iconColor': p.success,
+        'bg': p.mintSoft,
         'done': true,
       },
       {
@@ -136,8 +138,8 @@ class HomeScreen extends StatelessWidget {
         'meta': ['Atomic Habits', 'Evening'],
         'streak': '5d',
         'icon': Icons.menu_book_outlined,
-        'iconColor': const Color(0xFF059669),
-        'bg': const Color(0xFFD1FAE5),
+        'iconColor': p.success,
+        'bg': p.mintSoft,
         'done': true,
       },
       {
@@ -145,8 +147,8 @@ class HomeScreen extends StatelessWidget {
         'meta': ['5:30 PM', '350 kcal'],
         'streak': '19d',
         'icon': Icons.directions_walk_rounded,
-        'iconColor': const Color(0xFFE05316),
-        'bg': const Color(0xFFFFF2EB),
+        'iconColor': p.emberDark,
+        'bg': p.creamSoft,
         'done': false,
         'next': true,
       },
@@ -155,8 +157,8 @@ class HomeScreen extends StatelessWidget {
         'meta': ['9:30 PM', 'Reflection'],
         'streak': '7d',
         'icon': Icons.edit_note_rounded,
-        'iconColor': const Color(0xFF57423B),
-        'bg': const Color(0xFFE7E9E5),
+        'iconColor': p.body,
+        'bg': p.bone,
         'done': false,
       },
     ];
@@ -209,14 +211,14 @@ class _Greeting extends StatelessWidget {
               weight: FontWeight.w600,
               letterSpacing: 0.5 * s,
               lineHeight: 12 * s,
-              color: const Color(0xFF57423B),
+              color: p.body,
             ),
             Container(
               width: 4 * s,
               height: 4 * s,
               margin: EdgeInsets.symmetric(horizontal: 6 * s),
-              decoration: const BoxDecoration(
-                color: Color(0xFFDEC0B7),
+              decoration: BoxDecoration(
+                color: p.warmBorder,
                 shape: BoxShape.circle,
               ),
             ),
@@ -226,7 +228,7 @@ class _Greeting extends StatelessWidget {
               weight: FontWeight.w500,
               letterSpacing: 0.4 * s,
               lineHeight: 12 * s,
-              color: const Color(0xFF3A6750),
+              color: p.sage,
             ),
           ],
         ),
@@ -237,7 +239,7 @@ class _Greeting extends StatelessWidget {
           weight: FontWeight.w600,
           letterSpacing: -0.55 * s,
           lineHeight: 28 * s,
-          color: const Color(0xFF191C1A),
+          color: p.ink,
         ),
         SizedBox(height: 2 * s),
         figmaText(
@@ -245,7 +247,7 @@ class _Greeting extends StatelessWidget {
           size: 14 * s,
           weight: FontWeight.w400,
           lineHeight: 20 * s,
-          color: const Color(0xFF57423B),
+          color: p.body,
         ),
       ],
     );
@@ -274,14 +276,14 @@ class _RoutineHeader extends StatelessWidget {
             weight: FontWeight.w600,
             letterSpacing: -0.45 * s,
             lineHeight: 24 * s,
-            color: const Color(0xFF191C1A),
+            color: p.ink,
           ),
           SizedBox(width: 4 * s),
           Container(
             height: 16 * s,
             padding: EdgeInsets.symmetric(horizontal: 8 * s),
-            decoration: const BoxDecoration(
-              color: Color(0xFFE7E9E5),
+            decoration: BoxDecoration(
+              color: p.bone,
               borderRadius: BorderRadius.all(Radius.circular(999)),
             ),
             child: Center(
@@ -291,11 +293,11 @@ class _RoutineHeader extends StatelessWidget {
                 weight: FontWeight.w600,
                 letterSpacing: 0.4 * s,
                 lineHeight: 12 * s,
-                color: const Color(0xFF57423B),
+                color: p.body,
               ),
             ),
           ),
-          const Spacer(),
+          Spacer(),
           GestureDetector(
             onTap: onNewRitual,
             behavior: HitTestBehavior.opaque,
@@ -303,12 +305,12 @@ class _RoutineHeader extends StatelessWidget {
               height: 28 * s,
               padding: EdgeInsets.symmetric(horizontal: 12 * s),
               decoration: BoxDecoration(
-                color: const Color(0xFFE7E9E5),
+                color: p.bone,
                 borderRadius: BorderRadius.circular(12 * s),
               ),
               child: Row(
                 children: [
-                  Icon(Icons.add_rounded, size: 12 * s, color: const Color(0xFF191C1A)),
+                  Icon(Icons.add_rounded, size: 12 * s, color: p.ink),
                   SizedBox(width: 5 * s),
                   figmaText(
                     'New Ritual',
@@ -316,7 +318,7 @@ class _RoutineHeader extends StatelessWidget {
                     weight: FontWeight.w500,
                     letterSpacing: 0.24 * s,
                     lineHeight: 16 * s,
-                    color: const Color(0xFF191C1A),
+                    color: p.ink,
                   ),
                 ],
               ),
@@ -356,7 +358,7 @@ class _FilterPills extends StatelessWidget {
                 height: 28 * s,
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
-                  color: i == 0 ? const Color(0xFF2E312F) : const Color(0xFFF3F4F0),
+                  color: i == 0 ? p.slate : p.panel,
                   borderRadius: BorderRadius.circular(999),
                 ),
                 child: figmaText(
@@ -365,7 +367,7 @@ class _FilterPills extends StatelessWidget {
                   weight: FontWeight.w500,
                   letterSpacing: 0.24 * s,
                   lineHeight: 16 * s,
-                  color: i == 0 ? const Color(0xFFF0F1EE) : const Color(0xFF57423B),
+                  color: i == 0 ? p.panel : p.body,
                 ),
               ),
             ),
@@ -391,7 +393,7 @@ class _ClarityNote extends StatelessWidget {
       width: 358 * s,
       height: 174 * s,
       decoration: BoxDecoration(
-        color: const Color(0xFFF3F4F0),
+        color: p.panel,
         borderRadius: BorderRadius.circular(16 * s),
       ),
       child: Stack(
@@ -402,14 +404,14 @@ class _ClarityNote extends StatelessWidget {
             child: Container(
               width: 32 * s,
               height: 32 * s,
-              decoration: const BoxDecoration(
-                color: Color(0xFFFEF3C7),
+              decoration: BoxDecoration(
+                color: p.goldSoft,
                 shape: BoxShape.circle,
               ),
               child: Icon(
                 Icons.lightbulb_outline_rounded,
                 size: 17 * s,
-                color: const Color(0xFFD97706),
+                color: p.ochre,
               ),
             ),
           ),
@@ -422,7 +424,7 @@ class _ClarityNote extends StatelessWidget {
               weight: FontWeight.w600,
               letterSpacing: 0.5 * s,
               lineHeight: 12 * s,
-              color: const Color(0xFFD97706),
+              color: p.ochre,
             ),
           ),
           Positioned(
@@ -435,7 +437,7 @@ class _ClarityNote extends StatelessWidget {
               weight: FontWeight.w400,
               letterSpacing: 0.12 * s,
               lineHeight: 16 * s,
-              color: const Color(0xFF57423B),
+              color: p.body,
               width: 270 * s,
             ),
           ),

@@ -44,6 +44,16 @@ class SparkPalette {
     required this.iconHaloStart,
     required this.iconHaloEnd,
     required this.iconBorder,
+    required this.emberTile,
+    required this.goldSoft,
+    required this.onGold,
+    required this.onEmberSoft,
+    required this.pineDark,
+    required this.mintSoft,
+    required this.creamSoft,
+    required this.slate,
+    required this.error,
+    required this.warmBorder,
   });
 
   final bool dark;
@@ -95,6 +105,18 @@ class SparkPalette {
   final Color iconHaloEnd;
   final Color iconBorder;
 
+  // Extra supporting tones
+  final Color emberTile;
+  final Color goldSoft;
+  final Color onGold;
+  final Color onEmberSoft;
+  final Color pineDark;
+  final Color mintSoft;
+  final Color creamSoft;
+  final Color slate;
+  final Color error;
+  final Color warmBorder;
+
   static const light = SparkPalette(
     dark: false,
     canvas: Color(0xFFF8FAF6),
@@ -132,9 +154,17 @@ class SparkPalette {
     iconHaloStart: Color(0x0D9F3C16),
     iconHaloEnd: Color(0x0A7E5300),
     iconBorder: Color(0x00000000),
+    emberTile: Color(0xFFFFF0E8),
+    goldSoft: Color(0xFFFFDDB2),
+    onGold: Color(0xFF291800),
+    onEmberSoft: Color(0xFF390C00),
+    pineDark: Color(0xFF224F3A),
+    mintSoft: Color(0xFFD1FAE5),
+    creamSoft: Color(0xFFFFF5F0),
+    slate: Color(0xFF2E312F),
+    error: Color(0xFFBA1A1A),
+    warmBorder: Color(0xFFDEC0B7),
   );
-
-  static const dark2 = Color(0xFF121413);
 
   static const _dark = SparkPalette(
     dark: true,
@@ -173,10 +203,23 @@ class SparkPalette {
     iconHaloStart: Color(0x33FF6B2C),
     iconHaloEnd: Color(0x1A10B981),
     iconBorder: Color(0xFF2A2E2C),
+    emberTile: Color(0x26FF6B2C),
+    goldSoft: Color(0x33FDBA54),
+    onGold: Color(0xFF121413),
+    onEmberSoft: Color(0xFFFFB59A),
+    pineDark: Color(0xFF4EDEA3),
+    mintSoft: Color(0x2610B981),
+    creamSoft: Color(0xFF1E211F),
+    slate: Color(0xFFE7E9E5),
+    error: Color(0xFFFF9E6C),
+    warmBorder: Color(0xFF3A3F3C),
   );
 
   /// The dark palette instance (kept out of `const` list literals for clarity).
   static SparkPalette get darkPalette => _dark;
+
+  /// Mutable pointer to the active palette — set by the app root on change.
+  static SparkPalette active = light;
 
   static SparkPalette of(BuildContext context) =>
       context.dependOnInheritedWidgetOfExactType<SparkThemeScope>()?.palette ??
@@ -201,6 +244,11 @@ class SparkThemeScope extends InheritedWidget {
   bool updateShouldNotify(SparkThemeScope oldWidget) =>
       oldWidget.palette != palette;
 }
+
+/// The palette currently in use. The app root keeps this in sync with the
+/// `SparkThemeScope`, so any widget (even helper methods without a context)
+/// can read `p.ink`, `p.panel`, … directly.
+SparkPalette get p => SparkPalette.active;
 
 extension SparkThemeContext on BuildContext {
   /// `context.spark.ink` — the active palette.

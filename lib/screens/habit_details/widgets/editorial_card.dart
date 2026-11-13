@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'package:daily_spark/design_system/theme/spark_palette.dart';
+
 import 'package:daily_spark/design_system/widgets/design_canvas.dart' show figmaText;
 
 /// Editorial inspiration card (current book) on Habit Details.
@@ -16,7 +18,7 @@ class EditorialCard extends StatelessWidget {
       width: 358 * s,
       height: 226 * s,
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: p.surface,
         borderRadius: BorderRadius.circular(16 * s),
         boxShadow: [
           BoxShadow(
@@ -101,7 +103,7 @@ class EditorialCard extends StatelessWidget {
                   Icon(
                     Icons.format_quote_rounded,
                     size: 15 * s,
-                    color: const Color(0xFF9F3C16),
+                    color: p.emberDeep,
                   ),
                   SizedBox(width: 8 * s),
                   figmaText(
@@ -110,13 +112,13 @@ class EditorialCard extends StatelessWidget {
                     weight: FontWeight.w400,
                     letterSpacing: 0.12 * s,
                     lineHeight: 16 * s,
-                    color: const Color(0xFF191C1A),
+                    color: p.ink,
                   ),
-                  const Spacer(),
+                  Spacer(),
                   Icon(
                     Icons.chevron_right_rounded,
                     size: 18 * s,
-                    color: const Color(0xFF57423B),
+                    color: p.body,
                   ),
                 ],
               ),
@@ -151,7 +153,7 @@ class _GlassChip extends StatelessWidget {
           weight: FontWeight.w500,
           letterSpacing: 0.4 * s,
           lineHeight: 12 * s,
-          color: const Color(0xFF191C1A),
+          color: p.ink,
         ),
       ),
     );

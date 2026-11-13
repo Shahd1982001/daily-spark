@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'package:daily_spark/design_system/theme/spark_palette.dart';
+
 import 'package:daily_spark/design_system/widgets/design_canvas.dart' show figmaText;
 
 /// Progress · Streak card — Figma 358 × 199, r24, ember gradient.
@@ -16,11 +18,11 @@ class StreakCard extends StatelessWidget {
       child: Container(
         width: 358 * s,
         height: 199 * s,
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: [Color(0xFFFF8A54), Color(0xFFFF6B2C)],
+            colors: [p.emberLight, p.ember],
           ),
         ),
         child: Stack(
@@ -31,9 +33,9 @@ class StreakCard extends StatelessWidget {
               child: Container(
                 width: 160 * s,
                 height: 160 * s,
-                decoration: const BoxDecoration(
+                decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: Color(0x4DFDBA54),
+                  color: p.gold.withValues(alpha: 0.302),
                 ),
               ),
             ),
@@ -49,7 +51,7 @@ class StreakCard extends StatelessWidget {
                   borderRadius: BorderRadius.circular(16 * s),
                 ),
                 child: Icon(Icons.local_fire_department_rounded,
-                    size: 22 * s, color: const Color(0xFFFFDBCF)),
+                    size: 22 * s, color: p.emberSoft),
               ),
             ),
             Positioned(
@@ -67,7 +69,7 @@ class StreakCard extends StatelessWidget {
                   ),
                   SizedBox(width: 4 * s),
                   Icon(Icons.auto_awesome_rounded,
-                      size: 16 * s, color: const Color(0xFFFDBA54)),
+                      size: 16 * s, color: p.gold),
                 ],
               ),
             ),
@@ -80,7 +82,7 @@ class StreakCard extends StatelessWidget {
                 weight: FontWeight.w500,
                 letterSpacing: 0.24 * s,
                 lineHeight: 16 * s,
-                color: const Color(0xFFFFB59C),
+                color: p.emberDeep,
               ),
             ),
             // pathway
@@ -108,7 +110,7 @@ class StreakCard extends StatelessWidget {
                       child: Container(
                         width: 192 * s,
                         height: 4 * s,
-                        color: const Color(0xFFFDBA54),
+                        color: p.gold,
                       ),
                     ),
                     _step(s, left: 8, top: 2, size: 28, label: 'Day 7',
@@ -126,7 +128,7 @@ class StreakCard extends StatelessWidget {
                       labelWeight: FontWeight.w700,
                     ),
                     _step(s, left: 273, top: 2, size: 28, label: 'Day 14',
-                        trophy: true, labelColor: const Color(0xFFFFB59C)),
+                        trophy: true, labelColor: p.emberDeep),
                   ],
                 ),
               ),
@@ -138,7 +140,7 @@ class StreakCard extends StatelessWidget {
               child: Row(
                 children: [
                   Icon(Icons.format_quote_rounded,
-                      size: 15 * s, color: const Color(0xFFFDBA54)),
+                      size: 15 * s, color: p.gold),
                   SizedBox(width: 8 * s),
                   figmaText(
                     '"Consistency is your quiet superpower."',
@@ -166,7 +168,7 @@ class StreakCard extends StatelessWidget {
     bool done = false,
     bool active = false,
     bool trophy = false,
-    Color labelColor = const Color(0xFFFFDBCF),
+    Color? labelColor,
     FontWeight labelWeight = FontWeight.w400,
   }) {
     const labelWidth = 46.0;
@@ -185,7 +187,7 @@ class StreakCard extends StatelessWidget {
                 color: active
                     ? Colors.white
                     : done
-                        ? const Color(0xFFFDBA54)
+                        ? p.gold
                         : Colors.white.withValues(alpha: 0.20),
               ),
               child: Icon(
@@ -196,9 +198,9 @@ class StreakCard extends StatelessWidget {
                         : Icons.emoji_events_rounded,
                 size: (active ? 14 : done ? 12 : 11) * s,
                 color: active
-                    ? const Color(0xFF9F3C16)
+                    ? p.emberDeep
                     : done
-                        ? const Color(0xFF291800)
+                        ? p.onGold
                         : Colors.white,
               ),
             ),
@@ -209,7 +211,7 @@ class StreakCard extends StatelessWidget {
             size: 10 * s,
             weight: labelWeight,
             lineHeight: 15 * s,
-            color: labelColor,
+            color: labelColor ?? p.emberSoft,
           ),
         ],
       ),

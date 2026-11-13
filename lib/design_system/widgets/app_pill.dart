@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
-import 'package:daily_spark/design_system/theme/app_colors.dart';
+import 'package:daily_spark/design_system/theme/spark_palette.dart';
+
 import 'package:daily_spark/design_system/theme/app_spacing.dart';
 import 'package:daily_spark/design_system/theme/app_typography.dart';
 
@@ -40,25 +41,25 @@ class AppPill extends StatelessWidget {
 
     switch (tone) {
       case PillTone.soft:
-        bg = isDark ? AppColors.darkSurfaceHigh : AppColors.surfaceLow;
-        fg = isDark ? AppColors.darkTextSecondary : AppColors.onSurfaceVariant;
-        border = Border.all(color: isDark ? AppColors.darkOutline : AppColors.surfaceContainer);
+        bg = isDark ? p.panel : p.panel;
+        fg = isDark ? p.body : p.body;
+        border = Border.all(color: isDark ? p.bone : p.container);
       case PillTone.outline:
         bg = Colors.transparent;
-        fg = isDark ? AppColors.darkTextSecondary : AppColors.onSurfaceVariant;
-        border = Border.all(color: isDark ? AppColors.darkOutline : AppColors.surfaceContainer);
+        fg = isDark ? p.body : p.body;
+        border = Border.all(color: isDark ? p.bone : p.container);
       case PillTone.sage:
-        bg = isDark ? AppColors.sageDark.withValues(alpha: 0.35) : AppColors.sageSoft;
-        fg = isDark ? AppColors.darkSuccess : AppColors.sageDark;
+        bg = isDark ? p.pineDark.withValues(alpha: 0.35) : p.mintSoft;
+        fg = isDark ? p.success : p.pineDark;
       case PillTone.ochre:
-        bg = isDark ? AppColors.ochre.withValues(alpha: 0.22) : AppColors.ochreSoft;
-        fg = isDark ? const Color(0xFFFDBA54) : AppColors.ochre;
+        bg = isDark ? p.ochre.withValues(alpha: 0.22) : p.goldSoft;
+        fg = isDark ? p.gold : p.ochre;
       case PillTone.ember:
-        bg = AppColors.sparkOrange.withValues(alpha: isDark ? 0.18 : 0.10);
-        fg = isDark ? AppColors.darkPeach : AppColors.primaryAccent;
+        bg = p.ember.withValues(alpha: isDark ? 0.18 : 0.10);
+        fg = isDark ? p.emberDeep : p.emberDeep;
       case PillTone.ghost:
         bg = Colors.transparent;
-        fg = isDark ? AppColors.darkTextMuted : AppColors.outlineWarm;
+        fg = isDark ? p.muted : p.muted;
     }
 
     final content = Row(

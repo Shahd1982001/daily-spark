@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
-import 'package:daily_spark/design_system/theme/app_colors.dart';
+import 'package:daily_spark/design_system/theme/spark_palette.dart';
+
 
 /// Onboarding page indicator: the active item stretches into an ember pill.
 class PageDots extends StatelessWidget {
@@ -29,8 +30,8 @@ class PageDots extends StatelessWidget {
           width: active ? 22 : 6,
           decoration: BoxDecoration(
             color: active
-                ? AppColors.sparkOrange
-                : (isDark ? AppColors.darkOutline : AppColors.surfaceContainer),
+                ? p.ember
+                : (isDark ? p.bone : p.container),
             borderRadius: BorderRadius.circular(999),
           ),
         );

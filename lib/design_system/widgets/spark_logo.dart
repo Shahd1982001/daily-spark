@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
-import 'package:daily_spark/design_system/theme/app_colors.dart';
+import 'package:daily_spark/design_system/theme/spark_palette.dart';
+
 
 /// Daily Spark brand mark: a soft squircle holding the ember spark glyph.
 class SparkLogo extends StatelessWidget {
@@ -20,7 +21,7 @@ class SparkLogo extends StatelessWidget {
     final glyph = CustomPaint(
       size: Size(size * 0.42, size * 0.42),
       painter: _SparkGlyphPainter(
-        color: AppColors.sparkOrange,
+        color: p.ember,
       ),
     );
 
@@ -30,10 +31,10 @@ class SparkLogo extends StatelessWidget {
       width: size,
       height: size,
       decoration: BoxDecoration(
-        color: isDark ? AppColors.darkSurfaceMid : Colors.white,
+        color: isDark ? p.panel : Colors.white,
         borderRadius: BorderRadius.circular(size * 0.32),
         border: Border.all(
-          color: isDark ? AppColors.darkOutline : Colors.white,
+          color: isDark ? p.bone : Colors.white,
           width: 1,
         ),
         boxShadow: [
@@ -43,7 +44,7 @@ class SparkLogo extends StatelessWidget {
             offset: const Offset(0, 10),
           ),
           BoxShadow(
-            color: AppColors.sparkOrange.withValues(alpha: 0.10),
+            color: p.ember.withValues(alpha: 0.10),
             blurRadius: 40,
             spreadRadius: 4,
           ),
@@ -79,10 +80,10 @@ class _SparkGlyphPainter extends CustomPainter {
     canvas.drawPath(
       path,
       Paint()
-        ..shader = const LinearGradient(
+        ..shader = LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [AppColors.sparkOrange, AppColors.primaryEmber],
+          colors: [p.ember, p.emberDeep],
         ).createShader(Rect.fromLTWH(0, 0, w, h))
         ..isAntiAlias = true,
     );

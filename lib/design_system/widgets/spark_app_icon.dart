@@ -102,9 +102,9 @@ class SparkAppIcon extends StatelessWidget {
 /// The Daily Spark mark: four ember petals with four bright inner petals
 /// and a small white centre dot — built exactly as the Figma SVG group.
 class SparkGlyphPainter extends CustomPainter {
-  const SparkGlyphPainter();
+  SparkGlyphPainter();
 
-  static const _ember = Color(0xFFFF6B2C);
+  static Color get _ember => p.ember;
 
   /// One arm of the star: wide base at the centre, sharp tip, concave sides.
   Path _petal(double cx, double cy, double r, double w) {

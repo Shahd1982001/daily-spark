@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:daily_spark/design_system/theme/app_colors.dart';
+
+import 'package:daily_spark/design_system/theme/spark_palette.dart';
 
 /// The signature Daily Spark background: warm cream canvas with a soft
 /// ember glow bleeding from the top of the screen (no hard edges).
@@ -26,8 +27,8 @@ class AppBackground extends StatelessWidget {
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
                 colors: isDark
-                    ? const [Color(0xFF171A19), AppColors.darkCanvas]
-                    : const [Color(0xFFFFFCF8), AppColors.canvas],
+                    ? [Color(0xFF171A19), p.canvas]
+                    : [Color(0xFFFFFCF8), p.canvas],
               ),
             ),
           ),
@@ -41,8 +42,8 @@ class AppBackground extends StatelessWidget {
                     center: const Alignment(0, -1.15),
                     radius: 1.45,
                     colors: [
-                      AppColors.sparkOrange.withValues(alpha: isDark ? 0.16 : 0.13),
-                      AppColors.peachSoft.withValues(alpha: isDark ? 0.06 : 0.16),
+                      p.ember.withValues(alpha: isDark ? 0.16 : 0.13),
+                      p.emberSoft.withValues(alpha: isDark ? 0.06 : 0.16),
                       Colors.transparent,
                     ],
                     stops: const [0.0, 0.42, 1.0],

@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
 
+import 'package:daily_spark/design_system/theme/spark_palette.dart';
+
 import 'package:daily_spark/design_system/widgets/design_canvas.dart' show figmaText;
 
 /// PAGE 2 visual — "7-Day Streak In Flow" card with orbit badges.
 /// Figma: node 126:13517, visual area 358 × 356 at (16, 96).
 class StreakFlowCard extends StatelessWidget {
-  const StreakFlowCard({super.key});
+  StreakFlowCard({super.key});
 
-  static const _ink = Color(0xFF191C1A);
-  static const _brown = Color(0xFF57423B);
-  static const _ember = Color(0xFFFF6B2C);
-  static const _deepEmber = Color(0xFF9F3C16);
+  static Color get _ink => p.ink;
+  static Color get _brown => p.body;
+  static Color get _ember => p.ember;
+  static Color get _deepEmber => p.emberDeep;
 
   @override
   Widget build(BuildContext context) {
@@ -27,8 +29,8 @@ class StreakFlowCard extends StatelessWidget {
             child: Container(
               width: 240,
               height: 240,
-              decoration: const BoxDecoration(
-                color: Color(0x4DFFDBCF),
+              decoration: BoxDecoration(
+                color: p.emberSoft.withValues(alpha: 0.302),
                 shape: BoxShape.circle,
               ),
             ),
@@ -75,7 +77,7 @@ class StreakFlowCard extends StatelessWidget {
               height: 27.9,
               icon: Icons.link_rounded,
               iconSize: 13,
-              iconColor: const Color(0xFF3A6750),
+              iconColor: p.sage,
               label: 'Unbroken chain',
               labelSize: 11,
             ),
@@ -90,7 +92,7 @@ class StreakFlowCard extends StatelessWidget {
               width: 316,
               height: 194,
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: p.surface,
                 borderRadius: BorderRadius.circular(12),
                 boxShadow: [
                   BoxShadow(
@@ -110,22 +112,22 @@ class StreakFlowCard extends StatelessWidget {
                       width: 143,
                       height: 20,
                       decoration: BoxDecoration(
-                        color: const Color(0xFFFFDBCF),
+                        color: p.emberSoft,
                         borderRadius: BorderRadius.circular(9999),
                       ),
                       child: Row(
                         children: [
                           const SizedBox(width: 10),
-                          const Icon(Icons.local_fire_department_rounded,
+                          Icon(Icons.local_fire_department_rounded,
                               size: 10, color: _deepEmber),
-                          const SizedBox(width: 5),
+                          SizedBox(width: 5),
                           figmaText(
                             '7-Day Streak In Flow',
                             size: 10,
                             weight: FontWeight.w600,
                             letterSpacing: 0.4,
                             lineHeight: 12,
-                            color: const Color(0xFF390C00),
+                            color: p.onEmberSoft,
                           ),
                         ],
                       ),
@@ -138,21 +140,21 @@ class StreakFlowCard extends StatelessWidget {
                       width: 109,
                       height: 24,
                       decoration: BoxDecoration(
-                        color: const Color(0xFFD1FAE5),
+                        color: p.mintSoft,
                         borderRadius: BorderRadius.circular(9999),
                       ),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          const Icon(Icons.trending_up_rounded,
-                              size: 10, color: Color(0xFF3A6750)),
-                          const SizedBox(width: 4),
+                          Icon(Icons.trending_up_rounded,
+                              size: 10, color: p.sage),
+                          SizedBox(width: 4),
                           figmaText(
                             '+18% vs Last Wk',
                             size: 10,
                             weight: FontWeight.w600,
                             lineHeight: 20,
-                            color: const Color(0xFF10B981),
+                            color: p.success,
                           ),
                         ],
                       ),
@@ -172,10 +174,10 @@ class StreakFlowCard extends StatelessWidget {
                           width: 28,
                           height: 28,
                           decoration: BoxDecoration(
-                            color: const Color(0xFFEDEEEB),
+                            color: p.container,
                             borderRadius: BorderRadius.circular(8),
                           ),
-                          child: const Icon(Icons.nightlight_round,
+                          child: Icon(Icons.nightlight_round,
                               size: 15, color: _deepEmber),
                         ),
                         const SizedBox(width: 8),
@@ -202,7 +204,7 @@ class StreakFlowCard extends StatelessWidget {
                             ],
                           ),
                         ),
-                        const SizedBox(width: 8),
+                        SizedBox(width: 8),
                         Padding(
                           padding: const EdgeInsets.only(top: 10),
                           child: figmaText(
@@ -210,7 +212,7 @@ class StreakFlowCard extends StatelessWidget {
                             size: 11,
                             weight: FontWeight.w600,
                             lineHeight: 20,
-                            color: const Color(0xFF3A6750),
+                            color: p.sage,
                           ),
                         ),
                       ],
@@ -231,7 +233,7 @@ class StreakFlowCard extends StatelessWidget {
       height: height,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        border: Border.all(color: const Color(0x228A726A), width: 1),
+        border: Border.all(color: p.muted.withValues(alpha: 0.133), width: 1),
       ),
     );
   }
@@ -250,7 +252,7 @@ class StreakFlowCard extends StatelessWidget {
       height: height,
       padding: const EdgeInsets.symmetric(horizontal: 10),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: p.surface,
         borderRadius: BorderRadius.circular(9999),
         boxShadow: [
           BoxShadow(
@@ -295,7 +297,7 @@ class _WeekRow extends StatelessWidget {
           Positioned(
             left: 14,
             top: 50,
-            child: Container(width: 256, height: 2, color: const Color(0xFFEDEEEB)),
+            child: Container(width: 256, height: 2, color: p.container),
           ),
           for (var i = 0; i < 7; i++)
             Positioned(
@@ -308,33 +310,33 @@ class _WeekRow extends StatelessWidget {
                     if (i == 6)
                       Text(
                         'Today',
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontFamily: 'PlusJakartaSans',
                           fontSize: 10,
                           fontWeight: FontWeight.w700,
                           height: 2,
-                          color: Color(0xFF9F3C16),
+                          color: p.emberDeep,
                           decoration: TextDecoration.none,
                         ),
                       )
                     else
                       Text(
                         _letters[i],
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontFamily: 'PlusJakartaSans',
                           fontSize: 10,
                           fontWeight: FontWeight.w500,
                           height: 2,
-                          color: Color(0xFF57423B),
+                          color: p.body,
                           decoration: TextDecoration.none,
                         ),
                       ),
-                    const SizedBox(height: 4),
+                    SizedBox(height: 4),
                     Container(
                       width: 28,
                       height: 28,
-                      decoration: const BoxDecoration(
-                        color: Color(0xFFFF6B2C),
+                      decoration: BoxDecoration(
+                        color: p.ember,
                         shape: BoxShape.circle,
                       ),
                       child: i == 6

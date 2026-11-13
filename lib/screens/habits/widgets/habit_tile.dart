@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'package:daily_spark/design_system/theme/spark_palette.dart';
+
 import 'package:daily_spark/design_system/widgets/design_canvas.dart' show figmaText;
 
 /// Habit row used on the Habits screen (Figma: 358 × 76, radius 12).
@@ -45,7 +47,7 @@ class HabitTile extends StatelessWidget {
         width: 358 * s,
         height: 76 * s,
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: p.surface,
           borderRadius: BorderRadius.circular(12 * s),
           boxShadow: [
             BoxShadow(
@@ -86,7 +88,7 @@ class HabitTile extends StatelessWidget {
                       weight: FontWeight.w600,
                       letterSpacing: -0.08 * s,
                       lineHeight: 22 * s,
-                      color: const Color(0xFF191C1A),
+                      color: p.ink,
                     ),
                   ),
                   if (showStreakPill) ...[
@@ -95,7 +97,7 @@ class HabitTile extends StatelessWidget {
                       height: 16 * s,
                       padding: EdgeInsets.symmetric(horizontal: 6 * s),
                       decoration: BoxDecoration(
-                        color: const Color(0xFFFFDDB2),
+                        color: p.goldSoft,
                         borderRadius: BorderRadius.circular(999),
                       ),
                       child: Row(
@@ -104,7 +106,7 @@ class HabitTile extends StatelessWidget {
                           Icon(
                             Icons.local_fire_department_rounded,
                             size: 10 * s,
-                            color: const Color(0xFF7E5300),
+                            color: p.ochre,
                           ),
                           SizedBox(width: 2 * s),
                           figmaText(
@@ -113,7 +115,7 @@ class HabitTile extends StatelessWidget {
                             weight: FontWeight.w600,
                             letterSpacing: 0.4 * s,
                             lineHeight: 12 * s,
-                            color: const Color(0xFF291800),
+                            color: p.onGold,
                           ),
                         ],
                       ),
@@ -125,7 +127,7 @@ class HabitTile extends StatelessWidget {
                       height: 16 * s,
                       padding: EdgeInsets.symmetric(horizontal: 5 * s),
                       decoration: BoxDecoration(
-                        color: const Color(0xFFBCEED1),
+                        color: p.mint,
                         borderRadius: BorderRadius.circular(999),
                       ),
                       child: Center(
@@ -135,7 +137,7 @@ class HabitTile extends StatelessWidget {
                           weight: FontWeight.w600,
                           letterSpacing: 0.4 * s,
                           lineHeight: 12 * s,
-                          color: const Color(0xFF224F3A),
+                          color: p.pineDark,
                         ),
                       ),
                     ),
@@ -155,7 +157,7 @@ class HabitTile extends StatelessWidget {
                     weight: FontWeight.w400,
                     letterSpacing: 0.12 * s,
                     lineHeight: 16 * s,
-                    color: const Color(0xFF57423B),
+                    color: p.body,
                   ),
                   if (streakHighlighted) ...[
                     Padding(
@@ -165,13 +167,13 @@ class HabitTile extends StatelessWidget {
                         size: 14 * s,
                         weight: FontWeight.w400,
                         lineHeight: 20 * s,
-                        color: const Color(0xFF8A726A),
+                        color: p.muted,
                       ),
                     ),
                     Icon(
                       Icons.local_fire_department_rounded,
                       size: 11 * s,
-                      color: const Color(0xFFFF6B2C),
+                      color: p.ember,
                     ),
                     SizedBox(width: 2 * s),
                     figmaText(
@@ -180,7 +182,7 @@ class HabitTile extends StatelessWidget {
                       weight: FontWeight.w600,
                       letterSpacing: 0.4 * s,
                       lineHeight: 12 * s,
-                      color: const Color(0xFFFF6B2C),
+                      color: p.ember,
                     ),
                   ],
                 ],
@@ -197,7 +199,7 @@ class HabitTile extends StatelessWidget {
                   width: 44 * s,
                   height: 44 * s,
                   decoration: BoxDecoration(
-                    color: completed ? const Color(0xFF10B981) : const Color(0xFFEDEEEB),
+                    color: completed ? p.success : p.container,
                     shape: BoxShape.circle,
                   ),
                   child: Icon(
@@ -205,7 +207,7 @@ class HabitTile extends StatelessWidget {
                         ? Icons.check_rounded
                         : Icons.radio_button_unchecked_rounded,
                     size: completed ? 18 * s : 20 * s,
-                    color: completed ? Colors.white : const Color(0xFF57423B),
+                    color: completed ? Colors.white : p.body,
                   ),
                 ),
               ),

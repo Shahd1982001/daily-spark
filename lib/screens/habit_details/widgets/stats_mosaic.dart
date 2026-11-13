@@ -1,22 +1,24 @@
 import 'package:flutter/material.dart';
 
+import 'package:daily_spark/design_system/theme/spark_palette.dart';
+
 import 'package:daily_spark/design_system/widgets/design_canvas.dart' show figmaText;
 
 /// 2 × 2 habit stats mosaic on Habit Details.
 /// Figma: "Habit Stats Mosaic" 358 × 232 at (16, 1132).
 class StatsMosaic extends StatelessWidget {
-  const StatsMosaic({super.key, required this.scale});
+  StatsMosaic({super.key, required this.scale});
 
   final double scale;
 
   @override
   Widget build(BuildContext context) {
     final s = scale;
-    const cards = [
-      ('CURRENT RUN', Icons.local_fire_department_rounded, Color(0xFF7E5300), '12 Days', 'Personal momentum'),
-      ('BEST RECORD', Icons.emoji_events_rounded, Color(0xFF9F3C16), '28 Days', 'Set in September'),
-      ('TOTAL READ', Icons.menu_book_outlined, Color(0xFF3A6750), '1,420 pgs', 'Approx. 5.6 books'),
-      ('CONSISTENCY', Icons.check_circle_outline_rounded, Color(0xFF406D56), '88%', 'Lifetime success rate'),
+    final cards = [
+      ('CURRENT RUN', Icons.local_fire_department_rounded, p.ochre, '12 Days', 'Personal momentum'),
+      ('BEST RECORD', Icons.emoji_events_rounded, p.emberDeep, '28 Days', 'Set in September'),
+      ('TOTAL READ', Icons.menu_book_outlined, p.sage, '1,420 pgs', 'Approx. 5.6 books'),
+      ('CONSISTENCY', Icons.check_circle_outline_rounded, p.pine, '88%', 'Lifetime success rate'),
     ];
 
     return SizedBox(
@@ -67,7 +69,7 @@ class _StatCard extends StatelessWidget {
       width: 175 * s,
       height: 112 * s,
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: p.surface,
         borderRadius: BorderRadius.circular(16 * s),
         boxShadow: [
           BoxShadow(
@@ -88,7 +90,7 @@ class _StatCard extends StatelessWidget {
               weight: FontWeight.w600,
               letterSpacing: 0.5 * s,
               lineHeight: 12 * s,
-              color: const Color(0xFF57423B),
+              color: p.body,
             ),
           ),
           Positioned(
@@ -105,7 +107,7 @@ class _StatCard extends StatelessWidget {
               weight: FontWeight.w700,
               letterSpacing: -0.33 * s,
               lineHeight: 28 * s,
-              color: const Color(0xFF191C1A),
+              color: p.ink,
             ),
           ),
           Positioned(
@@ -117,7 +119,7 @@ class _StatCard extends StatelessWidget {
               weight: FontWeight.w400,
               letterSpacing: 0.12 * s,
               lineHeight: 16 * s,
-              color: const Color(0xFF57423B),
+              color: p.body,
             ),
           ),
         ],

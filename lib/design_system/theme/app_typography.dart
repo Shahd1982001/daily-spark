@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
-import 'package:daily_spark/design_system/theme/app_colors.dart';
+import 'package:daily_spark/design_system/theme/spark_palette.dart';
+
 
 /// Design tokens — Typography (Plus Jakarta Sans).
 class AppText {
@@ -60,8 +61,9 @@ class AppText {
 /// Semantic text themes resolved from the active brightness.
 class AppTextTheme {
   static TextTheme of(Brightness b) {
-    final primary = b == Brightness.dark ? AppColors.darkTextPrimary : AppColors.onBackground;
-    final secondary = b == Brightness.dark ? AppColors.darkTextSecondary : AppColors.onSurfaceVariant;
+    final pal = b == Brightness.dark ? SparkPalette.darkPalette : SparkPalette.light;
+    final primary = pal.ink;
+    final secondary = pal.body;
     return TextTheme(
       displayLarge: AppText.displayXL.copyWith(color: primary),
       displayMedium: AppText.displayL.copyWith(color: secondary),

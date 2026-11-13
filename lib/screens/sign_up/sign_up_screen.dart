@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'package:daily_spark/design_system/theme/spark_palette.dart';
+
 import 'package:daily_spark/design_system/widgets/design_canvas.dart' show figmaText;
 
 /// PURE UI — Sign Up.
@@ -32,13 +34,13 @@ class SignUpScreen extends StatelessWidget {
   final VoidCallback? onGuest;
   final VoidCallback? onLogIn;
 
-  static const _canvas = Color(0xFFF8FAF6);
-  static const _ink = Color(0xFF191C1A);
-  static const _brown = Color(0xFF57423B);
-  static const _deepEmber = Color(0xFF9F3C16);
-  static const _loginLink = Color(0xFFE05316);
-  static const _outlineWarm = Color(0xFF8A726A);
-  static const _sage = Color(0xFF3A6750);
+  static Color get _canvas => p.canvas;
+  static Color get _ink => p.ink;
+  static Color get _brown => p.body;
+  static Color get _deepEmber => p.emberDeep;
+  static Color get _loginLink => p.emberDark;
+  static Color get _outlineWarm => p.muted;
+  static Color get _sage => p.sage;
 
   @override
   Widget build(BuildContext context) {
@@ -133,7 +135,7 @@ class SignUpScreen extends StatelessWidget {
                             width: 6 * s,
                             height: 6 * s,
                             margin: EdgeInsets.only(right: 6 * s, top: 1 * s),
-                            decoration: const BoxDecoration(
+                            decoration: BoxDecoration(
                               color: _sage,
                               shape: BoxShape.circle,
                             ),
@@ -171,12 +173,12 @@ class SignUpScreen extends StatelessWidget {
                       child: Row(
                         children: [
                           _Label(text: 'CONFIRM PASSWORD', scale: s),
-                          const Spacer(),
+                          Spacer(),
                           Container(
                             height: 16 * s,
                             padding: EdgeInsets.symmetric(horizontal: 8 * s),
-                            decoration: const BoxDecoration(
-                              color: Color(0xFFBCEED1),
+                            decoration: BoxDecoration(
+                              color: p.mint,
                               borderRadius: BorderRadius.all(Radius.circular(999)),
                             ),
                             child: Row(
@@ -185,10 +187,10 @@ class SignUpScreen extends StatelessWidget {
                                 SizedBox(
                                   width: 8 * s,
                                   height: 6 * s,
-                                  child: const FittedBox(
+                                  child: FittedBox(
                                     fit: BoxFit.contain,
                                     child: Icon(Icons.check,
-                                        color: Color(0xFF406D56)),
+                                        color: p.pine),
                                   ),
                                 ),
                                 SizedBox(width: 4 * s),
@@ -198,7 +200,7 @@ class SignUpScreen extends StatelessWidget {
                                   weight: FontWeight.w500,
                                   letterSpacing: 0.4 * s,
                                   lineHeight: 12 * s,
-                                  color: const Color(0xFF406D56),
+                                  color: p.pine,
                                 ),
                               ],
                             ),
@@ -213,14 +215,14 @@ class SignUpScreen extends StatelessWidget {
                       obscure: obscurePassword,
                       letterSpacing: 1.4,
                       icon: Icons.lock_reset_rounded,
-                      iconBox: const Size(17, 17),
+                      iconBox: Size(17, 17),
                       gapAfterIcon: 12,
                       trailing: SizedBox(
                         width: 17 * s,
                         height: 17 * s,
-                        child: const FittedBox(
+                        child: FittedBox(
                           fit: BoxFit.contain,
-                          child: Icon(Icons.check_circle, color: Color(0xFF3A6750)),
+                          child: Icon(Icons.check_circle, color: p.sage),
                         ),
                       ),
                     ),
@@ -334,7 +336,7 @@ class _TopBar extends StatelessWidget {
               width: 44 * s,
               height: 44 * s,
               decoration: BoxDecoration(
-                color: const Color(0xFFEDEEEB),
+                color: p.container,
                 shape: BoxShape.circle,
                 boxShadow: [
                   BoxShadow(
@@ -347,16 +349,16 @@ class _TopBar extends StatelessWidget {
               child: Icon(
                 Icons.arrow_back_rounded,
                 size: 18 * s,
-                color: const Color(0xFF191C1A),
+                color: p.ink,
               ),
             ),
           ),
-          const Spacer(),
+          Spacer(),
           Container(
             height: 32 * s,
             padding: EdgeInsets.symmetric(horizontal: 12 * s),
-            decoration: const BoxDecoration(
-              color: Color(0xFFF3F4F0),
+            decoration: BoxDecoration(
+              color: p.panel,
               borderRadius: BorderRadius.all(Radius.circular(999)),
             ),
             child: Row(
@@ -367,7 +369,7 @@ class _TopBar extends StatelessWidget {
                   size: 14 * s,
                   weight: FontWeight.w400,
                   lineHeight: 20 * s,
-                  color: const Color(0xFF9F3C16),
+                  color: p.emberDeep,
                 ),
                 SizedBox(width: 7 * s),
                 figmaText(
@@ -376,7 +378,7 @@ class _TopBar extends StatelessWidget {
                   weight: FontWeight.w600,
                   letterSpacing: 0.5 * s,
                   lineHeight: 12 * s,
-                  color: const Color(0xFF57423B),
+                  color: p.body,
                 ),
               ],
             ),
@@ -401,8 +403,8 @@ class _JourneyChip extends StatelessWidget {
     return Container(
       height: 20 * s,
       padding: EdgeInsets.symmetric(horizontal: 10 * s),
-      decoration: const BoxDecoration(
-        color: Color(0xFFFFF0E8),
+      decoration: BoxDecoration(
+        color: p.emberTile,
         borderRadius: BorderRadius.all(Radius.circular(999)),
       ),
       child: figmaText(
@@ -411,7 +413,7 @@ class _JourneyChip extends StatelessWidget {
         weight: FontWeight.w600,
         letterSpacing: 1 * s,
         lineHeight: 12 * s,
-        color: const Color(0xFFE05316),
+        color: p.emberDark,
       ),
     );
   }
@@ -432,7 +434,7 @@ class _MotivationPill extends StatelessWidget {
       height: 56 * s,
       padding: EdgeInsets.symmetric(horizontal: 12 * s),
       decoration: BoxDecoration(
-        color: const Color(0xFFF3F4F0),
+        color: p.panel,
         borderRadius: BorderRadius.circular(12 * s),
       ),
       child: Row(
@@ -441,13 +443,13 @@ class _MotivationPill extends StatelessWidget {
             width: 32 * s,
             height: 32 * s,
             decoration: BoxDecoration(
-              color: const Color(0xFFD1FAE5),
+              color: p.mintSoft,
               borderRadius: BorderRadius.circular(8 * s),
             ),
             child: Icon(
               Icons.emoji_events_outlined,
               size: 17 * s,
-              color: const Color(0xFF10B981),
+              color: p.success,
             ),
           ),
           SizedBox(width: 10 * s),
@@ -461,7 +463,7 @@ class _MotivationPill extends StatelessWidget {
                 weight: FontWeight.w600,
                 letterSpacing: 0.24 * s,
                 lineHeight: 16 * s,
-                color: const Color(0xFF191C1A),
+                color: p.ink,
               ),
               figmaText(
                 'Join 45,000+ mindful daily ritual builders',
@@ -469,7 +471,7 @@ class _MotivationPill extends StatelessWidget {
                 weight: FontWeight.w400,
                 letterSpacing: 0.12 * s,
                 lineHeight: 16 * s,
-                color: const Color(0xFF57423B),
+                color: p.body,
               ),
             ],
           ),
@@ -496,7 +498,7 @@ class _Label extends StatelessWidget {
       weight: FontWeight.w600,
       letterSpacing: 0.5 * scale,
       lineHeight: 12 * scale,
-      color: const Color(0xFF57423B),
+      color: p.body,
     );
   }
 }
@@ -531,7 +533,7 @@ class _Field extends StatelessWidget {
     return Container(
       height: 52 * s,
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: p.surface,
         borderRadius: BorderRadius.circular(12 * s),
         boxShadow: [
           BoxShadow(
@@ -549,7 +551,7 @@ class _Field extends StatelessWidget {
             height: iconBox.height * s,
             child: FittedBox(
               fit: BoxFit.contain,
-              child: Icon(icon, color: const Color(0xFF8A726A)),
+              child: Icon(icon, color: p.muted),
             ),
           ),
           SizedBox(width: gapAfterIcon * s),
@@ -563,9 +565,9 @@ class _Field extends StatelessWidget {
                 height: 18 / 14,
                 letterSpacing: letterSpacing * s,
                 fontWeight: FontWeight.w400,
-                color: isEmpty ? const Color(0xFF8A726A) : const Color(0xFF191C1A),
+                color: isEmpty ? p.muted : p.ink,
               ),
-              cursorColor: const Color(0xFFFF6B2C),
+              cursorColor: p.ember,
               cursorWidth: 1.2 * s,
               decoration: InputDecoration(
                 isCollapsed: true,
@@ -578,7 +580,7 @@ class _Field extends StatelessWidget {
                   height: 18 / 14,
                   letterSpacing: 0,
                   fontWeight: FontWeight.w400,
-                  color: const Color(0xFF8A726A),
+                  color: p.muted,
                 ),
               ),
             ),
@@ -612,7 +614,7 @@ class _EyeButton extends StatelessWidget {
         child: Icon(
           obscured ? Icons.visibility_off_outlined : Icons.visibility_outlined,
           size: 18 * s,
-          color: const Color(0xFF8A726A),
+          color: p.muted,
         ),
       ),
     );
@@ -623,15 +625,15 @@ class _EyeButton extends StatelessWidget {
 // Password strength meter — 4 segments
 // ─────────────────────────────────────────────────────────────────────────────
 class _StrengthMeter extends StatelessWidget {
-  const _StrengthMeter({required this.scale});
+  _StrengthMeter({required this.scale});
 
   final double scale;
 
   @override
   Widget build(BuildContext context) {
     final s = scale;
-    const filled = Color(0xFF10B981);
-    final colors = [filled, filled, filled, const Color(0xFFA1D1B5)];
+    final filled = p.success;
+    final colors = [filled, filled, filled, Color(0xFFA1D1B5)];
     return SizedBox(
       height: 4 * s,
       child: Row(
@@ -672,10 +674,10 @@ class _CreateAccountButton extends StatelessWidget {
         height: 56 * s,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(12 * s),
-          gradient: const LinearGradient(
+          gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: [Color(0xFFFF8A54), Color(0xFFFF6B2C)],
+            colors: [p.emberLight, p.ember],
           ),
         ),
         child: Row(
@@ -687,7 +689,7 @@ class _CreateAccountButton extends StatelessWidget {
               weight: FontWeight.w600,
               letterSpacing: 0.14 * s,
               lineHeight: 18 * s,
-              color: Colors.white,
+              color: p.surface,
             ),
             SizedBox(width: 8 * s),
             SizedBox(
@@ -717,7 +719,7 @@ class _OrDivider extends StatelessWidget {
       height: 12 * s,
       child: Row(
         children: [
-          Expanded(child: Container(height: 1, color: const Color(0xFFE1E3DF))),
+          Expanded(child: Container(height: 1, color: p.bone)),
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 12 * s),
             child: figmaText(
@@ -726,10 +728,10 @@ class _OrDivider extends StatelessWidget {
               weight: FontWeight.w500,
               letterSpacing: 0.5 * s,
               lineHeight: 12 * s,
-              color: const Color(0xFF8A726A),
+              color: p.muted,
             ),
           ),
-          Expanded(child: Container(height: 1, color: const Color(0xFFE1E3DF))),
+          Expanded(child: Container(height: 1, color: p.bone)),
         ],
       ),
     );
@@ -751,7 +753,7 @@ class _GuestButton extends StatelessWidget {
       child: Container(
         height: 52 * s,
         decoration: BoxDecoration(
-          color: const Color(0xFFF3F4F0),
+          color: p.panel,
           borderRadius: BorderRadius.circular(12 * s),
         ),
         child: Row(
@@ -760,9 +762,9 @@ class _GuestButton extends StatelessWidget {
             SizedBox(
               width: 17 * s,
               height: 17 * s,
-              child: const FittedBox(
+              child: FittedBox(
                 fit: BoxFit.contain,
-                child: Icon(Icons.explore_outlined, color: Color(0xFF57423B)),
+                child: Icon(Icons.explore_outlined, color: p.body),
               ),
             ),
             SizedBox(width: 9 * s),
@@ -772,7 +774,7 @@ class _GuestButton extends StatelessWidget {
               weight: FontWeight.w600,
               letterSpacing: 0.14 * s,
               lineHeight: 18 * s,
-              color: const Color(0xFF191C1A),
+              color: p.ink,
             ),
           ],
         ),

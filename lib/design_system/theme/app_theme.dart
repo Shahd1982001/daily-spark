@@ -1,39 +1,40 @@
 import 'package:flutter/material.dart';
 
-import 'package:daily_spark/design_system/theme/app_colors.dart';
 import 'package:daily_spark/design_system/theme/app_spacing.dart';
+import 'package:daily_spark/design_system/theme/spark_palette.dart';
 import 'package:daily_spark/design_system/theme/app_typography.dart';
 
 /// Builds the light & dark [ThemeData] from the Figma tokens.
 class AppTheme {
   AppTheme._();
 
-  static ThemeData get light => _build(Brightness.light);
-  static ThemeData get dark => _build(Brightness.dark);
+  static ThemeData get light => _build(SparkPalette.light);
+  static ThemeData get dark => _build(SparkPalette.darkPalette);
 
-  static ThemeData _build(Brightness brightness) {
-    final isDark = brightness == Brightness.dark;
+  static ThemeData _build(SparkPalette p) {
+    final isDark = p.dark;
+    final brightness = isDark ? Brightness.dark : Brightness.light;
 
-    final scaffold = isDark ? AppColors.darkCanvas : AppColors.canvas;
-    final surface = isDark ? AppColors.darkSurface : AppColors.surface;
-    final surfaceHigh = isDark ? AppColors.darkSurfaceHigh : AppColors.warmBone;
-    final outline = isDark ? AppColors.darkOutline : AppColors.surfaceContainer;
-    final onSurface = isDark ? AppColors.darkTextPrimary : AppColors.onBackground;
-    final muted = isDark ? AppColors.darkTextSecondary : AppColors.onSurfaceVariant;
+    final scaffold = isDark ? p.canvas : p.canvas;
+    final surface = isDark ? p.surface : p.surface;
+    final surfaceHigh = isDark ? p.panel : p.bone;
+    final outline = isDark ? p.bone : p.container;
+    final onSurface = isDark ? p.ink : p.ink;
+    final muted = isDark ? p.body : p.body;
 
     final scheme = ColorScheme(
       brightness: brightness,
-      primary: AppColors.sparkOrange,
+      primary: p.ember,
       onPrimary: Colors.white,
-      primaryContainer: isDark ? AppColors.darkPrimaryContainer : AppColors.primaryAccent,
+      primaryContainer: isDark ? p.emberDeep : p.emberDeep,
       onPrimaryContainer: Colors.white,
-      secondary: isDark ? AppColors.darkSuccess : AppColors.sage,
+      secondary: isDark ? p.success : p.sage,
       onSecondary: Colors.white,
-      secondaryContainer: isDark ? AppColors.darkSurfaceHighest : AppColors.sageSoft,
-      onSecondaryContainer: isDark ? AppColors.darkSuccess : AppColors.sageDark,
-      tertiary: AppColors.ochre,
+      secondaryContainer: isDark ? p.panel : p.mintSoft,
+      onSecondaryContainer: isDark ? p.success : p.pineDark,
+      tertiary: p.ochre,
       onTertiary: Colors.white,
-      error: AppColors.crimson,
+      error: p.error,
       onError: Colors.white,
       surface: surface,
       onSurface: onSurface,
@@ -54,7 +55,7 @@ class AppTheme {
       dividerTheme: DividerThemeData(color: outline, thickness: 1, space: 1),
       filledButtonTheme: FilledButtonThemeData(
         style: FilledButton.styleFrom(
-          backgroundColor: AppColors.sparkOrange,
+          backgroundColor: p.ember,
           foregroundColor: Colors.white,
           minimumSize: const Size.fromHeight(AppSizes.buttonHeight),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppRadius.btn)),
@@ -64,14 +65,14 @@ class AppTheme {
       ),
       textButtonTheme: TextButtonThemeData(
         style: TextButton.styleFrom(
-          foregroundColor: AppColors.primaryAccent,
+          foregroundColor: p.emberDeep,
           textStyle: AppText.captionMain,
           padding: const EdgeInsets.symmetric(horizontal: AppSpacing.s8),
           minimumSize: const Size(0, 40),
         ),
       ),
       snackBarTheme: SnackBarThemeData(
-        backgroundColor: isDark ? AppColors.darkSurfaceHigh : AppColors.onBackground,
+        backgroundColor: isDark ? p.panel : p.ink,
         contentTextStyle: AppText.bodyMedium.copyWith(color: Colors.white),
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppRadius.btn)),

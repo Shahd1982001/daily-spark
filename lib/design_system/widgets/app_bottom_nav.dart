@@ -2,6 +2,8 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 
+import 'package:daily_spark/design_system/theme/spark_palette.dart';
+
 import 'package:daily_spark/design_system/widgets/design_canvas.dart' show figmaText;
 
 /// Floating bottom navigation shared by the app shell screens.
@@ -53,7 +55,7 @@ class AppBottomNav extends StatelessWidget {
         color: Colors.white.withValues(alpha: frosted ? 0.90 : 0.95),
         border: frosted
             ? Border.all(
-                color: const Color(0xFFDEC0B5).withValues(alpha: 0.10),
+                color: p.warmBorder.withValues(alpha: 0.10),
                 width: 1 * s,
               )
             : null,
@@ -79,10 +81,10 @@ class AppBottomNav extends StatelessWidget {
                       width: selectedWidth * s,
                       height: selectedHeight * s,
                       decoration: BoxDecoration(
-                        gradient: const LinearGradient(
+                        gradient: LinearGradient(
                           begin: Alignment.topLeft,
                           end: Alignment.bottomRight,
-                          colors: [Color(0xFFFF8A54), Color(0xFFFF6B2C)],
+                          colors: [p.emberLight, p.ember],
                         ),
                         borderRadius: BorderRadius.circular(999),
                       ),
@@ -108,7 +110,7 @@ class AppBottomNav extends StatelessWidget {
                       child: Icon(
                         navIcons[i],
                         size: iconSize * s,
-                        color: const Color(0xFF57423B),
+                        color: p.body,
                       ),
                     ),
             ),

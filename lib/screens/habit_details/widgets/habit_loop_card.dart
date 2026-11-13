@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'package:daily_spark/design_system/theme/spark_palette.dart';
+
 import 'package:daily_spark/design_system/widgets/design_canvas.dart' show figmaText;
 
 /// "Habit Loop Configuration" card on Habit Details.
@@ -16,7 +18,7 @@ class HabitLoopCard extends StatelessWidget {
       width: 358 * s,
       height: 484 * s,
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: p.surface,
         borderRadius: BorderRadius.circular(16 * s),
         boxShadow: [
           BoxShadow(
@@ -37,7 +39,7 @@ class HabitLoopCard extends StatelessWidget {
               weight: FontWeight.w600,
               letterSpacing: -0.08 * s,
               lineHeight: 22 * s,
-              color: const Color(0xFF191C1A),
+              color: p.ink,
             ),
           ),
           Positioned(
@@ -46,7 +48,7 @@ class HabitLoopCard extends StatelessWidget {
             child: Icon(
               Icons.info_outline_rounded,
               size: 15 * s,
-              color: const Color(0xFF57423B),
+              color: p.body,
             ),
           ),
           _row(
@@ -81,7 +83,7 @@ class HabitLoopCard extends StatelessWidget {
               width: 310 * s,
               height: 96 * s,
               decoration: BoxDecoration(
-                color: const Color(0xFFFFF5F0),
+                color: p.creamSoft,
                 borderRadius: BorderRadius.circular(12 * s),
               ),
               child: Column(
@@ -94,7 +96,7 @@ class HabitLoopCard extends StatelessWidget {
                         Icon(
                           Icons.link_rounded,
                           size: 14 * s,
-                          color: const Color(0xFF822801),
+                          color: p.emberDeep,
                         ),
                         SizedBox(width: 6 * s),
                         figmaText(
@@ -103,7 +105,7 @@ class HabitLoopCard extends StatelessWidget {
                           weight: FontWeight.w600,
                           letterSpacing: 0.24 * s,
                           lineHeight: 16 * s,
-                          color: const Color(0xFF822801),
+                          color: p.emberDeep,
                         ),
                       ],
                     ),
@@ -116,7 +118,7 @@ class HabitLoopCard extends StatelessWidget {
                       size: 14 * s,
                       weight: FontWeight.w400,
                       lineHeight: 20 * s,
-                      color: const Color(0xFF822801),
+                      color: p.emberDeep,
                     ),
                   ),
                 ],
@@ -143,7 +145,7 @@ class HabitLoopCard extends StatelessWidget {
         width: 310 * s,
         height: height * s,
         decoration: BoxDecoration(
-          color: const Color(0xFFF3F4F0),
+          color: p.panel,
           borderRadius: BorderRadius.circular(12 * s),
         ),
         child: Row(
@@ -155,10 +157,10 @@ class HabitLoopCard extends StatelessWidget {
                 width: 36 * s,
                 height: 36 * s,
                 decoration: BoxDecoration(
-                  color: const Color(0xFFEDEEEB),
+                  color: p.container,
                   borderRadius: BorderRadius.circular(8 * s),
                 ),
-                child: Icon(icon, size: 17 * s, color: const Color(0xFF57423B)),
+                child: Icon(icon, size: 17 * s, color: p.body),
               ),
             ),
             SizedBox(width: 16 * s),
@@ -174,7 +176,7 @@ class HabitLoopCard extends StatelessWidget {
                       weight: FontWeight.w600,
                       letterSpacing: 0.5 * s,
                       lineHeight: 12 * s,
-                      color: const Color(0xFF57423B),
+                      color: p.body,
                     ),
                     SizedBox(height: 4 * s),
                     figmaText(
@@ -182,7 +184,7 @@ class HabitLoopCard extends StatelessWidget {
                       size: 14 * s,
                       weight: FontWeight.w600,
                       lineHeight: 20 * s,
-                      color: const Color(0xFF191C1A),
+                      color: p.ink,
                     ),
                   ],
                 ),

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+
+import 'package:daily_spark/design_system/theme/spark_palette.dart';
 import 'dart:ui';
 
 import 'package:daily_spark/design_system/widgets/design_canvas.dart' show figmaText;
@@ -35,7 +37,7 @@ class AppTopBar extends StatelessWidget {
         filter: ImageFilter.blur(sigmaX: 12 * s, sigmaY: 12 * s),
         child: Container(
           height: 64 * s,
-          color: const Color(0xFFF8FAF6).withValues(alpha: 0.85),
+          color: p.canvas.withValues(alpha: 0.85),
           child: Stack(
             children: [
               Positioned(
@@ -69,7 +71,7 @@ class AppTopBar extends StatelessWidget {
                   weight: FontWeight.w600,
                   letterSpacing: -0.08 * s,
                   lineHeight: 22 * s,
-                  color: const Color(0xFF191C1A),
+                  color: p.ink,
                 ),
               ),
               if (showBell)
@@ -85,7 +87,7 @@ class AppTopBar extends StatelessWidget {
                       child: Icon(
                         Icons.notifications_none_rounded,
                         size: 20 * s,
-                        color: const Color(0xFF57423B),
+                        color: p.body,
                       ),
                     ),
                   ),
@@ -103,7 +105,7 @@ class AppTopBar extends StatelessWidget {
                       child: Icon(
                         Icons.settings_rounded,
                         size: 21 * s,
-                        color: const Color(0xFF57423B),
+                        color: p.body,
                       ),
                     ),
                   ),
@@ -139,9 +141,9 @@ class AppTopBar extends StatelessWidget {
                             width: 10 * s,
                             height: 10 * s,
                             decoration: BoxDecoration(
-                              color: const Color(0xFF9F3C16),
+                              color: p.emberDeep,
                               shape: BoxShape.circle,
-                              border: Border.all(color: Colors.white, width: 1.5 * s),
+                              border: Border.all(color: p.surface, width: 1.5 * s),
                             ),
                           ),
                         ),

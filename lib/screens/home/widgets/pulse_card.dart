@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
 
+import 'package:daily_spark/design_system/theme/spark_palette.dart';
+
 import 'package:daily_spark/design_system/widgets/design_canvas.dart' show figmaText;
 
 /// Top part of the Home screen — the daily pulse & streak card.
 /// Figma: node 126:15685 → "2. Motivation & Streak Bar", 358 × 168 at (16, 170).
 class PulseCard extends StatelessWidget {
-  const PulseCard({super.key, required this.scale});
+  PulseCard({super.key, required this.scale});
 
   final double scale;
 
-  static const _ink = Color(0xFF191C1A);
-  static const _brown = Color(0xFF57423B);
+  static Color get _ink => p.ink;
+  static Color get _brown => p.body;
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +21,7 @@ class PulseCard extends StatelessWidget {
       width: 358 * s,
       height: 168 * s,
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: p.surface,
         borderRadius: BorderRadius.circular(16 * s),
         boxShadow: [
           BoxShadow(
@@ -85,8 +87,8 @@ class PulseCard extends StatelessWidget {
                 Container(
                   width: 6 * s,
                   height: 6 * s,
-                  decoration: const BoxDecoration(
-                    color: Color(0xFF10B981),
+                  decoration: BoxDecoration(
+                    color: p.success,
                     shape: BoxShape.circle,
                   ),
                 ),
@@ -97,7 +99,7 @@ class PulseCard extends StatelessWidget {
                   weight: FontWeight.w500,
                   letterSpacing: 0.4 * s,
                   lineHeight: 12 * s,
-                  color: const Color(0xFF10B981),
+                  color: p.success,
                 ),
               ],
             ),
@@ -111,7 +113,7 @@ class PulseCard extends StatelessWidget {
               width: 155 * s,
               height: 60 * s,
               decoration: BoxDecoration(
-                color: const Color(0xFFF3F4F0).withValues(alpha: 0.7),
+                color: p.panel.withValues(alpha: 0.7),
                 borderRadius: BorderRadius.circular(12 * s),
               ),
               child: Stack(
@@ -123,13 +125,13 @@ class PulseCard extends StatelessWidget {
                       width: 40 * s,
                       height: 40 * s,
                       decoration: BoxDecoration(
-                        color: const Color(0xFFFFF2EB),
+                        color: p.creamSoft,
                         borderRadius: BorderRadius.circular(12 * s),
                       ),
                       child: Icon(
                         Icons.local_fire_department_rounded,
                         size: 20 * s,
-                        color: const Color(0xFFFF6B2C),
+                        color: p.ember,
                       ),
                     ),
                   ),
@@ -155,7 +157,7 @@ class PulseCard extends StatelessWidget {
                           weight: FontWeight.w600,
                           letterSpacing: 0.4 * s,
                           lineHeight: 12 * s,
-                          color: const Color(0xFFE05316),
+                          color: p.emberDark,
                         ),
                       ],
                     ),
@@ -185,7 +187,7 @@ class PulseCard extends StatelessWidget {
               width: 326 * s,
               height: 60 * s,
               decoration: BoxDecoration(
-                color: const Color(0xFFF3F4F0).withValues(alpha: 0.4),
+                color: p.panel.withValues(alpha: 0.4),
                 borderRadius: BorderRadius.circular(12 * s),
               ),
               padding: EdgeInsets.symmetric(horizontal: 8 * s, vertical: 8 * s),
@@ -240,7 +242,7 @@ class _DayCell extends StatelessWidget {
                 width: 28 * s,
                 height: 39 * s,
                 decoration: BoxDecoration(
-                  color: const Color(0xFFD1FAE5),
+                  color: p.mintSoft,
                   borderRadius: BorderRadius.circular(14 * s),
                 ),
               ),
@@ -254,7 +256,7 @@ class _DayCell extends StatelessWidget {
                 weight: isToday ? FontWeight.w700 : FontWeight.w600,
                 letterSpacing: 0.4 * s,
                 lineHeight: 12 * s,
-                color: isToday ? const Color(0xFFE05316) : const Color(0xFF57423B),
+                color: isToday ? p.emberDark : p.body,
                 align: TextAlign.center,
                 width: 28 * s,
               ),
@@ -263,12 +265,12 @@ class _DayCell extends StatelessWidget {
                 width: 28 * s,
                 height: 28 * s,
                 decoration: BoxDecoration(
-                  color: isToday ? null : const Color(0xFFD1FAE5),
+                  color: isToday ? null : p.mintSoft,
                   gradient: isToday
-                      ? const LinearGradient(
+                      ? LinearGradient(
                           begin: Alignment.topLeft,
                           end: Alignment.bottomRight,
-                          colors: [Color(0xFFFF8A54), Color(0xFFFF6B2C)],
+                          colors: [p.emberLight, p.ember],
                         )
                       : null,
                   shape: BoxShape.circle,
@@ -304,14 +306,14 @@ class _PulseRingPainter extends CustomPainter {
       ..style = PaintingStyle.stroke
       ..strokeWidth = stroke
       ..strokeCap = StrokeCap.round
-      ..color = const Color(0xFFEDEEEB);
+      ..color = p.container;
     canvas.drawArc(rect, 0, 6.2832, false, track);
 
     final progress = Paint()
       ..style = PaintingStyle.stroke
       ..strokeWidth = stroke
       ..strokeCap = StrokeCap.round
-      ..color = const Color(0xFF10B981);
+      ..color = p.success;
     canvas.drawArc(rect, -1.5708, 6.2832 * 0.6, false, progress);
   }
 

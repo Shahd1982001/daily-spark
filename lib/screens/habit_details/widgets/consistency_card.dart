@@ -1,54 +1,56 @@
 import 'package:flutter/material.dart';
 
+import 'package:daily_spark/design_system/theme/spark_palette.dart';
+
 import 'package:daily_spark/design_system/widgets/design_canvas.dart' show figmaText;
 
 /// "November Consistency" calendar card on Habit Details.
 /// Figma: 358 × 390 at (16, 718).
 class ConsistencyCard extends StatelessWidget {
-  const ConsistencyCard({super.key, required this.scale});
+  ConsistencyCard({super.key, required this.scale});
 
   final double scale;
 
-  static const _ink = Color(0xFF191C1A);
-  static const _brown = Color(0xFF57423B);
+  static Color get _ink => p.ink;
+  static Color get _brown => p.body;
 
   /// day label, background, text colour, bold
-  static const List<List<Object>> _days = [
-    ['28', Color(0xFFF3F4F0), Color(0x6657423B), false],
-    ['29', Color(0xFFF3F4F0), Color(0x6657423B), false],
-    ['30', Color(0xFFF3F4F0), Color(0x6657423B), false],
-    ['1', Color(0xFF9F3C16), Colors.white, false],
-    ['2', Color(0xFF9F3C16), Colors.white, false],
-    ['3', Color(0xFFEDEEEB), Color(0xFF57423B), false],
-    ['4', Color(0xFF9F3C16), Colors.white, false],
-    ['5', Color(0xFF9F3C16), Colors.white, false],
-    ['6', Color(0xFF9F3C16), Colors.white, false],
-    ['7', Color(0xFF9F3C16), Colors.white, false],
-    ['8', Color(0xFF9F3C16), Colors.white, false],
-    ['9', Color(0xFFEDEEEB), Color(0xFF57423B), false],
-    ['10', Color(0xFF9F3C16), Colors.white, false],
-    ['11', Color(0xFF9F3C16), Colors.white, false],
-    ['12', Color(0xFF9F3C16), Colors.white, false],
-    ['13', Color(0xFF9F3C16), Colors.white, false],
-    ['14', Color(0xFF9F3C16), Colors.white, false],
-    ['15', Color(0xFF9F3C16), Colors.white, false],
-    ['16', Color(0xFF9F3C16), Colors.white, false],
-    ['17', Color(0xFF9F3C16), Colors.white, false],
-    ['18', Color(0xFF9F3C16), Colors.white, false],
-    ['19', Color(0xFF9F3C16), Colors.white, false],
-    ['20', Color(0xFF9F3C16), Colors.white, false],
-    ['21', Color(0xFF9F3C16), Colors.white, false],
-    ['22', Color(0xFF9F3C16), Colors.white, false],
-    ['23', Color(0xFF9F3C16), Colors.white, false],
-    ['24', Color(0xFF3A6750), Colors.white, true],
-    ['25', Color(0xFFF3F4F0), Color(0xFF191C1A), false],
-    ['26', Color(0xFFF3F4F0), Color(0xFF191C1A), false],
-    ['27', Color(0xFFF3F4F0), Color(0xFF191C1A), false],
-    ['28', Color(0xFFF3F4F0), Color(0xFF191C1A), false],
-    ['29', Color(0xFFF3F4F0), Color(0xFF191C1A), false],
-    ['30', Color(0xFFF3F4F0), Color(0xFF191C1A), false],
-    ['1', Color(0xFFF3F4F0), Color(0x6657423B), false],
-    ['2', Color(0xFFF3F4F0), Color(0x6657423B), false],
+  static List<List<Object>> _days = [
+    ['28', p.panel, p.body.withValues(alpha: 0.4), false],
+    ['29', p.panel, p.body.withValues(alpha: 0.4), false],
+    ['30', p.panel, p.body.withValues(alpha: 0.4), false],
+    ['1', p.emberDeep, Colors.white, false],
+    ['2', p.emberDeep, Colors.white, false],
+    ['3', p.container, p.body, false],
+    ['4', p.emberDeep, Colors.white, false],
+    ['5', p.emberDeep, Colors.white, false],
+    ['6', p.emberDeep, Colors.white, false],
+    ['7', p.emberDeep, Colors.white, false],
+    ['8', p.emberDeep, Colors.white, false],
+    ['9', p.container, p.body, false],
+    ['10', p.emberDeep, Colors.white, false],
+    ['11', p.emberDeep, Colors.white, false],
+    ['12', p.emberDeep, Colors.white, false],
+    ['13', p.emberDeep, Colors.white, false],
+    ['14', p.emberDeep, Colors.white, false],
+    ['15', p.emberDeep, Colors.white, false],
+    ['16', p.emberDeep, Colors.white, false],
+    ['17', p.emberDeep, Colors.white, false],
+    ['18', p.emberDeep, Colors.white, false],
+    ['19', p.emberDeep, Colors.white, false],
+    ['20', p.emberDeep, Colors.white, false],
+    ['21', p.emberDeep, Colors.white, false],
+    ['22', p.emberDeep, Colors.white, false],
+    ['23', p.emberDeep, Colors.white, false],
+    ['24', p.sage, Colors.white, true],
+    ['25', p.panel, p.ink, false],
+    ['26', p.panel, p.ink, false],
+    ['27', p.panel, p.ink, false],
+    ['28', p.panel, p.ink, false],
+    ['29', p.panel, p.ink, false],
+    ['30', p.panel, p.ink, false],
+    ['1', p.panel, p.body.withValues(alpha: 0.4), false],
+    ['2', p.panel, p.body.withValues(alpha: 0.4), false],
   ];
 
   @override
@@ -58,7 +60,7 @@ class ConsistencyCard extends StatelessWidget {
       width: 358 * s,
       height: 390 * s,
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: p.surface,
         borderRadius: BorderRadius.circular(16 * s),
         boxShadow: [
           BoxShadow(
@@ -173,15 +175,15 @@ class ConsistencyCard extends StatelessWidget {
             top: 350 * s,
             child: Row(
               children: [
-                _LegendDot(scale: s, color: const Color(0xFF9F3C16)),
+                _LegendDot(scale: s, color: p.emberDeep),
                 SizedBox(width: 6 * s),
                 _legendText(s, 'Completed'),
                 SizedBox(width: 30 * s),
-                _LegendDot(scale: s, color: const Color(0xFF3A6750)),
+                _LegendDot(scale: s, color: p.sage),
                 SizedBox(width: 6 * s),
                 _legendText(s, 'Today'),
                 SizedBox(width: 30 * s),
-                _LegendDot(scale: s, color: const Color(0xFFEDEEEB)),
+                _LegendDot(scale: s, color: p.container),
                 SizedBox(width: 6 * s),
                 _legendText(s, 'Missed'),
               ],
@@ -198,7 +200,7 @@ class ConsistencyCard extends StatelessWidget {
         weight: FontWeight.w600,
         letterSpacing: 0.4 * s,
         lineHeight: 12 * s,
-        color: const Color(0xFF57423B),
+        color: p.body,
       );
 }
 

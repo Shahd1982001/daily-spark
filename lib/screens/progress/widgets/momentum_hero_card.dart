@@ -3,6 +3,8 @@ import 'dart:ui' show ImageFilter;
 
 import 'package:flutter/material.dart';
 
+import 'package:daily_spark/design_system/theme/spark_palette.dart';
+
 import 'package:daily_spark/design_system/widgets/design_canvas.dart' show figmaText;
 
 /// Progress · hero momentum card — Figma 358 × 304, r24.
@@ -16,7 +18,7 @@ class MomentumHeroCard extends StatelessWidget {
   final double scale;
   final double percent;
 
-  static const _brown = Color(0xFF57423B);
+  static Color get _brown => p.body;
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +28,7 @@ class MomentumHeroCard extends StatelessWidget {
       child: Container(
         width: 358 * s,
         height: 304 * s,
-        color: const Color(0xFFF3F4F0),
+        color: p.panel,
         child: Stack(
           clipBehavior: Clip.none,
           children: [
@@ -34,12 +36,12 @@ class MomentumHeroCard extends StatelessWidget {
             Positioned(
               left: 214 * s,
               top: 24 * s,
-              child: _Blob(size: 192 * s, color: const Color(0xFF9F3C16)),
+              child: _Blob(size: 192 * s, color: p.emberDeep),
             ),
             Positioned(
               left: -48 * s,
               top: 264 * s,
-              child: _Blob(size: 192 * s, color: const Color(0xFF7E5300)),
+              child: _Blob(size: 192 * s, color: p.ochre),
             ),
             // gauge
             Positioned(
@@ -68,7 +70,7 @@ class MomentumHeroCard extends StatelessWidget {
                           size: 16 * s,
                           weight: FontWeight.w400,
                           lineHeight: 20 * s,
-                          color: const Color(0xFFFDBA54),
+                          color: p.gold,
                         ),
                       ),
                     ),
@@ -86,7 +88,7 @@ class MomentumHeroCard extends StatelessWidget {
                             weight: FontWeight.w700,
                             letterSpacing: -2 * s,
                             lineHeight: 46 * s,
-                            color: const Color(0xFF191C1A),
+                            color: p.ink,
                           ),
                           Padding(
                             padding: EdgeInsets.only(top: 16 * s),
@@ -95,7 +97,7 @@ class MomentumHeroCard extends StatelessWidget {
                               size: 22 * s,
                               weight: FontWeight.w600,
                               lineHeight: 26 * s,
-                              color: const Color(0xFF9F3C16),
+                              color: p.emberDeep,
                             ),
                           ),
                         ],
@@ -128,7 +130,7 @@ class MomentumHeroCard extends StatelessWidget {
                 height: 24 * s,
                 padding: EdgeInsets.symmetric(horizontal: 12 * s),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: p.surface,
                   borderRadius: BorderRadius.circular(999 * s),
                   boxShadow: [
                     BoxShadow(
@@ -144,7 +146,7 @@ class MomentumHeroCard extends StatelessWidget {
                     Icon(
                       Icons.bolt_rounded,
                       size: 14 * s,
-                      color: const Color(0xFF9F3C16),
+                      color: p.emberDeep,
                     ),
                     SizedBox(width: 5 * s),
                     figmaText(
@@ -152,7 +154,7 @@ class MomentumHeroCard extends StatelessWidget {
                       size: 12 * s,
                       weight: FontWeight.w600,
                       lineHeight: 16 * s,
-                      color: const Color(0xFF191C1A),
+                      color: p.ink,
                     ),
                   ],
                 ),
@@ -220,12 +222,12 @@ class _GaugePainter extends CustomPainter {
       ..style = PaintingStyle.stroke
       ..strokeWidth = stroke
       ..strokeCap = StrokeCap.round
-      ..color = const Color(0xFFEDEEEB);
+      ..color = p.container;
     final fill = Paint()
       ..style = PaintingStyle.stroke
       ..strokeWidth = stroke
       ..strokeCap = StrokeCap.round
-      ..color = const Color(0xFFFF6B2C);
+      ..color = p.ember;
 
     canvas.drawArc(rect, 0, math.pi * 2, false, track);
     canvas.drawArc(rect, -math.pi / 2, math.pi * 2 * progress, false, fill);

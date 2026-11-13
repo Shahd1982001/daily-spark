@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'package:daily_spark/design_system/theme/spark_palette.dart';
+
 import 'package:daily_spark/design_system/widgets/design_canvas.dart' show figmaText;
 
 /// Progress · Milestone & Rewards — Figma 358 × 186, r24.
@@ -16,7 +18,7 @@ class MilestoneCard extends StatelessWidget {
       width: 358 * s,
       height: 186 * s,
       decoration: BoxDecoration(
-        color: const Color(0xFFF3F4F0),
+        color: p.panel,
         borderRadius: BorderRadius.circular(24 * s),
       ),
       child: Stack(
@@ -28,11 +30,11 @@ class MilestoneCard extends StatelessWidget {
               width: 48 * s,
               height: 48 * s,
               decoration: BoxDecoration(
-                color: const Color(0xFFFFDDB2),
+                color: p.goldSoft,
                 borderRadius: BorderRadius.circular(16 * s),
               ),
               child: Icon(Icons.emoji_events_rounded,
-                  size: 24 * s, color: const Color(0xFF291800)),
+                  size: 24 * s, color: p.onGold),
             ),
           ),
           Positioned(
@@ -44,7 +46,7 @@ class MilestoneCard extends StatelessWidget {
               weight: FontWeight.w600,
               letterSpacing: -0.08 * s,
               lineHeight: 22 * s,
-              color: const Color(0xFF191C1A),
+              color: p.ink,
             ),
           ),
           Positioned(
@@ -55,7 +57,7 @@ class MilestoneCard extends StatelessWidget {
               height: 15 * s,
               alignment: Alignment.center,
               decoration: BoxDecoration(
-                color: const Color(0xFFFFDDB2),
+                color: p.goldSoft,
                 borderRadius: BorderRadius.circular(999 * s),
               ),
               child: figmaText(
@@ -63,7 +65,7 @@ class MilestoneCard extends StatelessWidget {
                 size: 10 * s,
                 weight: FontWeight.w700,
                 lineHeight: 12 * s,
-                color: const Color(0xFF291800),
+                color: p.onGold,
               ),
             ),
           ),
@@ -79,7 +81,7 @@ class MilestoneCard extends StatelessWidget {
               weight: FontWeight.w400,
               letterSpacing: 0.12 * s,
               lineHeight: 16 * s,
-              color: const Color(0xFF57423B),
+              color: p.body,
             ),
           ),
           Positioned(
@@ -96,11 +98,11 @@ class MilestoneCard extends StatelessWidget {
                     weight: FontWeight.w600,
                     letterSpacing: 0.24 * s,
                     lineHeight: 16 * s,
-                    color: const Color(0xFF9F3C16),
+                    color: p.emberDeep,
                   ),
                   SizedBox(width: 4 * s),
                   Icon(Icons.arrow_forward_rounded,
-                      size: 12 * s, color: const Color(0xFF9F3C16)),
+                      size: 12 * s, color: p.emberDeep),
                 ],
               ),
             ),

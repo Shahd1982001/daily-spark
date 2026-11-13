@@ -2,7 +2,8 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 
-import 'package:daily_spark/design_system/theme/app_colors.dart';
+import 'package:daily_spark/design_system/theme/spark_palette.dart';
+
 
 /// The progress arc used for "Consistency", "Daily Pulse", "Target" rings.
 class SparkRing extends StatelessWidget {
@@ -11,7 +12,7 @@ class SparkRing extends StatelessWidget {
     required this.progress,
     this.size = 120,
     this.strokeWidth = 10,
-    this.colors = const [AppColors.sparkOrange, AppColors.primaryEmber],
+    this.colors,
     this.trackColor,
     this.child,
     this.startAngle = -math.pi / 2,
@@ -22,7 +23,7 @@ class SparkRing extends StatelessWidget {
   final double progress;
   final double size;
   final double strokeWidth;
-  final List<Color> colors;
+  final List<Color>? colors;
   final Color? trackColor;
   final Widget? child;
   final double startAngle;
@@ -39,8 +40,8 @@ class SparkRing extends StatelessWidget {
         painter: _RingPainter(
           progress: progress.clamp(0.0, 1.0),
           strokeWidth: strokeWidth,
-          colors: colors,
-          track: trackColor ?? (isDark ? AppColors.darkSurfaceHigh : AppColors.surfaceContainer),
+          colors: colors ?? [p.ember, p.emberDeep],
+          track: trackColor ?? (isDark ? p.panel : p.container),
           startAngle: startAngle,
           sweepMultiplier: sweepMultiplier,
         ),

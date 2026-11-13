@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'package:daily_spark/design_system/theme/spark_palette.dart';
+
 import 'package:daily_spark/design_system/widgets/design_canvas.dart' show figmaText;
 
 /// PURE UI — Login.
@@ -30,14 +32,14 @@ class LoginScreen extends StatelessWidget {
   final VoidCallback? onGuest;
   final VoidCallback? onSignUp;
 
-  static const _canvas = Color(0xFFF8FAF6);
-  static const _ink = Color(0xFF191C1A);
-  static const _brown = Color(0xFF57423B);
-  static const _ember = Color(0xFFFF6B2C);
-  static const _deepEmber = Color(0xFF9F3C16);
-  static const _loginLink = Color(0xFFE05316);
-  static const _outlineWarm = Color(0xFF8A726A);
-  static const _sage = Color(0xFF3A6750);
+  static Color get _canvas => p.canvas;
+  static Color get _ink => p.ink;
+  static Color get _brown => p.body;
+  static Color get _ember => p.ember;
+  static Color get _deepEmber => p.emberDeep;
+  static Color get _loginLink => p.emberDark;
+  static Color get _outlineWarm => p.muted;
+  static Color get _sage => p.sage;
 
   @override
   Widget build(BuildContext context) {
@@ -219,7 +221,7 @@ class _TopBar extends StatelessWidget {
               width: 44 * s,
               height: 44 * s,
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: p.surface,
                 shape: BoxShape.circle,
                 boxShadow: [
                   BoxShadow(
@@ -232,16 +234,16 @@ class _TopBar extends StatelessWidget {
               child: Icon(
                 Icons.arrow_back_rounded,
                 size: 18 * s,
-                color: const Color(0xFF191C1A),
+                color: p.ink,
               ),
             ),
           ),
-          const Spacer(),
+          Spacer(),
           Container(
             height: 28 * s,
             padding: EdgeInsets.symmetric(horizontal: 12 * s),
-            decoration: const BoxDecoration(
-              color: Color(0xFFF3F4F0),
+            decoration: BoxDecoration(
+              color: p.panel,
               borderRadius: BorderRadius.all(Radius.circular(999)),
             ),
             child: Row(
@@ -259,7 +261,7 @@ class _TopBar extends StatelessWidget {
                   size: 12 * s,
                   weight: FontWeight.w600,
                   lineHeight: 16 * s,
-                  color: const Color(0xFF191C1A),
+                  color: p.ink,
                 ),
               ],
             ),
@@ -284,8 +286,8 @@ class _EyebrowChip extends StatelessWidget {
     return Container(
       height: 20 * s,
       padding: EdgeInsets.symmetric(horizontal: 12 * s),
-      decoration: const BoxDecoration(
-        color: Color(0xFFFFF0E8),
+      decoration: BoxDecoration(
+        color: p.emberTile,
         borderRadius: BorderRadius.all(Radius.circular(999)),
       ),
       child: Row(
@@ -294,8 +296,8 @@ class _EyebrowChip extends StatelessWidget {
           Container(
             width: 6 * s,
             height: 6 * s,
-            decoration: const BoxDecoration(
-              color: Color(0xFF9F3C16),
+            decoration: BoxDecoration(
+              color: p.emberDeep,
               shape: BoxShape.circle,
             ),
           ),
@@ -306,7 +308,7 @@ class _EyebrowChip extends StatelessWidget {
             weight: FontWeight.w700,
             letterSpacing: 0.5 * s,
             lineHeight: 12 * s,
-            color: const Color(0xFFE05316),
+            color: p.emberDark,
           ),
         ],
       ),
@@ -328,7 +330,7 @@ class _StreakBanner extends StatelessWidget {
     return Container(
       height: 60 * s,
       decoration: BoxDecoration(
-        color: const Color(0x4DFFDDB2),
+        color: p.goldSoft.withValues(alpha: 0.302),
         borderRadius: BorderRadius.circular(16 * s),
       ),
       padding: EdgeInsets.symmetric(horizontal: 14 * s),
@@ -338,13 +340,13 @@ class _StreakBanner extends StatelessWidget {
             width: 32 * s,
             height: 32 * s,
             decoration: BoxDecoration(
-              color: const Color(0xFFFFF0E8),
+              color: p.emberTile,
               borderRadius: BorderRadius.circular(12 * s),
             ),
             child: Icon(
               Icons.local_fire_department_rounded,
               size: 16 * s,
-              color: const Color(0xFFFF6B2C),
+              color: p.ember,
             ),
           ),
           SizedBox(width: 12 * s),
@@ -357,14 +359,14 @@ class _StreakBanner extends StatelessWidget {
                 size: 12 * s,
                 weight: FontWeight.w600,
                 lineHeight: 16 * s,
-                color: const Color(0xFF191C1A),
+                color: p.ink,
               ),
               figmaText(
                 'Check in today to keep momentum alive.',
                 size: 12 * s,
                 weight: FontWeight.w500,
                 lineHeight: 16 * s,
-                color: const Color(0xFF7E5300),
+                color: p.ochre,
               ),
             ],
           ),
@@ -393,7 +395,7 @@ class _FieldLabel extends StatelessWidget {
         weight: FontWeight.w700,
         letterSpacing: 0.4 * scale,
         lineHeight: 12 * scale,
-        color: const Color(0xFF57423B),
+        color: p.body,
       ),
     );
   }
@@ -426,7 +428,7 @@ class _InputField extends StatelessWidget {
     return Container(
       height: 52 * s,
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: p.surface,
         borderRadius: BorderRadius.circular(16 * s),
         boxShadow: [
           BoxShadow(
@@ -444,7 +446,7 @@ class _InputField extends StatelessWidget {
             height: iconHeight,
             child: FittedBox(
               fit: BoxFit.contain,
-              child: Icon(icon, color: const Color(0xFF8A726A)),
+              child: Icon(icon, color: p.muted),
             ),
           ),
           SizedBox(width: iconGap ?? 9 * s),
@@ -458,9 +460,9 @@ class _InputField extends StatelessWidget {
                 height: 18 / 14,
                 letterSpacing: 0,
                 fontWeight: FontWeight.w400,
-                color: const Color(0xFF191C1A),
+                color: p.ink,
               ),
-              cursorColor: const Color(0xFFFF6B2C),
+              cursorColor: p.ember,
               cursorWidth: 1.2 * s,
               decoration: const InputDecoration(
                 isCollapsed: true,
@@ -495,11 +497,11 @@ class _EyeButton extends StatelessWidget {
       child: Container(
         width: 32 * s,
         height: 32 * s,
-        decoration: const BoxDecoration(shape: BoxShape.circle),
+        decoration: BoxDecoration(shape: BoxShape.circle),
         child: Icon(
           obscured ? Icons.visibility_outlined : Icons.visibility_off_outlined,
           size: 18 * s,
-          color: const Color(0xFF8A726A),
+          color: p.muted,
         ),
       ),
     );
@@ -525,10 +527,10 @@ class _PrimaryButton extends StatelessWidget {
         height: 52 * s,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(16 * s),
-          gradient: const LinearGradient(
+          gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: [Color(0xFFFF8A54), Color(0xFFFF6B2C)],
+            colors: [p.emberLight, p.ember],
           ),
         ),
         child: Row(
@@ -539,7 +541,7 @@ class _PrimaryButton extends StatelessWidget {
               size: 14 * s,
               weight: FontWeight.w600,
               lineHeight: 18 * s,
-              color: Colors.white,
+              color: p.surface,
             ),
             SizedBox(width: 9 * s),
             SizedBox(
@@ -573,7 +575,7 @@ class _OrDivider extends StatelessWidget {
       child: Row(
         children: [
           Expanded(
-            child: Container(height: 1, color: const Color(0xFFE1E3DF)),
+            child: Container(height: 1, color: p.bone),
           ),
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 12 * s),
@@ -583,11 +585,11 @@ class _OrDivider extends StatelessWidget {
               weight: FontWeight.w600,
               letterSpacing: 0.4 * s,
               lineHeight: 12 * s,
-              color: const Color(0xFF8A726A),
+              color: p.muted,
             ),
           ),
           Expanded(
-            child: Container(height: 1, color: const Color(0xFFE1E3DF)),
+            child: Container(height: 1, color: p.bone),
           ),
         ],
       ),
@@ -613,7 +615,7 @@ class _GuestButton extends StatelessWidget {
       child: Container(
         height: 48 * s,
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: p.surface,
           borderRadius: BorderRadius.circular(16 * s),
           boxShadow: [
             BoxShadow(
@@ -629,9 +631,9 @@ class _GuestButton extends StatelessWidget {
             SizedBox(
               width: 15 * s,
               height: 15 * s,
-              child: const FittedBox(
+              child: FittedBox(
                 fit: BoxFit.contain,
-                child: Icon(Icons.explore_outlined, color: Color(0xFF3A6750)),
+                child: Icon(Icons.explore_outlined, color: p.sage),
               ),
             ),
             SizedBox(width: 8 * s),
@@ -640,7 +642,7 @@ class _GuestButton extends StatelessWidget {
               size: 14 * s,
               weight: FontWeight.w500,
               lineHeight: 18 * s,
-              color: const Color(0xFF191C1A),
+              color: p.ink,
             ),
           ],
         ),
@@ -666,7 +668,7 @@ class _LegalLinks extends StatelessWidget {
       height: 12 / 10,
       letterSpacing: 0.4 * s,
       fontWeight: FontWeight.w600,
-      color: const Color(0xFF57423B).withValues(alpha: 0.7),
+      color: p.body.withValues(alpha: 0.7),
       decoration: TextDecoration.none,
     );
     return RichText(

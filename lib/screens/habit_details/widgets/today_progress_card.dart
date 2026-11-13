@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'package:daily_spark/design_system/theme/spark_palette.dart';
+
 import 'package:daily_spark/design_system/widgets/design_canvas.dart' show figmaText;
 
 /// "Today's completion" card on Habit Details.
@@ -20,8 +22,8 @@ class TodayProgressCard extends StatelessWidget {
   final VoidCallback? onPlusTen;
   final VoidCallback? onToggleComplete;
 
-  static const _ink = Color(0xFF191C1A);
-  static const _brown = Color(0xFF57423B);
+  static Color get _ink => p.ink;
+  static Color get _brown => p.body;
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +32,7 @@ class TodayProgressCard extends StatelessWidget {
       width: 358 * s,
       height: 260 * s,
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: p.surface,
         borderRadius: BorderRadius.circular(16 * s),
         boxShadow: [
           BoxShadow(
@@ -73,8 +75,8 @@ class TodayProgressCard extends StatelessWidget {
             child: Container(
               width: 99 * s,
               height: 24 * s,
-              decoration: const BoxDecoration(
-                color: Color(0xFFBCEED1),
+              decoration: BoxDecoration(
+                color: p.mint,
                 borderRadius: BorderRadius.all(Radius.circular(999)),
               ),
               child: Row(
@@ -83,8 +85,8 @@ class TodayProgressCard extends StatelessWidget {
                   Container(
                     width: 13 * s,
                     height: 13 * s,
-                    decoration: const BoxDecoration(
-                      color: Color(0xFF224F3A),
+                    decoration: BoxDecoration(
+                      color: p.pineDark,
                       shape: BoxShape.circle,
                     ),
                     child: Icon(Icons.check_rounded, size: 9 * s, color: Colors.white),
@@ -96,7 +98,7 @@ class TodayProgressCard extends StatelessWidget {
                     weight: FontWeight.w500,
                     letterSpacing: 0.24 * s,
                     lineHeight: 16 * s,
-                    color: const Color(0xFF224F3A),
+                    color: p.pineDark,
                   ),
                 ],
               ),
@@ -110,12 +112,12 @@ class TodayProgressCard extends StatelessWidget {
               width: 310 * s,
               height: 10 * s,
               decoration: BoxDecoration(
-                color: const Color(0xFFEDEEEB),
+                color: p.container,
                 borderRadius: BorderRadius.circular(999),
               ),
               child: Container(
                 decoration: BoxDecoration(
-                  color: const Color(0xFF3A6750),
+                  color: p.sage,
                   borderRadius: BorderRadius.circular(999),
                 ),
               ),
@@ -202,10 +204,10 @@ class TodayProgressCard extends StatelessWidget {
                 width: 40 * s,
                 height: 40 * s,
                 decoration: BoxDecoration(
-                  gradient: const LinearGradient(
+                  gradient: LinearGradient(
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
-                    colors: [Color(0xFF16C48C), Color(0xFF10B981)],
+                    colors: [Color(0xFF16C48C), p.success],
                   ),
                   borderRadius: BorderRadius.circular(12 * s),
                 ),
@@ -221,7 +223,7 @@ class TodayProgressCard extends StatelessWidget {
               width: 310 * s,
               height: 48 * s,
               decoration: BoxDecoration(
-                color: const Color(0xFFF3F4F0),
+                color: p.panel,
                 borderRadius: BorderRadius.circular(12 * s),
               ),
               child: Row(
@@ -235,7 +237,7 @@ class TodayProgressCard extends StatelessWidget {
                         size: 20 * s,
                         weight: FontWeight.w400,
                         lineHeight: 24 * s,
-                        color: const Color(0xFF3A6750),
+                        color: p.sage,
                       ),
                     ),
                   ),
@@ -247,7 +249,7 @@ class TodayProgressCard extends StatelessWidget {
                       weight: FontWeight.w400,
                       letterSpacing: 0.12 * s,
                       lineHeight: 16 * s,
-                      color: const Color(0xFF406D56),
+                      color: p.pine,
                     ),
                   ),
                   SizedBox(width: 12 * s),
@@ -285,7 +287,7 @@ class _StepperButton extends StatelessWidget {
         height: 40 * s,
         alignment: Alignment.center,
         decoration: BoxDecoration(
-          color: const Color(0xFFEDEEEB),
+          color: p.container,
           borderRadius: BorderRadius.circular(12 * s),
         ),
         child: child,

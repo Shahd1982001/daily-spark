@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'package:daily_spark/design_system/theme/spark_palette.dart';
+
 import 'package:daily_spark/design_system/widgets/app_bottom_nav.dart';
 import 'package:daily_spark/design_system/widgets/app_top_bar.dart';
 import 'package:daily_spark/design_system/widgets/design_canvas.dart' show figmaText;
@@ -29,6 +31,7 @@ class ProfileScreen extends StatelessWidget {
     this.onNavTap,
     this.remindersOn = true,
     this.soundOn = true,
+    this.themeDark = false,
   });
 
   final VoidCallback? onSettings;
@@ -47,8 +50,9 @@ class ProfileScreen extends StatelessWidget {
   final ValueChanged<int>? onNavTap;
   final bool remindersOn;
   final bool soundOn;
+  final bool themeDark;
 
-  static const _brown = Color(0xFF57423B);
+  static Color get _brown => p.body;
 
   @override
   Widget build(BuildContext context) {
@@ -56,7 +60,7 @@ class ProfileScreen extends StatelessWidget {
     final s = (width / 390).clamp(0.86, 1.25);
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF8FAF6),
+      backgroundColor: p.canvas,
       body: Stack(
         children: [
           Positioned.fill(
@@ -82,9 +86,9 @@ class ProfileScreen extends StatelessWidget {
                               value: '12d',
                               label: 'Streak',
                               icon: Icons.local_fire_department_rounded,
-                              iconColor: const Color(0xFF9F3C16),
+                              iconColor: p.emberDeep,
                               overlayColor:
-                                  const Color(0xFF9F3C16).withValues(alpha: 0.10),
+                                  p.emberDeep.withValues(alpha: 0.10),
                             ),
                             SizedBox(width: 8 * s),
                             StatTile(
@@ -92,9 +96,9 @@ class ProfileScreen extends StatelessWidget {
                               value: '100',
                               label: 'Completed',
                               icon: Icons.check_circle_rounded,
-                              iconColor: const Color(0xFF3A6750),
+                              iconColor: p.sage,
                               overlayColor:
-                                  const Color(0xFF3A6750).withValues(alpha: 0.10),
+                                  p.sage.withValues(alpha: 0.10),
                             ),
                             SizedBox(width: 8 * s),
                             StatTile(
@@ -102,9 +106,9 @@ class ProfileScreen extends StatelessWidget {
                               value: '6',
                               label: 'Active Habits',
                               icon: Icons.format_list_bulleted_rounded,
-                              iconColor: const Color(0xFF7E5300),
+                              iconColor: p.ochre,
                               overlayColor:
-                                  const Color(0xFFFDBA54).withValues(alpha: 0.30),
+                                  p.gold.withValues(alpha: 0.30),
                             ),
                           ],
                         ),
@@ -127,13 +131,13 @@ class ProfileScreen extends StatelessWidget {
                             SettingsRow(
                               scale: s,
                               icon: Icons.cloud_outlined,
-                              iconColor: const Color(0xFF3A6750),
+                              iconColor: p.sage,
                               title: 'Spark Cloud Sync',
                               subtitle: 'Synced just now · 100% safe',
                               height: 71,
                               valuePill: 'Active',
                               valuePillColor:
-                                  const Color(0xFF3A6750).withValues(alpha: 0.10),
+                                  p.sage.withValues(alpha: 0.10),
                               onTap: onCloudSync,
                             ),
                           ],
@@ -164,10 +168,12 @@ class ProfileScreen extends StatelessWidget {
                             ),
                             SettingsRow(
                               scale: s,
-                              icon: Icons.wb_sunny_outlined,
+                              icon: themeDark
+                                  ? Icons.nightlight_round
+                                  : Icons.wb_sunny_outlined,
                               title: 'Appearance & Theme',
                               height: 69,
-                              value: 'Warm Light',
+                              value: themeDark ? 'Midnight' : 'Warm Light',
                               onTap: onAppearance,
                             ),
                             SettingsRow(
@@ -196,7 +202,7 @@ class ProfileScreen extends StatelessWidget {
                             SettingsRow(
                               scale: s,
                               icon: Icons.info_outline_rounded,
-                              iconColor: const Color(0xFF9F3C16),
+                              iconColor: p.emberDeep,
                               title: 'About Daily Spark',
                               height: 69,
                               value: 'v2.4.0',
@@ -274,7 +280,7 @@ class ProfileScreen extends StatelessWidget {
               weight: FontWeight.w600,
               letterSpacing: -0.45 * s,
               lineHeight: 24 * s,
-              color: const Color(0xFF191C1A),
+              color: p.ink,
             ),
           ),
           Positioned(
@@ -300,7 +306,7 @@ class ProfileScreen extends StatelessWidget {
         width: 44 * s,
         height: 44 * s,
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: p.surface,
           shape: BoxShape.circle,
           boxShadow: [
             BoxShadow(
@@ -328,7 +334,7 @@ class ProfileScreen extends StatelessWidget {
               width: 358 * s,
               height: 48 * s,
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: p.surface,
                 borderRadius: BorderRadius.circular(12 * s),
                 boxShadow: [
                   BoxShadow(

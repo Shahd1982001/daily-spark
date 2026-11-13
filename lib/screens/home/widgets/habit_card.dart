@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'package:daily_spark/design_system/theme/spark_palette.dart';
+
 import 'package:daily_spark/design_system/widgets/design_canvas.dart' show figmaText;
 
 /// One habit row inside the Home routine stack.
@@ -32,8 +34,8 @@ class HabitCard extends StatelessWidget {
   final VoidCallback? onToggle;
   final VoidCallback? onTap;
 
-  static const _ink = Color(0xFF191C1A);
-  static const _brown = Color(0xFF57423B);
+  static Color get _ink => p.ink;
+  static Color get _brown => p.body;
 
   @override
   Widget build(BuildContext context) {
@@ -45,7 +47,7 @@ class HabitCard extends StatelessWidget {
         width: 358 * s,
         height: 76 * s,
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: p.surface,
           borderRadius: BorderRadius.circular(16 * s),
           boxShadow: [
             BoxShadow(
@@ -94,7 +96,7 @@ class HabitCard extends StatelessWidget {
                       padding: EdgeInsets.symmetric(horizontal: 6 * s),
                       height: 12 * s,
                       decoration: BoxDecoration(
-                        color: const Color(0xFFFFE6D9),
+                        color: p.emberTile,
                         borderRadius: BorderRadius.circular(6 * s),
                       ),
                       child: Center(
@@ -104,7 +106,7 @@ class HabitCard extends StatelessWidget {
                           weight: FontWeight.w600,
                           letterSpacing: 0.4 * s,
                           lineHeight: 12 * s,
-                          color: const Color(0xFFE05316),
+                          color: p.emberDark,
                         ),
                       ),
                     ),
@@ -124,8 +126,8 @@ class HabitCard extends StatelessWidget {
                         width: 4 * s,
                         height: 4 * s,
                         margin: EdgeInsets.symmetric(horizontal: 6 * s),
-                        decoration: const BoxDecoration(
-                          color: Color(0xFFDEC0B7),
+                        decoration: BoxDecoration(
+                          color: p.warmBorder,
                           shape: BoxShape.circle,
                         ),
                       ),
@@ -143,7 +145,7 @@ class HabitCard extends StatelessWidget {
                     child: Icon(
                       Icons.bolt_rounded,
                       size: 12 * s,
-                      color: const Color(0xFF7E5300),
+                      color: p.ochre,
                     ),
                   ),
                   figmaText(
@@ -152,7 +154,7 @@ class HabitCard extends StatelessWidget {
                     weight: FontWeight.w500,
                     letterSpacing: 0.12 * s,
                     lineHeight: 16 * s,
-                    color: const Color(0xFF7E5300),
+                    color: p.ochre,
                   ),
                 ],
               ),
@@ -168,13 +170,13 @@ class HabitCard extends StatelessWidget {
                   width: 40 * s,
                   height: 40 * s,
                   decoration: BoxDecoration(
-                    color: completed ? const Color(0xFF10B981) : const Color(0xFFEDEEEB),
+                    color: completed ? p.success : p.container,
                     shape: BoxShape.circle,
                   ),
                   child: Icon(
                     Icons.check_rounded,
                     size: 16 * s,
-                    color: completed ? Colors.white : const Color(0xFF57423B),
+                    color: completed ? Colors.white : p.body,
                   ),
                 ),
               ),

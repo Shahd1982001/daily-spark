@@ -78,8 +78,10 @@ class _PreviewShellState extends State<PreviewShell> {
     super.initState();
     // Only auto-advance when the splash was reached naturally (no ?s= route).
     if (_stage == _Stage.splash && _param('s') == null) {
-      _timer = Timer(const Duration(milliseconds: 2600), () {
-        if (mounted) setState(() => _stage = _Stage.onboarding);
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _timer = Timer(const Duration(milliseconds: 2600), () {
+          if (mounted) setState(() => _stage = _Stage.onboarding);
+        });
       });
     }
   }
@@ -104,6 +106,7 @@ class _PreviewShellState extends State<PreviewShell> {
   @override
   Widget build(BuildContext context) {
     final palette = _isDark ? SparkPalette.darkPalette : SparkPalette.light;
+    SparkPalette.active = palette;
     return MaterialApp(
       title: 'Daily Spark',
       debugShowCheckedModeBanner: false,
@@ -202,6 +205,7 @@ class _PreviewShellState extends State<PreviewShell> {
             onDiscard: () => _go(_Stage.habits),
           ),
         _Stage.profile => ProfileScreen(
+            themeDark: _isDark,
             onSettings: () => _toast('Settings ✦'),
             onShare: () => _toast('Share summary ✦'),
             onEdit: () => _toast('Edit profile ✦'),
@@ -210,7 +214,7 @@ class _PreviewShellState extends State<PreviewShell> {
             onCloudSync: () => _toast('Cloud sync ✦'),
             onToggleReminders: (v) => _toast('Reminders ${v ? 'on' : 'off'} ✦'),
             onToggleSound: (v) => _toast('Sound ${v ? 'on' : 'off'} ✦'),
-            onAppearance: () => _toast('Appearance ✦'),
+            onAppearance: () => setState(() => _isDark = !_isDark),
             onLanguage: () => _toast('Language ✦'),
             onGuide: () => _toast('Ritual guide ✦'),
             onAbout: () => _toast('About ✦'),

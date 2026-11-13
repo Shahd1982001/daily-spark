@@ -2,6 +2,8 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 
+import 'package:daily_spark/design_system/theme/spark_palette.dart';
+
 import 'package:daily_spark/design_system/widgets/design_canvas.dart' show figmaText;
 
 /// PURE UI — Add Habit ("New Habit").
@@ -39,9 +41,9 @@ class AddHabitScreen extends StatelessWidget {
   final VoidCallback? onIgnite;
   final VoidCallback? onDiscard;
 
-  static const _ink = Color(0xFF191C1A);
-  static const _brown = Color(0xFF57423B);
-  static const _muted = Color(0xFF8A726A);
+  static Color get _ink => p.ink;
+  static Color get _brown => p.body;
+  static Color get _muted => p.muted;
 
   @override
   Widget build(BuildContext context) {
@@ -49,7 +51,7 @@ class AddHabitScreen extends StatelessWidget {
     final s = (width / 390).clamp(0.86, 1.25);
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF8FAF6),
+      backgroundColor: p.canvas,
       body: Stack(
         children: [
           Positioned.fill(
@@ -146,7 +148,7 @@ class _AddHabitHeader extends StatelessWidget {
         filter: ImageFilter.blur(sigmaX: 12 * s, sigmaY: 12 * s),
         child: Container(
           height: 64 * s,
-          color: const Color(0xFFF8FAF6).withValues(alpha: 0.8),
+          color: p.canvas.withValues(alpha: 0.8),
           child: Stack(
             children: [
               Positioned(
@@ -158,14 +160,14 @@ class _AddHabitHeader extends StatelessWidget {
                   child: Container(
                     width: 44 * s,
                     height: 44 * s,
-                    decoration: const BoxDecoration(
-                      color: Color(0xFFF3F4F0),
+                    decoration: BoxDecoration(
+                      color: p.panel,
                       shape: BoxShape.circle,
                     ),
                     child: Icon(
                       Icons.close_rounded,
                       size: 18 * s,
-                      color: const Color(0xFF191C1A),
+                      color: p.ink,
                     ),
                   ),
                 ),
@@ -189,7 +191,7 @@ class _AddHabitHeader extends StatelessWidget {
                   weight: FontWeight.w600,
                   letterSpacing: -0.45 * s,
                   lineHeight: 24 * s,
-                  color: const Color(0xFF191C1A),
+                  color: p.ink,
                 ),
               ),
               Positioned(
@@ -201,8 +203,8 @@ class _AddHabitHeader extends StatelessWidget {
                   child: Container(
                     width: 32 * s,
                     height: 32 * s,
-                    decoration: const BoxDecoration(
-                      color: Color(0xFF9F3C16),
+                    decoration: BoxDecoration(
+                      color: p.emberDeep,
                       shape: BoxShape.circle,
                     ),
                     child: Icon(
@@ -239,8 +241,8 @@ class _SubBar extends StatelessWidget {
           Container(
             height: 24 * s,
             padding: EdgeInsets.symmetric(horizontal: 12 * s),
-            decoration: const BoxDecoration(
-              color: Color(0xFFE7E9E5),
+            decoration: BoxDecoration(
+              color: p.bone,
               borderRadius: BorderRadius.all(Radius.circular(999)),
             ),
             child: Row(
@@ -248,8 +250,8 @@ class _SubBar extends StatelessWidget {
                 Container(
                   width: 6 * s,
                   height: 6 * s,
-                  decoration: const BoxDecoration(
-                    color: Color(0xFF9F3C16),
+                  decoration: BoxDecoration(
+                    color: p.emberDeep,
                     shape: BoxShape.circle,
                   ),
                 ),
@@ -260,7 +262,7 @@ class _SubBar extends StatelessWidget {
                   weight: FontWeight.w500,
                   letterSpacing: 0.3 * s,
                   lineHeight: 16 * s,
-                  color: const Color(0xFF57423B),
+                  color: p.body,
                 ),
               ],
             ),
@@ -272,7 +274,7 @@ class _SubBar extends StatelessWidget {
             weight: FontWeight.w600,
             letterSpacing: 0.4 * s,
             lineHeight: 12 * s,
-            color: const Color(0xFFDEC0B7),
+            color: p.warmBorder,
           ),
           SizedBox(width: 11 * s),
           figmaText(
@@ -281,14 +283,14 @@ class _SubBar extends StatelessWidget {
             weight: FontWeight.w500,
             letterSpacing: 0.24 * s,
             lineHeight: 16 * s,
-            color: const Color(0xFF8A726A),
+            color: p.muted,
           ),
-          const Spacer(),
+          Spacer(),
           Container(
             height: 20 * s,
             padding: EdgeInsets.symmetric(horizontal: 10 * s),
-            decoration: const BoxDecoration(
-              color: Color(0xFFFFDDB2),
+            decoration: BoxDecoration(
+              color: p.goldSoft,
               borderRadius: BorderRadius.all(Radius.circular(999)),
             ),
             child: Center(
@@ -298,7 +300,7 @@ class _SubBar extends StatelessWidget {
                 weight: FontWeight.w600,
                 letterSpacing: 0.5 * s,
                 lineHeight: 12 * s,
-                color: const Color(0xFF291800),
+                color: p.onGold,
               ),
             ),
           ),
@@ -312,7 +314,7 @@ class _SubBar extends StatelessWidget {
 // Section 1 — identity
 // ─────────────────────────────────────────────────────────────────────────────
 class _IdentitySection extends StatelessWidget {
-  const _IdentitySection({
+  _IdentitySection({
     required this.scale,
     this.onIconSelected,
     this.onAccentSelected,
@@ -331,11 +333,11 @@ class _IdentitySection extends StatelessWidget {
     Icons.local_fire_department_rounded,
   ];
 
-  static const _accents = [
-    Color(0xFF9F3C16),
-    Color(0xFF3A6750),
-    Color(0xFF7E5300),
-    Color(0xFF2E312F),
+  static get _accents => [
+    p.emberDeep,
+    p.sage,
+    p.ochre,
+    p.slate,
   ];
 
   @override
@@ -345,7 +347,7 @@ class _IdentitySection extends StatelessWidget {
       width: 358 * s,
       height: 221 * s,
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: p.surface,
         borderRadius: BorderRadius.circular(16 * s),
         boxShadow: [
           BoxShadow(
@@ -365,13 +367,13 @@ class _IdentitySection extends StatelessWidget {
               width: 56 * s,
               height: 56 * s,
               decoration: BoxDecoration(
-                color: const Color(0xFFFFDBCF),
+                color: p.emberSoft,
                 borderRadius: BorderRadius.circular(16 * s),
               ),
               child: Icon(
                 Icons.menu_book_rounded,
                 size: 26 * s,
-                color: const Color(0xFF9F3C16),
+                color: p.emberDeep,
               ),
             ),
           ),
@@ -381,16 +383,16 @@ class _IdentitySection extends StatelessWidget {
             child: Container(
               width: 20 * s,
               height: 20 * s,
-              decoration: const BoxDecoration(
-                color: Colors.white,
+              decoration: BoxDecoration(
+                color: p.surface,
                 shape: BoxShape.circle,
               ),
               child: Center(
                 child: Container(
                   width: 14 * s,
                   height: 14 * s,
-                  decoration: const BoxDecoration(
-                    color: Color(0xFF9F3C16),
+                  decoration: BoxDecoration(
+                    color: p.emberDeep,
                     shape: BoxShape.circle,
                   ),
                   child: Icon(Icons.edit, size: 8 * s, color: Colors.white),
@@ -407,7 +409,7 @@ class _IdentitySection extends StatelessWidget {
               weight: FontWeight.w600,
               letterSpacing: 0.5 * s,
               lineHeight: 12 * s,
-              color: const Color(0xFF8A726A),
+              color: p.muted,
             ),
           ),
           Positioned(
@@ -419,7 +421,7 @@ class _IdentitySection extends StatelessWidget {
               weight: FontWeight.w600,
               letterSpacing: -0.55 * s,
               lineHeight: 28 * s,
-              color: const Color(0xFF191C1A),
+              color: p.ink,
             ),
           ),
           Positioned(
@@ -431,7 +433,7 @@ class _IdentitySection extends StatelessWidget {
               weight: FontWeight.w400,
               letterSpacing: 0.12 * s,
               lineHeight: 16 * s,
-              color: const Color(0xFF8A726A),
+              color: p.muted,
             ),
           ),
           // symbol tokens
@@ -444,7 +446,7 @@ class _IdentitySection extends StatelessWidget {
               weight: FontWeight.w600,
               letterSpacing: 0.5 * s,
               lineHeight: 12 * s,
-              color: const Color(0xFF8A726A),
+              color: p.muted,
             ),
           ),
           Positioned(
@@ -461,13 +463,13 @@ class _IdentitySection extends StatelessWidget {
                       width: 47 * s,
                       height: 44 * s,
                       decoration: BoxDecoration(
-                        color: i == 0 ? const Color(0xFFFF6B2C) : const Color(0xFFEDEEEB),
+                        color: i == 0 ? p.ember : p.container,
                         borderRadius: BorderRadius.circular(12 * s),
                       ),
                       child: Icon(
                         _icons[i],
                         size: 20 * s,
-                        color: i == 0 ? Colors.white : const Color(0xFF57423B),
+                        color: i == 0 ? Colors.white : p.body,
                       ),
                     ),
                   ),
@@ -485,7 +487,7 @@ class _IdentitySection extends StatelessWidget {
               weight: FontWeight.w600,
               letterSpacing: 0.5 * s,
               lineHeight: 12 * s,
-              color: const Color(0xFF8A726A),
+              color: p.muted,
             ),
           ),
           Positioned(
@@ -543,7 +545,7 @@ class _RhythmSection extends StatelessWidget {
       width: 358 * s,
       height: 187 * s,
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: p.surface,
         borderRadius: BorderRadius.circular(16 * s),
         boxShadow: [
           BoxShadow(
@@ -564,7 +566,7 @@ class _RhythmSection extends StatelessWidget {
               weight: FontWeight.w600,
               letterSpacing: -0.45 * s,
               lineHeight: 24 * s,
-              color: const Color(0xFF191C1A),
+              color: p.ink,
             ),
           ),
           Positioned(
@@ -573,8 +575,8 @@ class _RhythmSection extends StatelessWidget {
             child: Container(
               height: 16 * s,
               padding: EdgeInsets.symmetric(horizontal: 8 * s),
-              decoration: const BoxDecoration(
-                color: Color(0xFFBCEED1),
+              decoration: BoxDecoration(
+                color: p.mint,
                 borderRadius: BorderRadius.all(Radius.circular(999)),
               ),
               child: Center(
@@ -584,7 +586,7 @@ class _RhythmSection extends StatelessWidget {
                   weight: FontWeight.w500,
                   letterSpacing: 0.4 * s,
                   lineHeight: 12 * s,
-                  color: const Color(0xFF3A6750),
+                  color: p.sage,
                 ),
               ),
             ),
@@ -598,7 +600,7 @@ class _RhythmSection extends StatelessWidget {
               weight: FontWeight.w400,
               letterSpacing: 0.12 * s,
               lineHeight: 16 * s,
-              color: const Color(0xFF8A726A),
+              color: p.muted,
             ),
           ),
           // segmented presets
@@ -609,7 +611,7 @@ class _RhythmSection extends StatelessWidget {
               width: 326 * s,
               height: 40 * s,
               decoration: BoxDecoration(
-                color: const Color(0xFFF3F4F0),
+                color: p.panel,
                 borderRadius: BorderRadius.circular(12 * s),
               ),
               padding: EdgeInsets.all(4 * s),
@@ -625,7 +627,7 @@ class _RhythmSection extends StatelessWidget {
                         height: 32 * s,
                         alignment: Alignment.center,
                         decoration: BoxDecoration(
-                          color: i == 0 ? const Color(0xFFFF6B2C) : Colors.transparent,
+                          color: i == 0 ? p.ember : Colors.transparent,
                           borderRadius: BorderRadius.circular(8 * s),
                         ),
                         child: figmaText(
@@ -634,7 +636,7 @@ class _RhythmSection extends StatelessWidget {
                           weight: i == 0 ? FontWeight.w600 : FontWeight.w500,
                           letterSpacing: 0.24 * s,
                           lineHeight: 16 * s,
-                          color: i == 0 ? Colors.white : const Color(0xFF57423B),
+                          color: i == 0 ? Colors.white : p.body,
                         ),
                       ),
                     ),
@@ -658,7 +660,7 @@ class _RhythmSection extends StatelessWidget {
                       width: 43 * s,
                       height: 37 * s,
                       decoration: BoxDecoration(
-                        color: const Color(0xFF10B981),
+                        color: p.success,
                         borderRadius: BorderRadius.circular(12 * s),
                       ),
                       child: Column(
@@ -670,7 +672,7 @@ class _RhythmSection extends StatelessWidget {
                             weight: FontWeight.w600,
                             letterSpacing: 0.4 * s,
                             lineHeight: 12 * s,
-                            color: Colors.white,
+                            color: p.surface,
                           ),
                           SizedBox(height: 2 * s),
                           Icon(Icons.check_rounded, size: 10 * s, color: Colors.white),
@@ -713,7 +715,7 @@ class _TargetSection extends StatelessWidget {
       width: 358 * s,
       height: 207 * s,
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: p.surface,
         borderRadius: BorderRadius.circular(16 * s),
         boxShadow: [
           BoxShadow(
@@ -734,7 +736,7 @@ class _TargetSection extends StatelessWidget {
               weight: FontWeight.w600,
               letterSpacing: -0.45 * s,
               lineHeight: 24 * s,
-              color: const Color(0xFF191C1A),
+              color: p.ink,
             ),
           ),
           Positioned(
@@ -743,8 +745,8 @@ class _TargetSection extends StatelessWidget {
             child: Container(
               height: 24 * s,
               padding: EdgeInsets.symmetric(horizontal: 10 * s),
-              decoration: const BoxDecoration(
-                color: Color(0xFFFFDDB2),
+              decoration: BoxDecoration(
+                color: p.goldSoft,
                 borderRadius: BorderRadius.all(Radius.circular(999)),
               ),
               child: Center(
@@ -754,7 +756,7 @@ class _TargetSection extends StatelessWidget {
                   weight: FontWeight.w500,
                   letterSpacing: 0.24 * s,
                   lineHeight: 16 * s,
-                  color: const Color(0xFF7E5300),
+                  color: p.ochre,
                 ),
               ),
             ),
@@ -768,7 +770,7 @@ class _TargetSection extends StatelessWidget {
               weight: FontWeight.w400,
               letterSpacing: 0.12 * s,
               lineHeight: 16 * s,
-              color: const Color(0xFF8A726A),
+              color: p.muted,
             ),
           ),
           // stepper
@@ -779,7 +781,7 @@ class _TargetSection extends StatelessWidget {
               width: 326 * s,
               height: 69 * s,
               decoration: BoxDecoration(
-                color: const Color(0xFFF3F4F0),
+                color: p.panel,
                 borderRadius: BorderRadius.circular(12 * s),
               ),
               child: Stack(
@@ -793,7 +795,7 @@ class _TargetSection extends StatelessWidget {
                       weight: FontWeight.w600,
                       letterSpacing: 0.5 * s,
                       lineHeight: 12 * s,
-                      color: const Color(0xFF8A726A),
+                      color: p.muted,
                     ),
                   ),
                   Positioned(
@@ -809,7 +811,7 @@ class _TargetSection extends StatelessWidget {
                           weight: FontWeight.w700,
                           letterSpacing: -1 * s,
                           lineHeight: 40 * s,
-                          color: const Color(0xFF191C1A),
+                          color: p.ink,
                         ),
                         SizedBox(width: 6 * s),
                         figmaText(
@@ -818,7 +820,7 @@ class _TargetSection extends StatelessWidget {
                           weight: FontWeight.w500,
                           letterSpacing: -0.08 * s,
                           lineHeight: 22 * s,
-                          color: const Color(0xFF8A726A),
+                          color: p.muted,
                         ),
                       ],
                     ),
@@ -833,11 +835,11 @@ class _TargetSection extends StatelessWidget {
                         width: 40 * s,
                         height: 40 * s,
                         decoration: BoxDecoration(
-                          color: const Color(0xFFE1E3DF),
+                          color: p.bone,
                           borderRadius: BorderRadius.circular(12 * s),
                         ),
                         child: Icon(Icons.remove_rounded,
-                            size: 16 * s, color: const Color(0xFF191C1A)),
+                            size: 16 * s, color: p.ink),
                       ),
                     ),
                   ),
@@ -851,10 +853,10 @@ class _TargetSection extends StatelessWidget {
                         width: 40 * s,
                         height: 40 * s,
                         decoration: BoxDecoration(
-                          gradient: const LinearGradient(
+                          gradient: LinearGradient(
                             begin: Alignment.topLeft,
                             end: Alignment.bottomRight,
-                            colors: [Color(0xFFFF8A54), Color(0xFFFF6B2C)],
+                            colors: [p.emberLight, p.ember],
                           ),
                           borderRadius: BorderRadius.circular(12 * s),
                         ),
@@ -886,7 +888,7 @@ class _TargetSection extends StatelessWidget {
                     height: 28 * s,
                     alignment: Alignment.center,
                     decoration: BoxDecoration(
-                      color: i == 1 ? const Color(0xFFFF6B2C) : const Color(0xFFEDEEEB),
+                      color: i == 1 ? p.ember : p.container,
                       borderRadius: BorderRadius.circular(999),
                     ),
                     child: figmaText(
@@ -895,7 +897,7 @@ class _TargetSection extends StatelessWidget {
                       weight: i == 1 ? FontWeight.w600 : FontWeight.w500,
                       letterSpacing: 0.24 * s,
                       lineHeight: 16 * s,
-                      color: i == 1 ? Colors.white : const Color(0xFF57423B),
+                      color: i == 1 ? Colors.white : p.body,
                     ),
                   ),
                 ),
@@ -929,7 +931,7 @@ class _ReminderSection extends StatelessWidget {
       width: 358 * s,
       height: 138 * s,
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: p.surface,
         borderRadius: BorderRadius.circular(16 * s),
         boxShadow: [
           BoxShadow(
@@ -948,13 +950,13 @@ class _ReminderSection extends StatelessWidget {
               width: 40 * s,
               height: 40 * s,
               decoration: BoxDecoration(
-                color: const Color(0xFFBCEED1),
+                color: p.mint,
                 borderRadius: BorderRadius.circular(12 * s),
               ),
               child: Icon(
                 Icons.notifications_none_rounded,
                 size: 19 * s,
-                color: const Color(0xFF406D56),
+                color: p.pine,
               ),
             ),
           ),
@@ -967,7 +969,7 @@ class _ReminderSection extends StatelessWidget {
               weight: FontWeight.w600,
               letterSpacing: -0.4 * s,
               lineHeight: 22 * s,
-              color: const Color(0xFF191C1A),
+              color: p.ink,
             ),
           ),
           Positioned(
@@ -979,7 +981,7 @@ class _ReminderSection extends StatelessWidget {
               weight: FontWeight.w400,
               letterSpacing: 0.12 * s,
               lineHeight: 16 * s,
-              color: const Color(0xFF8A726A),
+              color: p.muted,
             ),
           ),
           // switch
@@ -992,8 +994,8 @@ class _ReminderSection extends StatelessWidget {
               child: Container(
                 width: 44 * s,
                 height: 24 * s,
-                decoration: const BoxDecoration(
-                  color: Color(0xFFFF6B2C),
+                decoration: BoxDecoration(
+                  color: p.ember,
                   borderRadius: BorderRadius.all(Radius.circular(999)),
                 ),
                 child: Align(
@@ -1003,8 +1005,8 @@ class _ReminderSection extends StatelessWidget {
                     child: Container(
                       width: 20 * s,
                       height: 20 * s,
-                      decoration: const BoxDecoration(
-                        color: Colors.white,
+                      decoration: BoxDecoration(
+                        color: p.surface,
                         shape: BoxShape.circle,
                       ),
                     ),
@@ -1021,7 +1023,7 @@ class _ReminderSection extends StatelessWidget {
               width: 326 * s,
               height: 50 * s,
               decoration: BoxDecoration(
-                color: const Color(0xFFF3F4F0),
+                color: p.panel,
                 borderRadius: BorderRadius.circular(12 * s),
               ),
               child: Stack(
@@ -1034,7 +1036,7 @@ class _ReminderSection extends StatelessWidget {
                         Icon(
                           Icons.access_time_rounded,
                           size: 15 * s,
-                          color: const Color(0xFF8A726A),
+                          color: p.muted,
                         ),
                         SizedBox(width: 8 * s),
                         figmaText(
@@ -1043,7 +1045,7 @@ class _ReminderSection extends StatelessWidget {
                           weight: FontWeight.w500,
                           letterSpacing: 0.24 * s,
                           lineHeight: 16 * s,
-                          color: const Color(0xFF191C1A),
+                          color: p.ink,
                         ),
                       ],
                     ),
@@ -1058,7 +1060,7 @@ class _ReminderSection extends StatelessWidget {
                         width: 112 * s,
                         height: 34 * s,
                         decoration: BoxDecoration(
-                          color: Colors.white,
+                          color: p.surface,
                           borderRadius: BorderRadius.circular(8 * s),
                         ),
                         child: Row(
@@ -1070,13 +1072,13 @@ class _ReminderSection extends StatelessWidget {
                               weight: FontWeight.w600,
                               letterSpacing: -0.08 * s,
                               lineHeight: 22 * s,
-                              color: const Color(0xFF9F3C16),
+                              color: p.emberDeep,
                             ),
                             SizedBox(width: 6 * s),
                             Icon(
                               Icons.keyboard_arrow_down_rounded,
                               size: 16 * s,
-                              color: const Color(0xFF9F3C16),
+                              color: p.emberDeep,
                             ),
                           ],
                         ),
@@ -1109,7 +1111,7 @@ class _SparkTip extends StatelessWidget {
       height: 111 * s,
       padding: EdgeInsets.fromLTRB(16 * s, 16 * s, 16 * s, 16 * s),
       decoration: BoxDecoration(
-        color: const Color(0x66FFDDB2),
+        color: p.goldSoft.withValues(alpha: 0.4),
         borderRadius: BorderRadius.circular(16 * s),
       ),
       child: Row(
@@ -1119,13 +1121,13 @@ class _SparkTip extends StatelessWidget {
             width: 32 * s,
             height: 32 * s,
             decoration: BoxDecoration(
-              color: const Color(0xFFFFDDB2),
+              color: p.goldSoft,
               borderRadius: BorderRadius.circular(8 * s),
             ),
             child: Icon(
               Icons.lightbulb_outline_rounded,
               size: 17 * s,
-              color: const Color(0xFF291800),
+              color: p.onGold,
             ),
           ),
           SizedBox(width: 8 * s),
@@ -1139,7 +1141,7 @@ class _SparkTip extends StatelessWidget {
                   weight: FontWeight.w600,
                   letterSpacing: -0.35 * s,
                   lineHeight: 18 * s,
-                  color: const Color(0xFF291800),
+                  color: p.onGold,
                 ),
                 SizedBox(height: 2 * s),
                 figmaText(
@@ -1150,7 +1152,7 @@ class _SparkTip extends StatelessWidget {
                   weight: FontWeight.w400,
                   letterSpacing: 0.12 * s,
                   lineHeight: 16 * s,
-                  color: const Color(0xFF57423B),
+                  color: p.body,
                 ),
               ],
             ),
@@ -1183,15 +1185,15 @@ class _StickyActions extends StatelessWidget {
             width: 358 * s,
             height: 56 * s,
             decoration: BoxDecoration(
-              gradient: const LinearGradient(
+              gradient: LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
-                colors: [Color(0xFFFF8A54), Color(0xFFFF6B2C)],
+                colors: [p.emberLight, p.ember],
               ),
               borderRadius: BorderRadius.circular(999),
               boxShadow: [
                 BoxShadow(
-                  color: const Color(0xFFFF6B2C).withValues(alpha: 0.28),
+                  color: p.ember.withValues(alpha: 0.28),
                   blurRadius: 18 * s,
                   offset: Offset(0, 6 * s),
                 ),
@@ -1227,7 +1229,7 @@ class _StickyActions extends StatelessWidget {
                 weight: FontWeight.w500,
                 letterSpacing: 0.24 * s,
                 lineHeight: 16 * s,
-                color: const Color(0xFF8A726A),
+                color: p.muted,
               ),
             ),
           ),

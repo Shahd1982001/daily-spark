@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'package:daily_spark/design_system/theme/spark_palette.dart';
+
 import 'package:daily_spark/design_system/widgets/app_bottom_nav.dart';
 import 'package:daily_spark/design_system/widgets/app_top_bar.dart';
 import 'package:daily_spark/design_system/widgets/design_canvas.dart' show figmaText;
@@ -28,7 +30,7 @@ class HabitsScreen extends StatelessWidget {
   final VoidCallback? onCreateHabit;
   final ValueChanged<int>? onNavTap;
 
-  static const _canvas = Color(0xFFF8FAF6);
+  static Color get _canvas => p.canvas;
 
   @override
   Widget build(BuildContext context) {
@@ -102,8 +104,8 @@ class HabitsScreen extends StatelessWidget {
         'meta': '10 mins \u00b7 Everyday \u00b7 8:00 AM',
         'streak': '12d',
         'icon': Icons.self_improvement,
-        'fg': const Color(0xFF406D56),
-        'bg': const Color(0xFFBCEED1),
+        'fg': p.pine,
+        'bg': p.mint,
         'done': true,
       },
       {
@@ -111,8 +113,8 @@ class HabitsScreen extends StatelessWidget {
         'meta': '2.5L goal \u00b7 Throughout day',
         'streak': '8d',
         'icon': Icons.water_drop_outlined,
-        'fg': const Color(0xFF191C1A),
-        'bg': const Color(0xFFEDEEEB),
+        'fg': p.ink,
+        'bg': p.container,
         'done': true,
       },
       {
@@ -120,8 +122,8 @@ class HabitsScreen extends StatelessWidget {
         'meta': 'Atomic Habits \u00b7 Evening',
         'streak': '5d',
         'icon': Icons.menu_book_outlined,
-        'fg': const Color(0xFF822801),
-        'bg': const Color(0xFFFFDBCF),
+        'fg': p.emberDeep,
+        'bg': p.emberSoft,
         'done': true,
       },
       {
@@ -129,8 +131,8 @@ class HabitsScreen extends StatelessWidget {
         'meta': '5:30 PM \u00b7 4x a week',
         'streak': '19d',
         'icon': Icons.directions_walk_rounded,
-        'fg': const Color(0xFF9F3C16),
-        'bg': const Color(0x66FFB59C),
+        'fg': p.emberDeep,
+        'bg': p.emberDeep.withValues(alpha: 0.4),
         'done': false,
         'next': true,
         'orange_streak': true,
@@ -140,8 +142,8 @@ class HabitsScreen extends StatelessWidget {
         'meta': '15 mins \u00b7 Everyday \u00b7 Evening',
         'streak': '3d',
         'icon': Icons.translate_rounded,
-        'fg': const Color(0xFF7E5300),
-        'bg': const Color(0x99FFDDB2),
+        'fg': p.ochre,
+        'bg': p.goldSoft.withValues(alpha: 0.6),
         'done': false,
       },
       {
@@ -149,8 +151,8 @@ class HabitsScreen extends StatelessWidget {
         'meta': '90 mins \u00b7 Weekdays \u00b7 Morning',
         'streak': '24d',
         'icon': Icons.work_outline_rounded,
-        'fg': const Color(0xFF224F3A),
-        'bg': const Color(0xFFBCEED1),
+        'fg': p.pineDark,
+        'bg': p.mint,
         'done': true,
       },
     ];
@@ -217,7 +219,7 @@ class _HeaderSection extends StatelessWidget {
                     weight: FontWeight.w600,
                     letterSpacing: -0.65 * s,
                     lineHeight: 32 * s,
-                    color: const Color(0xFF191C1A),
+                    color: p.ink,
                   ),
                   SizedBox(width: 6 * s),
                   figmaText(
@@ -225,7 +227,7 @@ class _HeaderSection extends StatelessWidget {
                     size: 18 * s,
                     weight: FontWeight.w400,
                     lineHeight: 22 * s,
-                    color: const Color(0xFF9F3C16),
+                    color: p.emberDeep,
                   ),
                 ],
               ),
@@ -235,7 +237,7 @@ class _HeaderSection extends StatelessWidget {
                 size: 14 * s,
                 weight: FontWeight.w400,
                 lineHeight: 20 * s,
-                color: const Color(0xFF57423B),
+                color: p.body,
               ),
             ],
           ),
@@ -248,13 +250,13 @@ class _HeaderSection extends StatelessWidget {
             width: 44 * s,
             height: 44 * s,
             decoration: BoxDecoration(
-              color: const Color(0xFFF3F4F0),
+              color: p.panel,
               borderRadius: BorderRadius.circular(12 * s),
             ),
             child: Icon(
               Icons.tune_rounded,
               size: 19 * s,
-              color: const Color(0xFF57423B),
+              color: p.body,
             ),
           ),
         ),
@@ -279,7 +281,7 @@ class _SnapshotCard extends StatelessWidget {
       child: Container(
         width: 358 * s,
         height: 114 * s,
-        color: Colors.white,
+        color: p.surface,
         child: Stack(
           children: [
             // ambient glow
@@ -289,8 +291,8 @@ class _SnapshotCard extends StatelessWidget {
               child: Container(
                 width: 96 * s,
                 height: 96 * s,
-                decoration: const BoxDecoration(
-                  color: Color(0x1A9F3C16),
+                decoration: BoxDecoration(
+                  color: p.emberDeep.withValues(alpha: 0.102),
                   shape: BoxShape.circle,
                 ),
               ),
@@ -302,13 +304,13 @@ class _SnapshotCard extends StatelessWidget {
                 width: 32 * s,
                 height: 32 * s,
                 decoration: BoxDecoration(
-                  color: const Color(0xFFFFDBCF),
+                  color: p.emberSoft,
                   borderRadius: BorderRadius.circular(8 * s),
                 ),
                 child: Icon(
                   Icons.local_fire_department_rounded,
                   size: 17 * s,
-                  color: const Color(0xFF9F3C16),
+                  color: p.emberDeep,
                 ),
               ),
             ),
@@ -321,7 +323,7 @@ class _SnapshotCard extends StatelessWidget {
                 weight: FontWeight.w600,
                 letterSpacing: -0.08 * s,
                 lineHeight: 22 * s,
-                color: const Color(0xFF191C1A),
+                color: p.ink,
               ),
             ),
             Positioned(
@@ -335,7 +337,7 @@ class _SnapshotCard extends StatelessWidget {
                     weight: FontWeight.w400,
                     letterSpacing: 0.12 * s,
                     lineHeight: 16 * s,
-                    color: const Color(0xFF57423B),
+                    color: p.body,
                   ),
                   SizedBox(width: 6 * s),
                   figmaText(
@@ -343,7 +345,7 @@ class _SnapshotCard extends StatelessWidget {
                     size: 12 * s,
                     weight: FontWeight.w500,
                     lineHeight: 16 * s,
-                    color: const Color(0xFF7E5300),
+                    color: p.ochre,
                   ),
                 ],
               ),
@@ -357,7 +359,7 @@ class _SnapshotCard extends StatelessWidget {
                 weight: FontWeight.w600,
                 letterSpacing: 0.14 * s,
                 lineHeight: 18 * s,
-                color: const Color(0xFF9F3C16),
+                color: p.emberDeep,
               ),
             ),
             Positioned(
@@ -369,7 +371,7 @@ class _SnapshotCard extends StatelessWidget {
                 weight: FontWeight.w600,
                 letterSpacing: 0.5 * s,
                 lineHeight: 12 * s,
-                color: const Color(0xFF8A726A),
+                color: p.muted,
               ),
             ),
             // progress
@@ -380,7 +382,7 @@ class _SnapshotCard extends StatelessWidget {
                 width: 326 * s,
                 height: 8 * s,
                 decoration: BoxDecoration(
-                  color: const Color(0xFFEDEEEB),
+                  color: p.container,
                   borderRadius: BorderRadius.circular(999),
                 ),
                 child: Align(
@@ -389,7 +391,7 @@ class _SnapshotCard extends StatelessWidget {
                     width: 217 * s,
                     height: 8 * s,
                     decoration: BoxDecoration(
-                      color: const Color(0xFF9F3C16),
+                      color: p.emberDeep,
                       borderRadius: BorderRadius.circular(999),
                     ),
                   ),
@@ -412,8 +414,8 @@ class _SnapshotCard extends StatelessWidget {
                       letterSpacing: 0.4 * s,
                       lineHeight: 12 * s,
                       color: label.startsWith('Thu')
-                          ? const Color(0xFF9F3C16)
-                          : const Color(0xFF57423B),
+                          ? p.emberDeep
+                          : p.body,
                     ),
                 ],
               ),
@@ -456,7 +458,7 @@ class _FilterChips extends StatelessWidget {
                   padding: EdgeInsets.symmetric(horizontal: 16 * s),
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
-                    color: i == 0 ? const Color(0xFF2E312F) : const Color(0xFFF3F4F0),
+                    color: i == 0 ? p.slate : p.panel,
                     borderRadius: BorderRadius.circular(999),
                   ),
                   child: figmaText(
@@ -465,7 +467,7 @@ class _FilterChips extends StatelessWidget {
                     weight: FontWeight.w500,
                     letterSpacing: 0.24 * s,
                     lineHeight: 16 * s,
-                    color: i == 0 ? const Color(0xFFF0F1EE) : const Color(0xFF57423B),
+                    color: i == 0 ? p.panel : p.body,
                   ),
                 ),
               ),
@@ -492,7 +494,7 @@ class _MindfulStreakNote extends StatelessWidget {
       width: 358 * s,
       height: 96 * s,
       decoration: BoxDecoration(
-        color: const Color(0xFFF3F4F0),
+        color: p.panel,
         borderRadius: BorderRadius.circular(12 * s),
       ),
       child: Stack(
@@ -506,7 +508,7 @@ class _MindfulStreakNote extends StatelessWidget {
               weight: FontWeight.w600,
               letterSpacing: 0.5 * s,
               lineHeight: 12 * s,
-              color: const Color(0xFF9F3C16),
+              color: p.emberDeep,
             ),
           ),
           Positioned(
@@ -521,7 +523,7 @@ class _MindfulStreakNote extends StatelessWidget {
                 weight: FontWeight.w400,
                 letterSpacing: 0.12 * s,
                 lineHeight: 16 * s,
-                color: const Color(0xFF57423B),
+                color: p.body,
               ),
             ),
           ),
@@ -532,7 +534,7 @@ class _MindfulStreakNote extends StatelessWidget {
               width: 40 * s,
               height: 40 * s,
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: p.surface,
                 shape: BoxShape.circle,
                 boxShadow: [
                   BoxShadow(
@@ -545,7 +547,7 @@ class _MindfulStreakNote extends StatelessWidget {
               child: Icon(
                 Icons.arrow_forward_rounded,
                 size: 18 * s,
-                color: const Color(0xFF9F3C16),
+                color: p.emberDeep,
               ),
             ),
           ),
@@ -574,15 +576,15 @@ class _CreateHabitCta extends StatelessWidget {
         width: 358 * s,
         height: 48 * s,
         decoration: BoxDecoration(
-          gradient: const LinearGradient(
+          gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: [Color(0xFFFF8A54), Color(0xFFFF6B2C)],
+            colors: [p.emberLight, p.ember],
           ),
           borderRadius: BorderRadius.circular(12 * s),
           boxShadow: [
             BoxShadow(
-              color: const Color(0xFFFF6B2C).withValues(alpha: 0.25),
+              color: p.ember.withValues(alpha: 0.25),
               blurRadius: 12 * s,
               offset: Offset(0, 4 * s),
             ),
@@ -607,7 +609,7 @@ class _CreateHabitCta extends StatelessWidget {
               size: 16 * s,
               weight: FontWeight.w400,
               lineHeight: 20 * s,
-              color: const Color(0xFFFFDBCF),
+              color: p.emberSoft,
             ),
           ],
         ),

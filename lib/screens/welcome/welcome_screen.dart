@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'package:daily_spark/design_system/theme/spark_palette.dart';
+
 import 'package:daily_spark/design_system/widgets/design_canvas.dart' show figmaText;
 
 /// PURE UI — Welcome & authentication choice.
@@ -22,10 +24,10 @@ class WelcomeScreen extends StatelessWidget {
   /// "Explore as Guest".
   final VoidCallback? onGuest;
 
-  static const _canvas = Color(0xFFF8FAF6);
-  static const _ink = Color(0xFF191C1A);
-  static const _brown = Color(0xFF57423B);
-  static const _ember = Color(0xFFFF6B2C);
+  static Color get _canvas => p.canvas;
+  static Color get _ink => p.ink;
+  static Color get _brown => p.body;
+  static Color get _ember => p.ember;
 
   @override
   Widget build(BuildContext context) {
@@ -172,7 +174,7 @@ class _Emblem extends StatelessWidget {
                 width: 80,
                 height: 80,
                 decoration: BoxDecoration(
-                  color: const Color(0x66FFDBCF),
+                  color: p.emberSoft.withValues(alpha: 0.4),
                   shape: BoxShape.circle,
                 ),
               ),
@@ -181,7 +183,7 @@ class _Emblem extends StatelessWidget {
                 width: 56,
                 height: 56,
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: p.surface,
                   borderRadius: BorderRadius.circular(16),
                   boxShadow: [
                     BoxShadow(
@@ -236,7 +238,7 @@ class _WelcomeChip extends StatelessWidget {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 12 * scale, vertical: 4 * scale),
       decoration: BoxDecoration(
-        color: const Color(0xFFFFF0E8),
+        color: p.emberTile,
         borderRadius: BorderRadius.circular(9999),
         boxShadow: [
           BoxShadow(
@@ -277,17 +279,17 @@ class _CentreVisual extends StatelessWidget {
           Positioned(
             left: 35,
             top: 62,
-            child: _circle(288, const Color(0x99EDEEEB)),
+            child: _circle(288, p.container.withValues(alpha: 0.6)),
           ),
           Positioned(
             left: 67,
             top: 94,
-            child: _circle(224, const Color(0x66E7E9E5)),
+            child: _circle(224, p.bone.withValues(alpha: 0.4)),
           ),
           Positioned(
             left: 99,
             top: 126,
-            child: _circle(160, const Color(0x33FFDBCF)),
+            child: _circle(160, p.emberSoft.withValues(alpha: 0.2)),
           ),
 
           // Central focus node card
@@ -298,7 +300,7 @@ class _CentreVisual extends StatelessWidget {
               width: 176,
               height: 176,
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: p.surface,
                 borderRadius: BorderRadius.circular(24),
                 boxShadow: [
                   BoxShadow(
@@ -324,7 +326,7 @@ class _CentreVisual extends StatelessWidget {
                             size: const Size(64, 64),
                             painter: _MiniRingsPainter(),
                           ),
-                          const Icon(Icons.local_fire_department_rounded,
+                          Icon(Icons.local_fire_department_rounded,
                               size: 15, color: WelcomeScreen._ember),
                         ],
                       ),
@@ -367,7 +369,7 @@ class _CentreVisual extends StatelessWidget {
                       width: 144,
                       height: 6,
                       decoration: BoxDecoration(
-                        color: const Color(0xFFF3F4F0),
+                        color: p.panel,
                         borderRadius: BorderRadius.circular(9999),
                       ),
                       child: Align(
@@ -398,7 +400,7 @@ class _CentreVisual extends StatelessWidget {
                 width: 119,
                 height: 28,
                 icon: Icons.auto_awesome,
-                iconColor: const Color(0xFF7E5300),
+                iconColor: p.ochre,
                 label: '1% Better Daily',
               ),
             ),
@@ -414,7 +416,7 @@ class _CentreVisual extends StatelessWidget {
                 width: 96.5,
                 height: 28,
                 icon: Icons.eco_rounded,
-                iconColor: const Color(0xFF3A6750),
+                iconColor: p.sage,
                 label: 'Pure Focus',
               ),
             ),
@@ -430,28 +432,28 @@ class _CentreVisual extends StatelessWidget {
               width: 156,
               height: 24.5,
               decoration: BoxDecoration(
-                color: const Color(0xFFFFF0E8),
+                color: p.emberTile,
                 borderRadius: BorderRadius.circular(9999),
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black.withValues(alpha: 0.05),
                     blurRadius: 2,
-                    offset: const Offset(0, 1),
+                    offset: Offset(0, 1),
                   ),
                 ],
               ),
               child: Row(
                 children: [
                   const SizedBox(width: 12),
-                  const Icon(Icons.bolt_rounded, size: 13, color: Color(0xFFE05316)),
-                  const SizedBox(width: 6),
+                  Icon(Icons.bolt_rounded, size: 13, color: p.emberDark),
+                  SizedBox(width: 6),
                   figmaText(
                     'Momentum Unleashed',
                     size: 10,
                     weight: FontWeight.w600,
                     letterSpacing: 0.4,
                     lineHeight: 12,
-                    color: const Color(0xFFE05316),
+                    color: p.emberDark,
                   ),
                 ],
               ),
@@ -481,7 +483,7 @@ class _CentreVisual extends StatelessWidget {
       height: height,
       padding: const EdgeInsets.symmetric(horizontal: 12),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: p.surface,
         borderRadius: BorderRadius.circular(9999),
         boxShadow: [
           BoxShadow(
@@ -545,13 +547,13 @@ class _MiniRingsPainter extends CustomPainter {
       Paint()
         ..style = PaintingStyle.stroke
         ..strokeWidth = 5
-        ..color = const Color(0xFFEDEEEB),
+        ..color = p.container,
     );
 
     // Outer — deep ember
-    ring(radius: 26.5, stroke: 5, color: const Color(0xFF9F3C16), startDeg: 240, sweepDeg: 330);
+    ring(radius: 26.5, stroke: 5, color: p.emberDeep, startDeg: 240, sweepDeg: 330);
     // Inner — sage
-    ring(radius: 19, stroke: 4, color: const Color(0xFF3A6750), startDeg: 250, sweepDeg: 320);
+    ring(radius: 19, stroke: 4, color: p.sage, startDeg: 250, sweepDeg: 320);
   }
 
   @override
@@ -578,10 +580,10 @@ class _PrimaryCta extends StatelessWidget {
         height: 54 * s,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(12 * s),
-          gradient: const LinearGradient(
+          gradient: LinearGradient(
             begin: Alignment.centerLeft,
             end: Alignment.centerRight,
-            colors: [Color(0xFFFF8A54), Color(0xFFFF6B2C)],
+            colors: [p.emberLight, p.ember],
           ),
           boxShadow: [
             BoxShadow(
@@ -600,7 +602,7 @@ class _PrimaryCta extends StatelessWidget {
               weight: FontWeight.w600,
               letterSpacing: 0.14 * s,
               lineHeight: 18 * s,
-              color: Colors.white,
+              color: p.surface,
             ),
             SizedBox(width: 8 * s),
             Icon(Icons.arrow_forward_rounded, size: 14 * s, color: Colors.white),
@@ -626,7 +628,7 @@ class _SecondaryCta extends StatelessWidget {
       child: Container(
         height: 50 * s,
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: p.surface,
           borderRadius: BorderRadius.circular(12 * s),
           boxShadow: [
             BoxShadow(
@@ -670,7 +672,7 @@ class _GuestEntry extends StatelessWidget {
         height: 52 * s,
         padding: EdgeInsets.symmetric(horizontal: 16 * s),
         decoration: BoxDecoration(
-          color: const Color(0xFFF3F4F0),
+          color: p.panel,
           borderRadius: BorderRadius.circular(12 * s),
         ),
         child: Row(
@@ -679,7 +681,7 @@ class _GuestEntry extends StatelessWidget {
               width: 32 * s,
               height: 32 * s,
               decoration: BoxDecoration(
-                color: const Color(0xFFE1E3DF),
+                color: p.bone,
                 borderRadius: BorderRadius.circular(8 * s),
               ),
               child: Icon(Icons.explore_outlined,

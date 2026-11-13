@@ -3,17 +3,19 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 
+import 'package:daily_spark/design_system/theme/spark_palette.dart';
+
 import 'package:daily_spark/design_system/widgets/design_canvas.dart' show figmaText;
 
 /// Hero momentum card on Habit Details.
 /// Figma: "Habit Visual Momentum Hero" 358 × 208 at (16, 202).
 class DetailsHeroCard extends StatelessWidget {
-  const DetailsHeroCard({super.key, required this.scale});
+  DetailsHeroCard({super.key, required this.scale});
 
   final double scale;
 
-  static const _ink = Color(0xFF191C1A);
-  static const _brown = Color(0xFF57423B);
+  static Color get _ink => p.ink;
+  static Color get _brown => p.body;
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +25,7 @@ class DetailsHeroCard extends StatelessWidget {
       child: Container(
         width: 358 * s,
         height: 208 * s,
-        color: Colors.white,
+        color: p.surface,
         child: Stack(
           children: [
             // ambient glow (clipped by the card)
@@ -35,8 +37,8 @@ class DetailsHeroCard extends StatelessWidget {
                 child: Container(
                   width: 144 * s,
                   height: 144 * s,
-                  decoration: const BoxDecoration(
-                    color: Color(0x0D9F3C16),
+                  decoration: BoxDecoration(
+                    color: p.emberDeep.withValues(alpha: 0.051),
                     shape: BoxShape.circle,
                   ),
                 ),
@@ -84,8 +86,8 @@ class DetailsHeroCard extends StatelessWidget {
               child: Container(
                 height: 24 * s,
                 padding: EdgeInsets.symmetric(horizontal: 8 * s),
-                decoration: const BoxDecoration(
-                  color: Color(0xFFFFF0E8),
+                decoration: BoxDecoration(
+                  color: p.emberTile,
                   borderRadius: BorderRadius.all(Radius.circular(999)),
                 ),
                 child: Row(
@@ -94,7 +96,7 @@ class DetailsHeroCard extends StatelessWidget {
                     Icon(
                       Icons.local_fire_department_rounded,
                       size: 13 * s,
-                      color: const Color(0xFF7E5300),
+                      color: p.ochre,
                     ),
                     SizedBox(width: 6 * s),
                     figmaText(
@@ -103,7 +105,7 @@ class DetailsHeroCard extends StatelessWidget {
                       weight: FontWeight.w600,
                       letterSpacing: 0.24 * s,
                       lineHeight: 16 * s,
-                      color: const Color(0xFFFF6B2C),
+                      color: p.ember,
                     ),
                   ],
                 ),
@@ -141,7 +143,7 @@ class DetailsHeroCard extends StatelessWidget {
                   Icon(
                     Icons.trending_up_rounded,
                     size: 13 * s,
-                    color: const Color(0xFF3A6750),
+                    color: p.sage,
                   ),
                   SizedBox(width: 4 * s),
                   figmaText(
@@ -150,7 +152,7 @@ class DetailsHeroCard extends StatelessWidget {
                     weight: FontWeight.w500,
                     letterSpacing: 0.4 * s,
                     lineHeight: 12 * s,
-                    color: const Color(0xFF3A6750),
+                    color: p.sage,
                   ),
                 ],
               ),
@@ -163,7 +165,7 @@ class DetailsHeroCard extends StatelessWidget {
                 width: 310 * s,
                 height: 32 * s,
                 decoration: BoxDecoration(
-                  color: const Color(0xFFF3F4F0).withValues(alpha: 0.6),
+                  color: p.panel.withValues(alpha: 0.6),
                   borderRadius: BorderRadius.circular(12 * s),
                 ),
                 child: Row(
@@ -172,7 +174,7 @@ class DetailsHeroCard extends StatelessWidget {
                     Icon(
                       Icons.nightlight_round,
                       size: 15 * s,
-                      color: const Color(0xFF57423B),
+                      color: p.body,
                     ),
                     SizedBox(width: 8 * s),
                     figmaText(
@@ -183,14 +185,14 @@ class DetailsHeroCard extends StatelessWidget {
                       lineHeight: 16 * s,
                       color: _brown,
                     ),
-                    const Spacer(),
+                    Spacer(),
                     figmaText(
                       'PRIME TIME',
                       size: 10 * s,
                       weight: FontWeight.w600,
                       letterSpacing: 0.5 * s,
                       lineHeight: 12 * s,
-                      color: const Color(0xFF9F3C16),
+                      color: p.emberDeep,
                     ),
                     SizedBox(width: 16 * s),
                   ],
@@ -219,14 +221,14 @@ class _GaugePainter extends CustomPainter {
       ..style = PaintingStyle.stroke
       ..strokeWidth = stroke
       ..strokeCap = StrokeCap.round
-      ..color = const Color(0xFFEDEEEB);
+      ..color = p.container;
     canvas.drawArc(rect, 0, math.pi * 2, false, track);
 
     final progress = Paint()
       ..style = PaintingStyle.stroke
       ..strokeWidth = stroke
       ..strokeCap = StrokeCap.round
-      ..color = const Color(0xFFFF6B2C);
+      ..color = p.ember;
     canvas.drawArc(rect, -math.pi / 2, math.pi * 2 * 0.76, false, progress);
   }
 

@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
 
+import 'package:daily_spark/design_system/theme/spark_palette.dart';
+
 import 'package:daily_spark/design_system/widgets/design_canvas.dart' show figmaText;
 
 /// PAGE 1 visual — "The First Spark" card floating over concentric orbits.
 /// Figma: node 126:13432, visual area 342 × 364 at (24, 153).
 class FirstSparkCard extends StatelessWidget {
-  const FirstSparkCard({super.key});
+  FirstSparkCard({super.key});
 
-  static const _ink = Color(0xFF191C1A);
-  static const _brown = Color(0xFF57423B);
-  static const _ember = Color(0xFFFF6B2C);
-  static const _deepEmber = Color(0xFF9F3C16);
+  static Color get _ink => p.ink;
+  static Color get _brown => p.body;
+  static Color get _ember => p.ember;
+  static Color get _deepEmber => p.emberDeep;
 
   @override
   Widget build(BuildContext context) {
@@ -24,23 +26,23 @@ class FirstSparkCard extends StatelessWidget {
           Positioned(
             left: 59,
             top: 58,
-            child: _circle(224, const Color(0x59FFDBCF)),
+            child: _circle(224, p.emberSoft.withValues(alpha: 0.349)),
           ),
           // Concentric orbit rings
           Positioned(
             left: 26,
             top: 25,
-            child: _circle(290, const Color(0x99F3F4F0)),
+            child: _circle(290, p.panel.withValues(alpha: 0.6)),
           ),
           Positioned(
             left: 56,
             top: 55,
-            child: _circle(230, const Color(0xB3EDEEEB)),
+            child: _circle(230, p.container.withValues(alpha: 0.702)),
           ),
           Positioned(
             left: 86,
             top: 85,
-            child: _circle(170, const Color(0x80E7E9E5)),
+            child: _circle(170, p.bone.withValues(alpha: 0.502)),
           ),
 
           // Floating badge — momentum (tilted +2° in the design)
@@ -52,10 +54,10 @@ class FirstSparkCard extends StatelessWidget {
               child: _badge(
               width: 113.4,
               height: 20,
-              background: const Color(0xFFD1FAE5),
+              background: p.mintSoft,
               icon: Icons.trending_up_rounded,
               iconSize: 10,
-              iconColor: const Color(0xFF3A6750),
+              iconColor: p.sage,
               label: '+1% Momentum',
             ),
             ),
@@ -73,7 +75,7 @@ class FirstSparkCard extends StatelessWidget {
               background: Colors.white,
               icon: Icons.bolt_rounded,
               iconSize: 13,
-              iconColor: const Color(0xFF7E5300),
+              iconColor: p.ochre,
               label: 'Atomic scale',
             ),
             ),
@@ -87,7 +89,7 @@ class FirstSparkCard extends StatelessWidget {
               width: 280,
               height: 140,
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: p.surface,
                 borderRadius: BorderRadius.circular(12),
                 boxShadow: [
                   BoxShadow(
@@ -107,22 +109,22 @@ class FirstSparkCard extends StatelessWidget {
                       width: 146,
                       height: 20,
                       decoration: BoxDecoration(
-                        color: const Color(0xFFFFDBCF),
+                        color: p.emberSoft,
                         borderRadius: BorderRadius.circular(9999),
                       ),
                       child: Row(
                         children: [
                           const SizedBox(width: 10),
-                          const Icon(Icons.local_fire_department_rounded,
+                          Icon(Icons.local_fire_department_rounded,
                               size: 10, color: _deepEmber),
-                          const SizedBox(width: 5),
+                          SizedBox(width: 5),
                           figmaText(
                             'Day 1 · The First Spark',
                             size: 10,
                             weight: FontWeight.w600,
                             letterSpacing: 0.4,
                             lineHeight: 12,
-                            color: const Color(0xFF390C00),
+                            color: p.onEmberSoft,
                           ),
                         ],
                       ),
@@ -137,7 +139,7 @@ class FirstSparkCard extends StatelessWidget {
                       weight: FontWeight.w600,
                       letterSpacing: 0.4,
                       lineHeight: 12,
-                      color: const Color(0xFF3A6750),
+                      color: p.sage,
                     ),
                   ),
 
@@ -179,8 +181,8 @@ class FirstSparkCard extends StatelessWidget {
                     child: Container(
                       width: 32,
                       height: 32,
-                      decoration: const BoxDecoration(
-                        color: Color(0xFF10B981),
+                      decoration: BoxDecoration(
+                        color: p.success,
                         shape: BoxShape.circle,
                       ),
                       child: const Icon(Icons.check_rounded,
@@ -240,10 +242,10 @@ class FirstSparkCard extends StatelessWidget {
             height: 40,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              border: Border.all(color: const Color(0xFFFFDBCF), width: 2),
+              border: Border.all(color: p.emberSoft, width: 2),
             ),
           ),
-          const Icon(Icons.menu_book_rounded, size: 18, color: _deepEmber),
+          Icon(Icons.menu_book_rounded, size: 18, color: _deepEmber),
         ],
       ),
     );

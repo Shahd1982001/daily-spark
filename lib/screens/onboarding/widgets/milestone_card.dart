@@ -2,18 +2,20 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 
+import 'package:daily_spark/design_system/theme/spark_palette.dart';
+
 import 'package:daily_spark/design_system/widgets/design_canvas.dart' show figmaText;
 
 /// PAGE 3 visual — the milestone dashboard.
 /// Figma: node 126:14455, card 358 × 326 at (16, 111).
 class MilestoneCard extends StatelessWidget {
-  const MilestoneCard({super.key});
+  MilestoneCard({super.key});
 
-  static const _ink = Color(0xFF191C1A);
-  static const _brown = Color(0xFF57423B);
-  static const _ember = Color(0xFFFF6B2C);
-  static const _deepEmber = Color(0xFF9F3C16);
-  static const _sage = Color(0xFF3A6750);
+  static Color get _ink => p.ink;
+  static Color get _brown => p.body;
+  static Color get _ember => p.ember;
+  static Color get _deepEmber => p.emberDeep;
+  static Color get _sage => p.sage;
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +29,7 @@ class MilestoneCard extends StatelessWidget {
             width: 358,
             height: 326,
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: p.surface,
               borderRadius: BorderRadius.circular(12),
               boxShadow: [
                 BoxShadow(
@@ -60,22 +62,22 @@ class MilestoneCard extends StatelessWidget {
               width: 189,
               height: 24,
               decoration: BoxDecoration(
-                color: const Color(0xFFD1FAE5),
+                color: p.mintSoft,
                 borderRadius: BorderRadius.circular(9999),
               ),
               child: Row(
                 children: [
-                  const SizedBox(width: 12),
-                  const Icon(Icons.auto_awesome_rounded,
-                      size: 13, color: Color(0xFF10B981)),
-                  const SizedBox(width: 6),
+                  SizedBox(width: 12),
+                  Icon(Icons.auto_awesome_rounded,
+                      size: 13, color: p.success),
+                  SizedBox(width: 6),
                   figmaText(
                     'Century Spark Achieved',
                     size: 12,
                     weight: FontWeight.w600,
                     letterSpacing: 0.24,
                     lineHeight: 16,
-                    color: const Color(0xFF10B981),
+                    color: p.success,
                   ),
                 ],
               ),
@@ -90,7 +92,7 @@ class MilestoneCard extends StatelessWidget {
               weight: FontWeight.w500,
               letterSpacing: 0.5,
               lineHeight: 12,
-              color: const Color(0xFF8A726A),
+              color: p.muted,
             ),
           ),
 
@@ -122,7 +124,7 @@ class MilestoneCard extends StatelessWidget {
                     color: _ink,
                   ),
                   const SizedBox(width: 2),
-                  const Padding(
+                  Padding(
                     padding: EdgeInsets.only(top: 10),
                     child: Icon(Icons.percent_rounded, size: 13, color: _deepEmber),
                   ),
@@ -138,7 +140,7 @@ class MilestoneCard extends StatelessWidget {
               child: Text(
                 'CONSISTENCY',
                 textAlign: TextAlign.center,
-                style: const TextStyle(
+                style: TextStyle(
                   fontFamily: 'PlusJakartaSans',
                   fontSize: 10,
                   fontWeight: FontWeight.w600,
@@ -159,7 +161,7 @@ class MilestoneCard extends StatelessWidget {
               width: 187,
               height: 20,
               decoration: BoxDecoration(
-                color: const Color(0xFFEDEEEB),
+                color: p.container,
                 borderRadius: BorderRadius.circular(9999),
               ),
               child: Row(
@@ -168,7 +170,7 @@ class MilestoneCard extends StatelessWidget {
                   Container(
                     width: 8,
                     height: 8,
-                    decoration: const BoxDecoration(
+                    decoration: BoxDecoration(
                       color: _ember,
                       shape: BoxShape.circle,
                     ),
@@ -254,20 +256,20 @@ class _StatCapsule extends StatelessWidget {
       width: 103,
       height: 79,
       decoration: BoxDecoration(
-        color: const Color(0xFFF3F4F0),
+        color: p.panel,
         borderRadius: BorderRadius.circular(8),
       ),
       child: Column(
         children: [
-          const SizedBox(height: 6),
+          SizedBox(height: 6),
           Text(
             label,
-            style: const TextStyle(
+            style: TextStyle(
               fontFamily: 'PlusJakartaSans',
               fontSize: 10,
               fontWeight: FontWeight.w500,
               height: 2,
-              color: Color(0xFF57423B),
+              color: p.body,
               decoration: TextDecoration.none,
             ),
           ),
@@ -277,10 +279,10 @@ class _StatCapsule extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               if (showFlame)
-                const Padding(
+                Padding(
                   padding: EdgeInsets.only(right: 3),
                   child: Icon(Icons.auto_awesome,
-                      size: 9, color: Color(0xFFFF6B2C)),
+                      size: 9, color: p.ember),
                 ),
               Text(
                 value,
@@ -297,13 +299,13 @@ class _StatCapsule extends StatelessWidget {
               if (suffix.isNotEmpty)
                 Text(
                   suffix,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontFamily: 'PlusJakartaSans',
                     fontSize: 10,
                     fontWeight: FontWeight.w700,
                     letterSpacing: -0.18,
                     height: 24 / 10,
-                    color: Color(0xFF8A726A),
+                    color: p.muted,
                     decoration: TextDecoration.none,
                   ),
                 ),
@@ -343,7 +345,7 @@ class _RingPainter extends CustomPainter {
       Paint()
         ..style = PaintingStyle.stroke
         ..strokeWidth = stroke
-        ..color = const Color(0xFFEDEEEB),
+        ..color = p.container,
     );
 
     const start = -0.9075712; // -52° — where the ember marker sits
@@ -360,7 +362,7 @@ class _RingPainter extends CustomPainter {
         ..shader = SweepGradient(
           startAngle: start,
           endAngle: start + sweep,
-          colors: [Color(0xFF34D399), Color(0xFF10B981)],
+          colors: [Color(0xFF34D399), p.success],
         ).createShader(rect),
     );
 
@@ -371,7 +373,7 @@ class _RingPainter extends CustomPainter {
       center.dx + rect.width / 2 * math.cos(endAngle),
       center.dy + rect.height / 2 * math.sin(endAngle),
     );
-    canvas.drawCircle(marker, 5, Paint()..color = const Color(0xFF9F3C16));
+    canvas.drawCircle(marker, 5, Paint()..color = p.emberDeep);
   }
 
   @override
@@ -386,7 +388,7 @@ class _SpiralPainter extends CustomPainter {
     final paint = Paint()
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1
-      ..color = const Color(0xFF191C1A);
+      ..color = p.ink;
 
     for (var i = 1; i <= 4; i++) {
       canvas.drawCircle(center, size.width / 2 * (i / 4), paint);

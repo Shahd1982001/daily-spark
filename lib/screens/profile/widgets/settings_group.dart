@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'package:daily_spark/design_system/theme/spark_palette.dart';
+
 import 'package:daily_spark/design_system/widgets/design_canvas.dart' show figmaText;
 
 /// Profile · a labelled group of settings rows (Figma: label + white r16 card).
@@ -29,13 +31,13 @@ class SettingsGroup extends StatelessWidget {
             weight: FontWeight.w600,
             letterSpacing: 0.5 * s,
             lineHeight: 12 * s,
-            color: const Color(0xFF57423B),
+            color: p.body,
           ),
         ),
         Container(
           width: 358 * s,
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: p.surface,
             borderRadius: BorderRadius.circular(16 * s),
             boxShadow: [
               BoxShadow(
@@ -104,7 +106,7 @@ class SettingsRow extends StatelessWidget {
         height: height * s,
         decoration: BoxDecoration(
           border: showDivider
-              ? Border(top: BorderSide(color: const Color(0xFFEDEEEB), width: 1 * s))
+              ? Border(top: BorderSide(color: p.container, width: 1 * s))
               : null,
         ),
         child: Stack(
@@ -131,7 +133,7 @@ class SettingsRow extends StatelessWidget {
                 weight: FontWeight.w600,
                 letterSpacing: -0.08 * s,
                 lineHeight: 22 * s,
-                color: const Color(0xFF191C1A),
+                color: p.ink,
               ),
             ),
             if (subtitle != null)
@@ -144,7 +146,7 @@ class SettingsRow extends StatelessWidget {
                   weight: FontWeight.w400,
                   letterSpacing: 0.12 * s,
                   lineHeight: 16 * s,
-                  color: const Color(0xFF57423B),
+                  color: p.body,
                 ),
               ),
             if (switchValue != null)
@@ -158,8 +160,8 @@ class SettingsRow extends StatelessWidget {
                     height: 28 * s,
                     decoration: BoxDecoration(
                       color: switchValue!
-                          ? const Color(0xFFFF6B2C)
-                          : const Color(0xFFDCDEDA),
+                          ? p.ember
+                          : p.bone,
                       borderRadius: BorderRadius.circular(999 * s),
                     ),
                     child: AnimatedAlign(
@@ -173,7 +175,7 @@ class SettingsRow extends StatelessWidget {
                           width: 24 * s,
                           height: 24 * s,
                           decoration: BoxDecoration(
-                            color: Colors.white,
+                            color: p.surface,
                             shape: BoxShape.circle,
                             boxShadow: [
                               BoxShadow(
@@ -207,7 +209,7 @@ class SettingsRow extends StatelessWidget {
                     weight: FontWeight.w600,
                     letterSpacing: 0.4 * s,
                     lineHeight: 12 * s,
-                    color: valuePillTextColor ?? const Color(0xFF3A6750),
+                    color: valuePillTextColor ?? p.sage,
                   ),
                 ),
               ),
@@ -221,7 +223,7 @@ class SettingsRow extends StatelessWidget {
                   weight: FontWeight.w400,
                   letterSpacing: 0.12 * s,
                   lineHeight: 16 * s,
-                  color: const Color(0xFF57423B),
+                  color: p.body,
                 ),
               ),
             if (switchValue == null && valuePill == null)
@@ -230,7 +232,7 @@ class SettingsRow extends StatelessWidget {
                 top: (height - 10) / 2 * s,
                 child: Icon(Icons.chevron_right_rounded,
                     size: 14 * s,
-                    color: const Color(0xFF57423B).withValues(alpha: 0.60)),
+                    color: p.body.withValues(alpha: 0.60)),
               ),
           ],
         ),

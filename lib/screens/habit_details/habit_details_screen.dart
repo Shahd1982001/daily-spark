@@ -2,6 +2,8 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 
+import 'package:daily_spark/design_system/theme/spark_palette.dart';
+
 import 'package:daily_spark/design_system/widgets/design_canvas.dart' show figmaText;
 import 'package:daily_spark/screens/habit_details/widgets/consistency_card.dart';
 import 'package:daily_spark/screens/habit_details/widgets/details_hero_card.dart';
@@ -39,9 +41,9 @@ class HabitDetailsScreen extends StatelessWidget {
   final VoidCallback? onArchive;
   final VoidCallback? onDelete;
 
-  static const _canvas = Color(0xFFF8FAF6);
-  static const _ink = Color(0xFF191C1A);
-  static const _brown = Color(0xFF57423B);
+  static Color get _canvas => p.canvas;
+  static Color get _ink => p.ink;
+  static Color get _brown => p.body;
 
   @override
   Widget build(BuildContext context) {
@@ -160,7 +162,7 @@ class _DetailsHeader extends StatelessWidget {
         filter: ImageFilter.blur(sigmaX: 12 * s, sigmaY: 12 * s),
         child: Container(
           height: 64 * s,
-          color: const Color(0xFFF8FAF6).withValues(alpha: 0.8),
+          color: p.canvas.withValues(alpha: 0.8),
           child: Stack(
             children: [
               Positioned(
@@ -172,14 +174,14 @@ class _DetailsHeader extends StatelessWidget {
                   child: Container(
                     width: 44 * s,
                     height: 44 * s,
-                    decoration: const BoxDecoration(
-                      color: Color(0xFFF3F4F0),
+                    decoration: BoxDecoration(
+                      color: p.panel,
                       shape: BoxShape.circle,
                     ),
                     child: Icon(
                       Icons.arrow_back_rounded,
                       size: 18 * s,
-                      color: const Color(0xFF191C1A),
+                      color: p.ink,
                     ),
                   ),
                 ),
@@ -193,7 +195,7 @@ class _DetailsHeader extends StatelessWidget {
                   weight: FontWeight.w600,
                   letterSpacing: -0.18 * s,
                   lineHeight: 24 * s,
-                  color: const Color(0xFF191C1A),
+                  color: p.ink,
                 ),
               ),
               Positioned(
@@ -205,14 +207,14 @@ class _DetailsHeader extends StatelessWidget {
                   child: Container(
                     width: 46 * s,
                     height: 44 * s,
-                    decoration: const BoxDecoration(
-                      color: Color(0xFFF3F4F0),
+                    decoration: BoxDecoration(
+                      color: p.panel,
                       shape: BoxShape.circle,
                     ),
                     child: Icon(
                       Icons.edit_outlined,
                       size: 16 * s,
-                      color: const Color(0xFF191C1A),
+                      color: p.ink,
                     ),
                   ),
                 ),
@@ -226,8 +228,8 @@ class _DetailsHeader extends StatelessWidget {
                   child: Container(
                     width: 32 * s,
                     height: 32 * s,
-                    decoration: const BoxDecoration(
-                      color: Color(0xFF9F3C16),
+                    decoration: BoxDecoration(
+                      color: p.emberDeep,
                       shape: BoxShape.circle,
                     ),
                     child: Icon(
@@ -262,8 +264,8 @@ class _ChipRow extends StatelessWidget {
         Container(
           height: 20 * s,
           padding: EdgeInsets.symmetric(horizontal: 8 * s),
-          decoration: const BoxDecoration(
-            color: Color(0xFFFFDBCF),
+          decoration: BoxDecoration(
+            color: p.emberSoft,
             borderRadius: BorderRadius.all(Radius.circular(999)),
           ),
           child: Row(
@@ -271,7 +273,7 @@ class _ChipRow extends StatelessWidget {
               Icon(
                 Icons.auto_stories_outlined,
                 size: 13 * s,
-                color: const Color(0xFF390C00),
+                color: p.onEmberSoft,
               ),
               SizedBox(width: 4 * s),
               figmaText(
@@ -280,17 +282,17 @@ class _ChipRow extends StatelessWidget {
                 weight: FontWeight.w600,
                 letterSpacing: 0.5 * s,
                 lineHeight: 12 * s,
-                color: const Color(0xFF390C00),
+                color: p.onEmberSoft,
               ),
             ],
           ),
         ),
-        const Spacer(),
+        Spacer(),
         Container(
           height: 20 * s,
           padding: EdgeInsets.symmetric(horizontal: 8 * s),
-          decoration: const BoxDecoration(
-            color: Color(0xFFE7E9E5),
+          decoration: BoxDecoration(
+            color: p.bone,
             borderRadius: BorderRadius.all(Radius.circular(999)),
           ),
           child: Row(
@@ -298,8 +300,8 @@ class _ChipRow extends StatelessWidget {
               Container(
                 width: 6 * s,
                 height: 6 * s,
-                decoration: const BoxDecoration(
-                  color: Color(0xFF3A6750),
+                decoration: BoxDecoration(
+                  color: p.sage,
                   shape: BoxShape.circle,
                 ),
               ),
@@ -310,7 +312,7 @@ class _ChipRow extends StatelessWidget {
                 weight: FontWeight.w600,
                 letterSpacing: 0.4 * s,
                 lineHeight: 12 * s,
-                color: const Color(0xFF57423B),
+                color: p.body,
               ),
             ],
           ),
@@ -338,13 +340,13 @@ class _TitleBlock extends StatelessWidget {
           width: 56 * s,
           height: 56 * s,
           decoration: BoxDecoration(
-            color: const Color(0x1A9F3C16),
+            color: p.emberDeep.withValues(alpha: 0.102),
             borderRadius: BorderRadius.circular(16 * s),
           ),
           child: Icon(
             Icons.menu_book_rounded,
             size: 26 * s,
-            color: const Color(0xFF9F3C16),
+            color: p.emberDeep,
           ),
         ),
         SizedBox(width: 16 * s),
@@ -358,7 +360,7 @@ class _TitleBlock extends StatelessWidget {
                 weight: FontWeight.w600,
                 letterSpacing: -0.55 * s,
                 lineHeight: 28 * s,
-                color: const Color(0xFF191C1A),
+                color: p.ink,
               ),
               SizedBox(height: 2 * s),
               figmaText(
@@ -366,7 +368,7 @@ class _TitleBlock extends StatelessWidget {
                 size: 14 * s,
                 weight: FontWeight.w400,
                 lineHeight: 20 * s,
-                color: const Color(0xFF57423B),
+                color: p.body,
                 width: 168 * s,
               ),
             ],
@@ -405,10 +407,10 @@ class _ActionCenter extends StatelessWidget {
             width: 358 * s,
             height: 48 * s,
             decoration: BoxDecoration(
-              gradient: const LinearGradient(
+              gradient: LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
-                colors: [Color(0xFFFF8A54), Color(0xFFFF6B2C)],
+                colors: [p.emberLight, p.ember],
               ),
               borderRadius: BorderRadius.circular(12 * s),
             ),
@@ -437,7 +439,7 @@ class _ActionCenter extends StatelessWidget {
             width: 358 * s,
             height: 44 * s,
             decoration: BoxDecoration(
-              color: const Color(0xFFF3F4F0),
+              color: p.panel,
               borderRadius: BorderRadius.circular(12 * s),
             ),
             child: Row(
@@ -446,7 +448,7 @@ class _ActionCenter extends StatelessWidget {
                 Icon(
                   Icons.inventory_2_outlined,
                   size: 15 * s,
-                  color: const Color(0xFF57423B),
+                  color: p.body,
                 ),
                 SizedBox(width: 8 * s),
                 figmaText(
@@ -455,7 +457,7 @@ class _ActionCenter extends StatelessWidget {
                   weight: FontWeight.w600,
                   letterSpacing: 0.14 * s,
                   lineHeight: 18 * s,
-                  color: const Color(0xFF191C1A),
+                  color: p.ink,
                 ),
               ],
             ),
@@ -474,7 +476,7 @@ class _ActionCenter extends StatelessWidget {
                 Icon(
                   Icons.delete_outline_rounded,
                   size: 14 * s,
-                  color: const Color(0xFFBA1A1A),
+                  color: p.error,
                 ),
                 SizedBox(width: 6 * s),
                 figmaText(
@@ -483,7 +485,7 @@ class _ActionCenter extends StatelessWidget {
                   weight: FontWeight.w500,
                   letterSpacing: 0.24 * s,
                   lineHeight: 16 * s,
-                  color: const Color(0xFFBA1A1A),
+                  color: p.error,
                 ),
               ],
             ),

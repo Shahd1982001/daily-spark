@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'package:daily_spark/design_system/theme/spark_palette.dart';
+
 import 'package:daily_spark/design_system/widgets/design_canvas.dart' show figmaText;
 import 'package:daily_spark/screens/onboarding/widgets/first_spark_card.dart';
 import 'package:daily_spark/screens/onboarding/widgets/milestone_card.dart';
@@ -59,7 +61,11 @@ class _OnboardingScreenState extends State<OnboardingScreen>
     super.initState();
     _swap.value = 1; // start settled (no pending slide)
     _timer.addStatusListener(_onTimerStatus);
-    if (_autoAdvances) _timer.forward();
+    // Start the dwell timer only once the first frame is actually on screen,
+    // so a slow cold start never eats the 6 s window.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted && _autoAdvances) _timer.forward();
+    });
   }
 
   @override
@@ -204,14 +210,14 @@ class _OnboardingScreenState extends State<OnboardingScreen>
 // ─────────────────────────────────────────────────────────────────────────────
 
 class _Colors {
-  static const canvas = Color(0xFFF8FAF6);
-  static const ink = Color(0xFF191C1A);
-  static const brown = Color(0xFF57423B);
-  static const muted = Color(0xFF78716C);
+  static Color get canvas => p.canvas;
+  static Color get ink => p.ink;
+  static Color get brown => p.body;
+  static Color get muted => p.faint;
   static const stone = Color(0xFF57534E);
-  static const warmGrey = Color(0xFFA8A29E);
-  static const ember = Color(0xFFFF6B2C);
-  static const deepEmber = Color(0xFF9F3C16);
+  static Color get warmGrey => p.muted;
+  static Color get ember => p.ember;
+  static Color get deepEmber => p.emberDeep;
 }
 
 /// Places a design-sized block and scales it uniformly to [scale].
@@ -273,11 +279,11 @@ class _Header extends StatelessWidget {
             height: logo,
             scale: s,
             child: Container(
-              decoration: const BoxDecoration(
-                color: Color(0x1A9F3C16),
+              decoration: BoxDecoration(
+                color: p.emberDeep.withValues(alpha: 0.102),
                 shape: BoxShape.circle,
               ),
-              child: const Icon(Icons.auto_awesome, size: 15, color: _Colors.ember),
+              child: Icon(Icons.auto_awesome, size: 15, color: _Colors.ember),
             ),
           ),
           SizedBox(width: (compact ? 4.0 : 8.0) * s),
@@ -330,7 +336,7 @@ class _Chip extends StatelessWidget {
       scale: scale,
       child: Container(
         decoration: BoxDecoration(
-          color: const Color(0xFFEDEEEB),
+          color: p.container,
           borderRadius: BorderRadius.circular(9999),
         ),
         child: Row(
@@ -339,7 +345,7 @@ class _Chip extends StatelessWidget {
             Container(
               width: 6,
               height: 6,
-              decoration: const BoxDecoration(
+              decoration: BoxDecoration(
                 color: _Colors.ember,
                 shape: BoxShape.circle,
               ),
@@ -391,7 +397,7 @@ class _StepEyebrow extends StatelessWidget {
             scale: s,
             child: Container(
               decoration: BoxDecoration(
-                color: const Color(0xFFE7E9E5),
+                color: p.bone,
                 borderRadius: BorderRadius.circular(9999),
               ),
               child: Row(
@@ -400,7 +406,7 @@ class _StepEyebrow extends StatelessWidget {
                   Container(
                     width: 6,
                     height: 6,
-                    decoration: const BoxDecoration(
+                    decoration: BoxDecoration(
                       color: _Colors.deepEmber,
                       shape: BoxShape.circle,
                     ),
@@ -466,7 +472,7 @@ class _Dots extends StatelessWidget {
                 width: 24 * s,
                 height: 8 * s,
                 decoration: BoxDecoration(
-                  color: const Color(0xFFE7E5E4),
+                  color: p.bone,
                   borderRadius: BorderRadius.circular(9999),
                 ),
                 child: Align(
@@ -486,7 +492,7 @@ class _Dots extends StatelessWidget {
                 width: 8 * s,
                 height: 8 * s,
                 decoration: BoxDecoration(
-                  color: const Color(0xFFE7E5E4),
+                  color: p.bone,
                   borderRadius: BorderRadius.circular(9999),
                 ),
               ),
@@ -532,10 +538,10 @@ class _PrimaryButton extends StatelessWidget {
           height: height * s,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(radius * s),
-            gradient: const LinearGradient(
+            gradient: LinearGradient(
               begin: Alignment.centerLeft,
               end: Alignment.centerRight,
-              colors: [Color(0xFFFF8A54), Color(0xFFFF6B2C)],
+              colors: [p.emberLight, p.ember],
             ),
             boxShadow: [
               BoxShadow(
@@ -554,7 +560,7 @@ class _PrimaryButton extends StatelessWidget {
                 weight: fontWeight,
                 letterSpacing: letterSpacing * s,
                 lineHeight: 18 * s,
-                color: Colors.white,
+                color: p.surface,
               ),
               if (sparkle) ...[
                 SizedBox(width: 8 * s),
@@ -677,7 +683,7 @@ class _PageOne extends StatelessWidget {
       color: _Colors.canvas,
       child: _PageLayout(
         scale: s,
-        artwork: const SizedBox(
+        artwork: SizedBox(
           width: 342,
           height: 364,
           child: FirstSparkCard(),
@@ -753,7 +759,7 @@ class _PageTwo extends StatelessWidget {
           trailingColor: _Colors.deepEmber,
           trailingIcon: Icons.auto_awesome,
         ),
-        artwork: const SizedBox(
+        artwork: SizedBox(
           width: 358,
           height: 356,
           child: StreakFlowCard(),
@@ -828,10 +834,10 @@ class _PageThree extends StatelessWidget {
           label: 'STEP 3 OF 3 · FINAL STEP',
           width: 162,
           trailingLabel: 'Milestone Engine',
-          trailingColor: const Color(0xFF3A6750),
+          trailingColor: p.sage,
           trailingIcon: Icons.workspace_premium_rounded,
         ),
-        artwork: const SizedBox(
+        artwork: SizedBox(
           width: 358,
           height: 326,
           child: MilestoneCard(),
@@ -894,7 +900,7 @@ class _PageThree extends StatelessWidget {
                     weight: FontWeight.w600,
                     letterSpacing: 0.24 * s,
                     lineHeight: 16 * s,
-                    color: const Color(0xFFE05316),
+                    color: p.emberDark,
                   ),
                 ),
               ],

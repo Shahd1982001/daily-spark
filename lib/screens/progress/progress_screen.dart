@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'package:daily_spark/design_system/theme/spark_palette.dart';
+
 import 'package:daily_spark/design_system/widgets/app_bottom_nav.dart';
 import 'package:daily_spark/design_system/widgets/app_top_bar.dart';
 import 'package:daily_spark/design_system/widgets/design_canvas.dart' show figmaText;
@@ -28,8 +30,8 @@ class ProgressScreen extends StatelessWidget {
   final VoidCallback? onShare;
   final ValueChanged<int>? onNavTap;
 
-  static const _ink = Color(0xFF191C1A);
-  static const _brown = Color(0xFF57423B);
+  static Color get _ink => p.ink;
+  static Color get _brown => p.body;
 
   static const _timeframes = ['This Week', 'This Month', 'All Time'];
 
@@ -39,7 +41,7 @@ class ProgressScreen extends StatelessWidget {
     final s = (width / 390).clamp(0.86, 1.25);
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF8FAF6),
+      backgroundColor: p.canvas,
       body: Stack(
         children: [
           Positioned.fill(
@@ -67,7 +69,7 @@ class ProgressScreen extends StatelessWidget {
             child: AppTopBar(
               scale: s,
               title: 'Progress',
-              brandColor: const Color(0xFF9F3C16),
+              brandColor: p.emberDeep,
               showBell: true,
               onBell: onBell,
               onProfile: onProfile,
@@ -134,11 +136,11 @@ class ProgressScreen extends StatelessWidget {
                 height: 16 * s,
                 padding: EdgeInsets.only(left: 8 * s, right: 8 * s),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFFFDBCF),
+                  color: p.emberSoft,
                   borderRadius: BorderRadius.circular(999 * s),
                   boxShadow: [
                     BoxShadow(
-                      color: const Color(0xFF9F3C16).withValues(alpha: 0.10),
+                      color: p.emberDeep.withValues(alpha: 0.10),
                       blurRadius: 6 * s,
                       offset: Offset(0, 2 * s),
                     ),
@@ -147,7 +149,7 @@ class ProgressScreen extends StatelessWidget {
                 child: Row(
                   children: [
                     Icon(Icons.bolt_rounded,
-                        size: 11 * s, color: const Color(0xFF9F3C16)),
+                        size: 11 * s, color: p.emberDeep),
                     SizedBox(width: 4 * s),
                     figmaText(
                       'Momentum Active',
@@ -155,7 +157,7 @@ class ProgressScreen extends StatelessWidget {
                       weight: FontWeight.w600,
                       letterSpacing: 0.4 * s,
                       lineHeight: 12 * s,
-                      color: const Color(0xFF390C00),
+                      color: p.onEmberSoft,
                     ),
                   ],
                 ),
@@ -183,7 +185,7 @@ class ProgressScreen extends StatelessWidget {
                 height: 36 * s,
                 padding: EdgeInsets.symmetric(horizontal: 4 * s),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFEDEEEB),
+                  color: p.container,
                   borderRadius: BorderRadius.circular(999 * s),
                 ),
                 child: Row(
@@ -199,7 +201,7 @@ class ProgressScreen extends StatelessWidget {
                             alignment: Alignment.center,
                             decoration: BoxDecoration(
                               color: i == 0
-                                  ? const Color(0xFFFF6B2C)
+                                  ? p.ember
                                   : Colors.transparent,
                               borderRadius: BorderRadius.circular(999 * s),
                             ),
@@ -241,7 +243,7 @@ class ProgressScreen extends StatelessWidget {
                   child: Row(
                     children: [
                       Icon(Icons.bar_chart_rounded,
-                          size: 14 * s, color: const Color(0xFF9F3C16)),
+                          size: 14 * s, color: p.emberDeep),
                       SizedBox(width: 8 * s),
                       figmaText(
                         'Weekly Rhythm',
@@ -262,7 +264,7 @@ class ProgressScreen extends StatelessWidget {
                     height: 16 * s,
                     alignment: Alignment.center,
                     decoration: BoxDecoration(
-                      color: const Color(0xFFBCEED1),
+                      color: p.mint,
                       borderRadius: BorderRadius.circular(999 * s),
                     ),
                     child: figmaText(
@@ -271,7 +273,7 @@ class ProgressScreen extends StatelessWidget {
                       weight: FontWeight.w600,
                       letterSpacing: 0.4 * s,
                       lineHeight: 12 * s,
-                      color: const Color(0xFF406D56),
+                      color: p.pine,
                     ),
                   ),
                 ),
@@ -295,13 +297,13 @@ class ProgressScreen extends StatelessWidget {
 
   // ── Section 4 · Habit Consistency ─────────────────────────────────────────
   Widget _consistencyBlock(double s) {
-    const rows = [
+    final rows = [
       (
         'Hydrate (2.5L)',
         '13 of 14 days completed',
         '92%',
-        Color(0xFF9F3C16),
-        Color(0xFF9F3C16),
+        p.emberDeep,
+        p.emberDeep,
         300.0,
         Icons.water_drop_rounded,
       ),
@@ -309,8 +311,8 @@ class ProgressScreen extends StatelessWidget {
         'Read 20 Pages',
         '12 of 14 days completed',
         '85%',
-        Color(0xFF7E5300),
-        Color(0xFF9F6A00),
+        p.ochre,
+        p.ochre,
         277.0,
         Icons.menu_book_rounded,
       ),
@@ -318,8 +320,8 @@ class ProgressScreen extends StatelessWidget {
         'Morning Meditation',
         '11 of 14 days completed',
         '78%',
-        Color(0xFF3A6750),
-        Color(0xFF10B981),
+        p.sage,
+        p.success,
         254.0,
         Icons.self_improvement_rounded,
       ),
@@ -327,8 +329,8 @@ class ProgressScreen extends StatelessWidget {
         '30-Min Movement',
         '9 of 14 days completed',
         '64%',
-        Color(0xFFBF542C),
-        Color(0xFFBF542C),
+        p.emberDeep,
+        p.emberDeep,
         209.0,
         Icons.directions_run_rounded,
       ),
@@ -348,7 +350,7 @@ class ProgressScreen extends StatelessWidget {
                   child: Row(
                     children: [
                       Icon(Icons.local_fire_department_rounded,
-                          size: 17 * s, color: const Color(0xFF9F3C16)),
+                          size: 17 * s, color: p.emberDeep),
                       SizedBox(width: 8 * s),
                       figmaText(
                         'Habit Consistency',
@@ -369,7 +371,7 @@ class ProgressScreen extends StatelessWidget {
                     height: 16 * s,
                     alignment: Alignment.center,
                     decoration: BoxDecoration(
-                      color: const Color(0xFFEDEEEB),
+                      color: p.container,
                       borderRadius: BorderRadius.circular(999 * s),
                     ),
                     child: figmaText(
