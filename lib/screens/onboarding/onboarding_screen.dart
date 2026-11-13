@@ -1,12 +1,20 @@
 import 'package:flutter/material.dart';
 
-import 'package:daily_spark/design_system/widgets/design_canvas.dart';
+import 'package:daily_spark/design_system/widgets/design_canvas.dart' show figmaText;
 import 'package:daily_spark/screens/onboarding/widgets/first_spark_card.dart';
 import 'package:daily_spark/screens/onboarding/widgets/milestone_card.dart';
 import 'package:daily_spark/screens/onboarding/widgets/streak_flow_card.dart';
 
-/// PURE UI — onboarding flow (3 pages), laid out on the exact Figma canvas.
-/// Figma: nodes 126:13432 · 126:13517 · 126:14455 (390 × 884 each).
+/// PURE UI — onboarding flow (3 pages).
+///
+/// Layout is fully responsive: every block keeps the Figma proportions while
+/// the typography, paddings and artwork scale with the device width, and the
+/// leftover vertical space is absorbed by the flexible artwork band — so the
+/// screen always fills the device with no letterboxing and no distortion.
+///
+/// Navigation: auto-advance (6 s per page) with a live progress indicator,
+/// swipe control that pauses the timer, and a persistent Skip link.
+/// Figma: nodes 126:13432 · 126:13517 · 126:14455.
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({
     super.key,
@@ -14,26 +22,48 @@ class OnboardingScreen extends StatefulWidget {
     this.onSkip,
     this.onFinished,
     this.onFooterLogin,
+    this.pageDuration = const Duration(seconds: 6),
   });
 
   final int initialPage;
   final VoidCallback? onSkip;
   final VoidCallback? onFinished;
   final VoidCallback? onFooterLogin;
+  final Duration pageDuration;
 
   @override
   State<OnboardingScreen> createState() => _OnboardingScreenState();
 }
 
-class _OnboardingScreenState extends State<OnboardingScreen> {
+class _OnboardingScreenState extends State<OnboardingScreen>
+    with SingleTickerProviderStateMixin {
   late final PageController _controller =
       PageController(initialPage: widget.initialPage);
   late int _index = widget.initialPage;
+  late final AnimationController _timer = AnimationController(
+    vsync: this,
+    duration: widget.pageDuration,
+  );
+
+  /// The last page is the decision point: it never auto-advances.
+  bool get _autoAdvances => _index < 2;
+
+  @override
+  void initState() {
+    super.initState();
+    _timer.addStatusListener(_onTimerStatus);
+    if (_autoAdvances) _timer.forward();
+  }
 
   @override
   void dispose() {
+    _timer.dispose();
     _controller.dispose();
     super.dispose();
+  }
+
+  void _onTimerStatus(AnimationStatus status) {
+    if (status == AnimationStatus.completed) _next();
   }
 
   void _next() {
@@ -43,33 +73,68 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     }
     _controller.animateToPage(
       _index + 1,
-      duration: const Duration(milliseconds: 380),
-      curve: Curves.easeOutCubic,
+      duration: const Duration(milliseconds: 520),
+      curve: Curves.easeInOutCubic,
     );
+  }
+
+  void _onPageChanged(int index) {
+    setState(() => _index = index);
+    _timer
+      ..reset()
+      ..forward();
+    if (index >= 2) _timer.reset();
+  }
+
+  void _pause() => _timer.stop();
+  void _resume() {
+    if (_autoAdvances && _timer.value < 1) _timer.forward();
   }
 
   @override
   Widget build(BuildContext context) {
-    return DesignCanvas(
-      child: PageView(
-        controller: _controller,
-        onPageChanged: (i) => setState(() => _index = i),
-        children: [
-          _PageOne(onNext: _next, onSkip: widget.onSkip),
-          _PageTwo(onNext: _next, onSkip: widget.onSkip),
-          _PageThree(
-            onNext: _next,
-            onSkip: widget.onSkip,
-            onLogin: widget.onFooterLogin,
+    // One scale driver for the whole flow: 390 pt is the Figma reference width.
+    final width = MediaQuery.sizeOf(context).width;
+    final scale = (width / 390).clamp(0.86, 1.25);
+
+    return Scaffold(
+      backgroundColor: _Colors.canvas,
+      body: Listener(
+        onPointerDown: (_) => _pause(),
+        onPointerUp: (_) => _resume(),
+        onPointerCancel: (_) => _resume(),
+        child: AnimatedBuilder(
+          animation: _timer,
+          builder: (context, _) => PageView(
+            controller: _controller,
+            onPageChanged: _onPageChanged,
+            children: [
+              _PageOne(
+                scale: scale,
+                progress: _index == 0 ? _timer.value : 0,
+                onSkip: widget.onSkip,
+              ),
+              _PageTwo(
+                scale: scale,
+                progress: _index == 1 ? _timer.value : 0,
+                onSkip: widget.onSkip,
+              ),
+              _PageThree(
+                scale: scale,
+                onSkip: widget.onSkip,
+                onBegin: widget.onFinished,
+                onLogin: widget.onFooterLogin,
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Shared pieces
+// Tokens used by the design
 // ─────────────────────────────────────────────────────────────────────────────
 
 class _Colors {
@@ -83,151 +148,147 @@ class _Colors {
   static const deepEmber = Color(0xFF9F3C16);
 }
 
-/// Page 1 header — 32 px logo mark + 18 px wordmark, "Skip" on the right.
-class _HeaderLarge extends StatelessWidget {
-  const _HeaderLarge({this.onSkip});
+/// Places a design-sized block and scales it uniformly to [scale].
+class _Scaled extends StatelessWidget {
+  const _Scaled({
+    required this.width,
+    required this.height,
+    required this.scale,
+    required this.child,
+  });
 
-  final VoidCallback? onSkip;
+  final double width;
+  final double height;
+  final double scale;
+  final Widget child;
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 100,
-      child: Stack(
-        children: [
-          Positioned(left: 24, top: 50, child: const _LogoMark()),
-          Positioned(
-            left: 64,
-            top: 52,
-            child: figmaText('Daily Spark',
-                size: 18,
-                weight: FontWeight.w600,
-                letterSpacing: -0.45,
-                lineHeight: 28,
-                color: _Colors.ink),
-          ),
-          Positioned(
-            right: 24,
-            top: 53,
-            child: GestureDetector(
-              onTap: onSkip,
-              behavior: HitTestBehavior.opaque,
-              child: figmaText('Skip',
-                  size: 14,
-                  weight: FontWeight.w500,
-                  lineHeight: 20,
-                  color: _Colors.warmGrey),
-            ),
-          ),
-        ],
+      width: width * scale,
+      height: height * scale,
+      child: FittedBox(
+        child: SizedBox(width: width, height: height, child: child),
       ),
     );
   }
 }
 
-/// Pages 2 & 3 header — compact 64 px variant.
-class _HeaderCompact extends StatelessWidget {
-  const _HeaderCompact({this.onSkip});
+// ─────────────────────────────────────────────────────────────────────────────
+// Shared pieces
+// ─────────────────────────────────────────────────────────────────────────────
 
+class _Header extends StatelessWidget {
+  const _Header({required this.scale, this.compact = false, this.onSkip});
+
+  final double scale;
+  final bool compact;
   final VoidCallback? onSkip;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 64,
-      color: _Colors.canvas.withValues(alpha: 0.8),
-      child: Stack(
-        children: [
-          Positioned(left: 16, top: 16, child: const _LogoMark()),
-          Positioned(
-            left: 52,
-            top: 21,
-            child: figmaText('Daily Spark',
-                size: 16,
-                weight: FontWeight.w600,
-                letterSpacing: -0.4,
-                lineHeight: 22,
-                color: _Colors.ink),
-          ),
-          Positioned(
-            right: 20,
-            top: 24,
-            child: GestureDetector(
-              onTap: onSkip,
-              behavior: HitTestBehavior.opaque,
-              child: figmaText('Skip',
-                  size: 14,
-                  weight: FontWeight.w600,
-                  letterSpacing: 0.14,
-                  lineHeight: 18,
-                  color: _Colors.warmGrey),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
+    final s = scale;
+    final logo = compact ? 32.0 : 32.0;
+    final titleSize = compact ? 16.0 : 18.0;
+    final top = (compact ? 16.0 : 50.0) * s;
+    final left = (compact ? 16.0 : 24.0) * s;
 
-class _LogoMark extends StatelessWidget {
-  const _LogoMark();
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 32,
-      height: 32,
-      decoration: const BoxDecoration(
-        color: Color(0x1A9F3C16),
-        shape: BoxShape.circle,
-      ),
-      child: const Icon(
-        Icons.auto_awesome,
-        size: 15,
-        color: _Colors.ember,
-      ),
-    );
-  }
-}
-
-/// "● FOUNDATION" style chip (page 1) and "● STEP 2 OF 3 · …" eyebrow rows.
-class _Chip extends StatelessWidget {
-  const _Chip({required this.label, this.width = 115, this.size = 11});
-
-  final String label;
-  final double width;
-  final double size;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: width,
-      height: 28,
-      decoration: BoxDecoration(
-        color: const Color(0xFFEDEEEB),
-        borderRadius: BorderRadius.circular(9999),
+    return Padding(
+      padding: EdgeInsets.only(
+        top: top,
+        left: left,
+        right: 20 * s,
+        bottom: (compact ? 16.0 : 18.0) * s,
       ),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Container(
-            width: 6,
-            height: 6,
-            decoration: const BoxDecoration(
-              color: _Colors.ember,
-              shape: BoxShape.circle,
+          _Scaled(
+            width: logo,
+            height: logo,
+            scale: s,
+            child: Container(
+              decoration: const BoxDecoration(
+                color: Color(0x1A9F3C16),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(Icons.auto_awesome, size: 15, color: _Colors.ember),
             ),
           ),
-          const SizedBox(width: 6),
+          SizedBox(width: (compact ? 4.0 : 8.0) * s),
           figmaText(
-            label,
-            size: size,
+            'Daily Spark',
+            size: titleSize * s,
             weight: FontWeight.w600,
-            letterSpacing: 0.55,
-            lineHeight: 20,
-            color: _Colors.stone,
+            letterSpacing: (compact ? -0.4 : -0.45) * s,
+            lineHeight: (compact ? 22 : 28) * s,
+            color: _Colors.ink,
+          ),
+          const Spacer(),
+          GestureDetector(
+            onTap: onSkip,
+            behavior: HitTestBehavior.opaque,
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 4 * s, vertical: 8 * s),
+              child: figmaText(
+                'Skip',
+                size: 14 * s,
+                weight: compact ? FontWeight.w600 : FontWeight.w500,
+                letterSpacing: compact ? 0.14 * s : null,
+                lineHeight: 18 * s,
+                color: _Colors.warmGrey,
+              ),
+            ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _Chip extends StatelessWidget {
+  const _Chip({
+    required this.label,
+    required this.scale,
+    this.width = 115,
+  });
+
+  final String label;
+  final double scale;
+  final double width;
+
+  @override
+  Widget build(BuildContext context) {
+    return _Scaled(
+      width: width,
+      height: 28,
+      scale: scale,
+      child: Container(
+        decoration: BoxDecoration(
+          color: const Color(0xFFEDEEEB),
+          borderRadius: BorderRadius.circular(9999),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              width: 6,
+              height: 6,
+              decoration: const BoxDecoration(
+                color: _Colors.ember,
+                shape: BoxShape.circle,
+              ),
+            ),
+            const SizedBox(width: 6),
+            figmaText(
+              label,
+              size: 11,
+              weight: FontWeight.w600,
+              letterSpacing: 0.55,
+              lineHeight: 20,
+              color: _Colors.stone,
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -235,6 +296,7 @@ class _Chip extends StatelessWidget {
 
 class _StepEyebrow extends StatelessWidget {
   const _StepEyebrow({
+    required this.scale,
     required this.label,
     required this.width,
     required this.trailingLabel,
@@ -242,6 +304,7 @@ class _StepEyebrow extends StatelessWidget {
     required this.trailingIcon,
   });
 
+  final double scale;
   final String label;
   final double width;
   final String trailingLabel;
@@ -250,17 +313,17 @@ class _StepEyebrow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: 358,
-      height: 32,
-      child: Stack(
+    final s = scale;
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 16 * s),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Positioned(
-            left: 0,
-            top: 0,
+          _Scaled(
+            width: width,
+            height: 20,
+            scale: s,
             child: Container(
-              width: width,
-              height: 20,
               decoration: BoxDecoration(
                 color: const Color(0xFFE7E9E5),
                 borderRadius: BorderRadius.circular(9999),
@@ -289,23 +352,19 @@ class _StepEyebrow extends StatelessWidget {
               ),
             ),
           ),
-          Positioned(
-            right: 0,
-            top: 2,
-            child: Row(
-              children: [
-                Icon(trailingIcon, size: 13, color: trailingColor),
-                const SizedBox(width: 4),
-                figmaText(
-                  trailingLabel,
-                  size: 12,
-                  weight: FontWeight.w500,
-                  letterSpacing: 0.24,
-                  lineHeight: 16,
-                  color: trailingColor,
-                ),
-              ],
-            ),
+          Row(
+            children: [
+              Icon(trailingIcon, size: 13 * s, color: trailingColor),
+              SizedBox(width: 4 * s),
+              figmaText(
+                trailingLabel,
+                size: 12 * s,
+                weight: FontWeight.w500,
+                letterSpacing: 0.24 * s,
+                lineHeight: 16 * s,
+                color: trailingColor,
+              ),
+            ],
           ),
         ],
       ),
@@ -313,35 +372,60 @@ class _StepEyebrow extends StatelessWidget {
   }
 }
 
+/// Page indicator. The active step doubles as a progress bar for the
+/// auto-advance timer (it grows from 8 pt to the full 24 pt).
 class _Dots extends StatelessWidget {
-  const _Dots({required this.active, required this.top});
+  const _Dots({
+    required this.active,
+    required this.progress,
+    required this.scale,
+  });
 
   final int active;
-  final double top;
+  final double progress;
+  final double scale;
 
   @override
   Widget build(BuildContext context) {
-    return Positioned(
-      left: (390 - 56) / 2,
-      top: top,
-      child: SizedBox(
-        width: 56,
-        height: 8,
-        child: Row(
-          children: [
-            for (var i = 0; i < 3; i++) ...[
-              if (i > 0) const SizedBox(width: 8),
+    final s = scale;
+    return SizedBox(
+      height: 8 * s,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          for (var i = 0; i < 3; i++) ...[
+            if (i > 0) SizedBox(width: 8 * s),
+            if (i == active)
               Container(
-                width: i == active ? 24 : 8,
-                height: 8,
+                width: 24 * s,
+                height: 8 * s,
                 decoration: BoxDecoration(
-                  color: i == active ? _Colors.ember : const Color(0xFFE7E5E4),
+                  color: const Color(0xFFE7E5E4),
+                  borderRadius: BorderRadius.circular(9999),
+                ),
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: Container(
+                    width: (8 + 16 * progress.clamp(0.0, 1.0)) * s,
+                    height: 8 * s,
+                    decoration: BoxDecoration(
+                      color: _Colors.ember,
+                      borderRadius: BorderRadius.circular(9999),
+                    ),
+                  ),
+                ),
+              )
+            else
+              Container(
+                width: 8 * s,
+                height: 8 * s,
+                decoration: BoxDecoration(
+                  color: const Color(0xFFE7E5E4),
                   borderRadius: BorderRadius.circular(9999),
                 ),
               ),
-            ],
           ],
-        ),
+        ],
       ),
     );
   }
@@ -351,66 +435,67 @@ class _PrimaryButton extends StatelessWidget {
   const _PrimaryButton({
     required this.label,
     required this.onTap,
-    this.left = 24,
-    this.width = 342,
-    this.height = 56,
-    this.radius = 16,
-    this.fontSize = 16,
-    this.fontWeight = FontWeight.w500,
-    this.letterSpacing,
-    this.sparkle = false,
+    required this.scale,
+    this.height = 48,
+    this.radius = 12,
+    this.fontSize = 14,
+    this.fontWeight = FontWeight.w600,
+    this.letterSpacing = 0.35,
+    this.sparkle = true,
   });
 
   final String label;
   final VoidCallback? onTap;
-  final double left;
-  final double width;
+  final double scale;
   final double height;
   final double radius;
   final double fontSize;
   final FontWeight fontWeight;
-  final double? letterSpacing;
+  final double letterSpacing;
   final bool sparkle;
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      behavior: HitTestBehavior.opaque,
-      child: Container(
-        width: width,
-        height: height,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(radius),
-          gradient: const LinearGradient(
-            begin: Alignment.centerLeft,
-            end: Alignment.centerRight,
-            colors: [Color(0xFFFF8A54), Color(0xFFFF6B2C)],
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.05),
-              blurRadius: 2,
-              offset: const Offset(0, 1),
+    final s = scale;
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 16 * s),
+      child: GestureDetector(
+        onTap: onTap,
+        behavior: HitTestBehavior.opaque,
+        child: Container(
+          height: height * s,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(radius * s),
+            gradient: const LinearGradient(
+              begin: Alignment.centerLeft,
+              end: Alignment.centerRight,
+              colors: [Color(0xFFFF8A54), Color(0xFFFF6B2C)],
             ),
-          ],
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            figmaText(
-              label,
-              size: fontSize,
-              weight: fontWeight,
-              letterSpacing: letterSpacing,
-              lineHeight: fontSize * 1.5,
-              color: Colors.white,
-            ),
-            if (sparkle) ...[
-              const SizedBox(width: 8),
-              const Icon(Icons.auto_awesome, size: 14, color: Colors.white),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.05),
+                blurRadius: 2 * s,
+                offset: Offset(0, 1 * s),
+              ),
             ],
-          ],
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              figmaText(
+                label,
+                size: fontSize * s,
+                weight: fontWeight,
+                letterSpacing: letterSpacing * s,
+                lineHeight: 18 * s,
+                color: Colors.white,
+              ),
+              if (sparkle) ...[
+                SizedBox(width: 8 * s),
+                Icon(Icons.auto_awesome, size: 14 * s, color: Colors.white),
+              ],
+            ],
+          ),
         ),
       ),
     );
@@ -421,33 +506,88 @@ class _MicroNote extends StatelessWidget {
   const _MicroNote({
     required this.icon,
     required this.text,
-    required this.top,
+    required this.scale,
     this.color = const Color(0xFFA8A29E),
   });
 
   final IconData icon;
   final String text;
-  final double top;
+  final double scale;
   final Color color;
 
   @override
   Widget build(BuildContext context) {
-    return Positioned(
-      left: 0,
-      right: 0,
-      top: top,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
+    final s = scale;
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Icon(icon, size: 12 * s, color: color),
+        SizedBox(width: 6 * s),
+        figmaText(
+          text,
+          size: 12 * s,
+          weight: FontWeight.w400,
+          lineHeight: 16 * s,
+          color: color,
+        ),
+      ],
+    );
+  }
+}
+
+/// Shared vertical rhythm — header, artwork band (flexible), copy, dots, footer.
+class _PageLayout extends StatelessWidget {
+  const _PageLayout({
+    required this.scale,
+    required this.header,
+    required this.artwork,
+    required this.copy,
+    required this.dots,
+    required this.footer,
+    this.eyebrow,
+    this.artworkWidth,
+    this.artworkHeight,
+  });
+
+  final double scale;
+  final Widget header;
+  final Widget? eyebrow;
+  final Widget artwork;
+  final Widget copy;
+  final Widget dots;
+  final Widget footer;
+  final double? artworkWidth;
+  final double? artworkHeight;
+
+  @override
+  Widget build(BuildContext context) {
+    final s = scale;
+    return SafeArea(
+      child: Column(
         children: [
-          Icon(icon, size: 12, color: color),
-          const SizedBox(width: 6),
-          figmaText(
-            text,
-            size: 12,
-            weight: FontWeight.w400,
-            lineHeight: 16,
-            color: color,
+          header,
+          if (eyebrow != null) ...[
+            SizedBox(height: 6 * s),
+            eyebrow!,
+          ],
+          Expanded(
+            child: Center(
+              child: Padding(
+                padding: EdgeInsets.symmetric(vertical: 6 * s),
+                child: SizedBox(
+                  width: (artworkWidth ?? 342) * s,
+                  height: (artworkHeight ?? 364) * s,
+                  child: FittedBox(child: artwork),
+                ),
+              ),
+            ),
           ),
+          copy,
+          SizedBox(height: 18 * s),
+          dots,
+          SizedBox(height: 18 * s),
+          footer,
+          SizedBox(height: 14 * s),
         ],
       ),
     );
@@ -459,65 +599,66 @@ class _MicroNote extends StatelessWidget {
 // ─────────────────────────────────────────────────────────────────────────────
 
 class _PageOne extends StatelessWidget {
-  const _PageOne({this.onNext, this.onSkip});
+  const _PageOne({
+    required this.scale,
+    required this.progress,
+    this.onSkip,
+  });
 
-  final VoidCallback? onNext;
+  final double scale;
+  final double progress;
   final VoidCallback? onSkip;
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        const Positioned.fill(child: ColoredBox(color: _Colors.canvas)),
-        Positioned(top: 0, left: 0, right: 0, child: _HeaderLarge(onSkip: onSkip)),
-        const Positioned(left: 24, top: 153, child: FirstSparkCard()),
-
-        const Positioned(left: 137, top: 517, child: _Chip(label: 'FOUNDATION')),
-
-        Positioned(
-          left: 40,
-          top: 556,
-          width: 310,
-          child: figmaText(
-            'Small habits.\nBig changes.',
-            size: 30,
-            weight: FontWeight.w700,
-            letterSpacing: -0.75,
-            lineHeight: 37.5,
-            color: _Colors.ink,
-            align: TextAlign.center,
+    final s = scale;
+    return ColoredBox(
+      color: _Colors.canvas,
+      child: _PageLayout(
+        scale: s,
+        header: _Header(scale: s, onSkip: onSkip),
+        artwork: const SizedBox(
+          width: 342,
+          height: 364,
+          child: FirstSparkCard(),
+        ),
+        artworkWidth: 342,
+        artworkHeight: 364,
+        copy: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 24 * s),
+          child: Column(
+            children: [
+              _Chip(label: 'FOUNDATION', scale: s),
+              SizedBox(height: 11 * s),
+              figmaText(
+                'Small habits.\nBig changes.',
+                size: 30 * s,
+                weight: FontWeight.w700,
+                letterSpacing: -0.75 * s,
+                lineHeight: 37.5 * s,
+                color: _Colors.ink,
+                align: TextAlign.center,
+              ),
+              SizedBox(height: 11 * s),
+              figmaText(
+                'Build simple daily rituals that fit naturally into your '
+                'routine without overwhelming your schedule.',
+                size: 14 * s,
+                weight: FontWeight.w400,
+                lineHeight: 22.75 * s,
+                color: _Colors.muted,
+                align: TextAlign.center,
+              ),
+            ],
           ),
         ),
-        Positioned(
-          left: 51,
-          top: 643,
-          width: 288,
-          child: figmaText(
-            'Build simple daily rituals that fit naturally into your routine '
-            'without overwhelming your schedule.',
-            size: 14,
-            weight: FontWeight.w400,
-            lineHeight: 22.75,
-            color: _Colors.muted,
-            align: TextAlign.center,
-          ),
-        ),
-
-        const _Dots(active: 0, top: 736),
-        Positioned(
-          left: 24,
-          top: 768,
-          child: _PrimaryButton(
-            label: 'Continue →',
-            onTap: onNext,
-          ),
-        ),
-        const _MicroNote(
+        dots: _Dots(active: 0, progress: progress, scale: s),
+        footer: _MicroNote(
           icon: Icons.schedule_rounded,
           text: 'Takes less than 1 minute to personalize',
-          top: 836,
+          scale: s,
         ),
-      ],
+      ),
     );
   }
 }
@@ -527,186 +668,182 @@ class _PageOne extends StatelessWidget {
 // ─────────────────────────────────────────────────────────────────────────────
 
 class _PageTwo extends StatelessWidget {
-  const _PageTwo({this.onNext, this.onSkip});
+  const _PageTwo({
+    required this.scale,
+    required this.progress,
+    this.onSkip,
+  });
 
-  final VoidCallback? onNext;
+  final double scale;
+  final double progress;
   final VoidCallback? onSkip;
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        const Positioned.fill(child: ColoredBox(color: _Colors.canvas)),
-        Positioned(top: 0, left: 0, right: 0, child: _HeaderCompact(onSkip: onSkip)),
-        const Positioned(
-          left: 16,
-          top: 64,
-          child: _StepEyebrow(
-            label: 'STEP 2 OF 3 · CONSISTENCY',
-            width: 180,
-            trailingLabel: 'Compound Rhythm',
-            trailingColor: _Colors.deepEmber,
-            trailingIcon: Icons.auto_awesome,
+    final s = scale;
+    return ColoredBox(
+      color: _Colors.canvas,
+      child: _PageLayout(
+        scale: s,
+        header: _Header(scale: s, compact: true, onSkip: onSkip),
+        eyebrow: _StepEyebrow(
+          scale: s,
+          label: 'STEP 2 OF 3 · CONSISTENCY',
+          width: 180,
+          trailingLabel: 'Compound Rhythm',
+          trailingColor: _Colors.deepEmber,
+          trailingIcon: Icons.auto_awesome,
+        ),
+        artwork: const SizedBox(
+          width: 358,
+          height: 356,
+          child: StreakFlowCard(),
+        ),
+        artworkWidth: 358,
+        artworkHeight: 356,
+        copy: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 24 * s),
+          child: Column(
+            children: [
+              _Chip(label: 'MOMENTUM', scale: s, width: 107),
+              SizedBox(height: 11 * s),
+              figmaText(
+                'Consistency creates\nmomentum.',
+                size: 28 * s,
+                weight: FontWeight.w700,
+                letterSpacing: -0.7 * s,
+                lineHeight: 35 * s,
+                color: _Colors.ink,
+                align: TextAlign.center,
+              ),
+              SizedBox(height: 11 * s),
+              figmaText(
+                'Keep your streak going and build daily rhythm one intentional '
+                'ritual at a time.',
+                size: 14 * s,
+                weight: FontWeight.w400,
+                lineHeight: 22.75 * s,
+                color: _Colors.muted,
+                align: TextAlign.center,
+              ),
+            ],
           ),
         ),
-        const Positioned(left: 16, top: 96, child: StreakFlowCard()),
-
-        const Positioned(left: 142, top: 460, child: _Chip(label: 'MOMENTUM', width: 107)),
-
-        Positioned(
-          left: 24,
-          top: 495,
-          width: 342,
-          child: figmaText(
-            'Consistency creates\nmomentum.',
-            size: 28,
-            weight: FontWeight.w700,
-            letterSpacing: -0.7,
-            lineHeight: 35,
-            color: _Colors.ink,
-            align: TextAlign.center,
-          ),
-        ),
-        Positioned(
-          left: 46,
-          top: 573,
-          width: 298,
-          child: figmaText(
-            'Keep your streak going and build daily rhythm one intentional '
-            'ritual at a time.',
-            size: 14,
-            weight: FontWeight.w400,
-            lineHeight: 22.75,
-            color: _Colors.muted,
-            align: TextAlign.center,
-          ),
-        ),
-
-        const _Dots(active: 1, top: 740),
-        Positioned(
-          left: 16,
-          top: 768,
-          child: _PrimaryButton(
-            label: 'Next →',
-            onTap: onNext,
-            left: 16,
-            width: 358,
-          ),
-        ),
-        const _MicroNote(
+        dots: _Dots(active: 1, progress: progress, scale: s),
+        footer: _MicroNote(
           icon: Icons.verified_rounded,
           text: 'Builds lasting habits that stick',
-          top: 842,
+          scale: s,
         ),
-      ],
+      ),
     );
   }
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// PAGE 3 — See Your Progress
+// PAGE 3 — See Your Progress (decision point, no auto-advance)
 // ─────────────────────────────────────────────────────────────────────────────
 
 class _PageThree extends StatelessWidget {
-  const _PageThree({this.onNext, this.onSkip, this.onLogin});
+  const _PageThree({
+    required this.scale,
+    this.onSkip,
+    this.onBegin,
+    this.onLogin,
+  });
 
-  final VoidCallback? onNext;
+  final double scale;
   final VoidCallback? onSkip;
+  final VoidCallback? onBegin;
   final VoidCallback? onLogin;
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        const Positioned.fill(child: ColoredBox(color: _Colors.canvas)),
-        Positioned(top: 0, left: 0, right: 0, child: _HeaderCompact(onSkip: onSkip)),
-        const Positioned(
-          left: 16,
-          top: 64,
-          child: _StepEyebrow(
-            label: 'STEP 3 OF 3 · FINAL STEP',
-            width: 162,
-            trailingLabel: 'Milestone Engine',
-            trailingColor: Color(0xFF3A6750),
-            trailingIcon: Icons.workspace_premium_rounded,
-          ),
+    final s = scale;
+    return ColoredBox(
+      color: _Colors.canvas,
+      child: _PageLayout(
+        scale: s,
+        header: _Header(scale: s, compact: true, onSkip: onSkip),
+        eyebrow: _StepEyebrow(
+          scale: s,
+          label: 'STEP 3 OF 3 · FINAL STEP',
+          width: 162,
+          trailingLabel: 'Milestone Engine',
+          trailingColor: const Color(0xFF3A6750),
+          trailingIcon: Icons.workspace_premium_rounded,
         ),
-        const Positioned(left: 16, top: 111, child: MilestoneCard()),
-
-        Positioned(
-          left: 24,
-          top: 460,
-          width: 342,
-          child: figmaText(
-            'See how far you\u2019ve come.',
-            size: 28,
-            weight: FontWeight.w700,
-            letterSpacing: -0.7,
-            lineHeight: 35,
-            color: _Colors.ink,
-            align: TextAlign.center,
-          ),
+        artwork: const SizedBox(
+          width: 358,
+          height: 326,
+          child: MilestoneCard(),
         ),
-        Positioned(
-          left: 47,
-          top: 502,
-          width: 296,
-          child: figmaText(
-            'Track your deliberate progress and celebrate every ritual you '
-            'forge into permanence.',
-            size: 14,
-            weight: FontWeight.w400,
-            lineHeight: 22.75,
-            color: _Colors.brown,
-            align: TextAlign.center,
-          ),
-        ),
-
-        const _Dots(active: 2, top: 744),
-        Positioned(
-          left: 16,
-          top: 772,
-          child: _PrimaryButton(
-            label: 'Begin Your Journey',
-            onTap: onNext,
-            left: 16,
-            width: 358,
-            height: 48,
-            radius: 12,
-            fontSize: 14,
-            fontWeight: FontWeight.w600,
-            letterSpacing: 0.35,
-            sparkle: true,
-          ),
-        ),
-        Positioned(
-          left: 0,
-          right: 0,
-          top: 836,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+        artworkWidth: 358,
+        artworkHeight: 326,
+        copy: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 24 * s),
+          child: Column(
             children: [
-              figmaText('Already have an account?',
-                  size: 12,
-                  weight: FontWeight.w500,
-                  letterSpacing: 0.24,
-                  lineHeight: 16,
-                  color: _Colors.brown),
-              const SizedBox(width: 4),
-              GestureDetector(
-                onTap: onLogin,
-                behavior: HitTestBehavior.opaque,
-                child: figmaText('Log In',
-                    size: 12,
-                    weight: FontWeight.w600,
-                    letterSpacing: 0.24,
-                    lineHeight: 16,
-                    color: const Color(0xFFE05316)),
+              figmaText(
+                'See how far you\u2019ve come.',
+                size: 28 * s,
+                weight: FontWeight.w700,
+                letterSpacing: -0.7 * s,
+                lineHeight: 35 * s,
+                color: _Colors.ink,
+                align: TextAlign.center,
+              ),
+              SizedBox(height: 11 * s),
+              figmaText(
+                'Track your deliberate progress and celebrate every ritual you '
+                'forge into permanence.',
+                size: 14 * s,
+                weight: FontWeight.w400,
+                lineHeight: 22.75 * s,
+                color: _Colors.brown,
+                align: TextAlign.center,
               ),
             ],
           ),
         ),
-      ],
+        dots: _Dots(active: 2, progress: 1, scale: s),
+        footer: Column(
+          children: [
+            _PrimaryButton(
+              label: 'Begin Your Journey',
+              onTap: onBegin,
+              scale: s,
+            ),
+            SizedBox(height: 14 * s),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                figmaText(
+                  'Already have an account?',
+                  size: 12 * s,
+                  weight: FontWeight.w500,
+                  letterSpacing: 0.24 * s,
+                  lineHeight: 16 * s,
+                  color: _Colors.brown,
+                ),
+                SizedBox(width: 4 * s),
+                GestureDetector(
+                  onTap: onLogin,
+                  behavior: HitTestBehavior.opaque,
+                  child: figmaText(
+                    'Log In',
+                    size: 12 * s,
+                    weight: FontWeight.w600,
+                    letterSpacing: 0.24 * s,
+                    lineHeight: 16 * s,
+                    color: const Color(0xFFE05316),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
