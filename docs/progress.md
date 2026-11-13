@@ -78,6 +78,24 @@ Verified (Playwright, 390×844, service workers blocked):
   `python3 -m http.server 20241 --bind 0.0.0.0 --directory build/web`.
 - 0 page errors on gallery, `?s=progress|profile|home|details|add&theme=dark`.
 
+## Dark polish round 3 (her verdict)
+She reviewed all 13 dark screens and confirmed they're right. Verdicts on the 3 open deltas:
+- **Progress header** — keep the app version (logo + wordmark + bell + avatar). No change.
+- **Ember glow** on Home/Details — keep it subtle. No change.
+- **Add Habit header** — match the Figma dark frame. Done, dark only:
+  header plate `#121413@0.90` with a `#282C2A@0.60` hairline, cancel button and avatar get the
+  `#282C2A` ring, avatar flips to a surface disc + ember glyph, and `DRAFT SAVED` is now the muted
+  ochre pill (`chipGold` fill, new `goldBorder #523A25` ring, `onEmberSoft #FFB596` text) instead of
+  bright gold. Also fixed the details-screen ember badge in dark to `chipEmber` + `ember@30%` ring.
+
+**Note on that Figma frame:** the wide "field" in `163:4304` is not a search input — the brand-logo
+image node (light frame: 32×32) was accidentally stretched to 261×32 and its fill covers the art, which
+pushes the "New Habit" heading off the bar. So the frame's own header is broken; the app keeps
+X + logo + title + avatar (the light-frame intent) with the dark tokens above.
+
+Light theme untouched and re-verified: add 0.37 mean-abs / 0.00 % of pixels > 40 vs the approved shots,
+details 0.08 / 0.00 %.
+
 ## Next (needs her decision)
 1. **Logic layer** — state management choice still open (Provider vs Riverpod).
 2. **Backend** — must stay last.
