@@ -52,10 +52,10 @@ class AppBottomNav extends StatelessWidget {
     final card = Container(
       height: height * s,
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: frosted ? 0.90 : 0.95),
+        color: p.surface.withValues(alpha: frosted ? 0.90 : 0.95),
         border: frosted
             ? Border.all(
-                color: p.warmBorder.withValues(alpha: 0.10),
+                color: (p.dark ? p.bone : p.warmBorder).withValues(alpha: 0.10),
                 width: 1 * s,
               )
             : null,

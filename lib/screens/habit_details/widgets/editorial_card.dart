@@ -143,7 +143,7 @@ class _GlassChip extends StatelessWidget {
       height: 20 * s,
       padding: EdgeInsets.symmetric(horizontal: 10 * s),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.9),
+        color: p.surface.withValues(alpha: 0.9),
         borderRadius: BorderRadius.circular(999),
       ),
       child: Center(
