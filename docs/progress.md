@@ -96,6 +96,22 @@ X + logo + title + avatar (the light-frame intent) with the dark tokens above.
 Light theme untouched and re-verified: add 0.37 mean-abs / 0.00 % of pixels > 40 vs the approved shots,
 details 0.08 / 0.00 %.
 
+## Brand logo swap (her asset)
+She supplied a new spark logo (`uploads/IMG_9594.png`, 1024×1024 RGBA, transparent bg) and asked for it in
+**both themes**. Applied everywhere the mark appears:
+- `assets/brand/spark_logo.png` — 1024 master (cropped to the artwork, square-padded, alpha kept).
+- `assets/brand/spark_mark.png` — 512, used by splash (`SparkAppIcon`, 72px on the white tile),
+  login and welcome badges.
+- `assets/brand/home_logo.png` — regenerated header tile: white squircle + logo, used by the shared
+  `AppTopBar` and the Add-habit header (32px).
+- `SparkLogo` widget now paints `spark_logo.png` instead of the old `CustomPainter` glyph (painter removed).
+- `web/favicon.png` (32) + `web/icons/Icon-192/512` + `Icon-maskable-192/512` regenerated on the cream plate.
+- Gallery thumbnails regenerated for all 13 screens in light **and** dark (`web_extra/screens*`, 390×844).
+
+Note: the uploaded file has no red outline in its pixels — its edges are an orange→transparent ramp
+(the red ring is an artefact of some viewers). If a hard ember ring is wanted on the logo it has to be drawn.
+Verified live: splash light/dark, home dark header, gallery — 0 page errors; analyze 0 errors.
+
 ## Next (needs her decision)
 1. **Logic layer** — state management choice still open (Provider vs Riverpod).
 2. **Backend** — must stay last.
