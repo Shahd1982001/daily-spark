@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:daily_spark/design_system/theme/app_theme.dart';
 import 'package:daily_spark/screens/onboarding/onboarding_screen.dart';
 import 'package:daily_spark/screens/splash/splash_screen.dart';
+import 'package:daily_spark/screens/home/home_screen.dart';
 import 'package:daily_spark/screens/login/login_screen.dart';
 import 'package:daily_spark/screens/sign_up/sign_up_screen.dart';
 import 'package:daily_spark/screens/welcome/welcome_screen.dart';
@@ -24,7 +25,7 @@ class PreviewShell extends StatefulWidget {
   State<PreviewShell> createState() => _PreviewShellState();
 }
 
-enum _Stage { splash, onboarding, welcome, login, signUp }
+enum _Stage { splash, onboarding, welcome, login, signUp, home }
 
 class _PreviewShellState extends State<PreviewShell> {
   final _messengerKey = GlobalKey<ScaffoldMessengerState>();
@@ -44,6 +45,7 @@ class _PreviewShellState extends State<PreviewShell> {
         'welcome' => _Stage.welcome,
         'login' => _Stage.login,
         'signup' => _Stage.signUp,
+        'home' => _Stage.home,
         _ => _Stage.splash,
       };
 
@@ -102,7 +104,7 @@ class _PreviewShellState extends State<PreviewShell> {
             onForgotPassword: () => _toast('Forgot password — later ✦'),
             onTogglePasswordVisibility: () =>
                 setState(() => _obscurePassword = !_obscurePassword),
-            onLogin: () => _toast('Log In — الشاشة الجاية ✦'),
+            onLogin: () => _go(_Stage.home),
             onGuest: () => _toast('Guest mode — الشاشة الجاية ✦'),
             onSignUp: () => _go(_Stage.signUp),
           ),
@@ -111,9 +113,17 @@ class _PreviewShellState extends State<PreviewShell> {
             onBack: () => _go(_Stage.welcome),
             onTogglePasswordVisibility: () =>
                 setState(() => _obscurePassword = !_obscurePassword),
-            onCreateAccount: () => _toast('Create Account — الشاشة الجاية ✦'),
+            onCreateAccount: () => _go(_Stage.home),
             onGuest: () => _toast('Guest mode — الشاشة الجاية ✦'),
             onLogIn: () => _go(_Stage.login),
+          ),
+        _Stage.home => HomeScreen(
+            onProfile: () => _toast('Profile — later ✦'),
+            onToggleHabit: (i) => _toast('Habit $i toggled ✦'),
+            onHabitTap: (i) => _toast('Habit $i — details later ✦'),
+            onNewRitual: () => _toast('New Ritual — later ✦'),
+            onFilterChanged: (i) => _toast('Filter $i ✦'),
+            onNavTap: (i) => _toast('Nav $i ✦'),
           ),
       },
     );
