@@ -154,6 +154,28 @@ lib/state/habit_providers.dart    habitsProvider (AsyncNotifier) + todayHabits /
 **Next — Phase 2:** wire Home + Habits to the store (list from `todayHabitsProvider`, check-off taps,
 Daily Pulse / "3 of 5" from `todaySummaryProvider`, streak chips from `habitStreakProvider`).
 
+## Logic layer — Phase 2a: Home is live + real empty start
+Her call: **a real install starts empty**; the design data set stays only for review.
+
+- `?demo=1` opens the seeded design data in a throw-away `MemoryHabitStore` (never touches real data).
+  A normal launch starts with zero habits and persists everything the user adds.
+- **Home is now store-driven** (ConsumerStatefulWidget):
+  routine list ← `todayHabitsProvider` · check circle ← `controller.toggle(id)` (instant + persisted) ·
+  ring % / "3 of 5" ← `todaySummaryProvider` · "N Days / Record" ← `routineStreakProvider` /
+  `routineRecordProvider` · the Su→Sa strip ← `lastSevenDaysProvider` (past days show ✓ only when the
+  whole day was completed, today stays ember) · filter pills are generated from the habit categories
+  with live counts · streak chip ← `habitStreakProvider` · card tap → Habit Details ·
+  greeting date/greeting word/season + status line are computed from the clock.
+- **New empty state** (not in Figma, designed to match the system): icon disc + "Your first spark is
+  waiting" + one line of copy + ember CTA "Create your first ritual →" + "Takes about 40 seconds".
+  CTA opens Add Habit. Empty screens hide the pulse card, filters and clarity note.
+- Secondary empty state for an empty filter (`Nothing scheduled in this part of the day.`).
+
+**Verified on the web build** (Playwright, 0 page errors throughout):
+empty home → CTA tap lands on Add Habit · demo home tap on the workout circle → `3 of 5 → 4 of 5`,
+ring `60% → 80%`, streak chip `19d → 20d` · `Morning (2)` filter shows exactly the 2 morning habits ·
+light + dark both correct · `flutter analyze` 0 errors · 19/19 tests still green.
+
 ## Next (needs her decision)
 1. **Logic layer** — state management choice still open (Provider vs Riverpod).
 2. **Backend** — must stay last.

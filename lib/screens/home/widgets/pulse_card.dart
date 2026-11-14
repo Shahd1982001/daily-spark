@@ -6,10 +6,40 @@ import 'package:daily_spark/design_system/widgets/design_canvas.dart' show figma
 
 /// Top part of the Home screen — the daily pulse & streak card.
 /// Figma: node 126:15685 → "2. Motivation & Streak Bar", 358 × 168 at (16, 170).
+/// One day in the pulse card's 7-day strip.
+class PulseDay {
+  const PulseDay({
+    required this.label,
+    this.done = false,
+    this.isToday = false,
+  });
+
+  final String label;
+  final bool done;
+  final bool isToday;
+}
+
 class PulseCard extends StatelessWidget {
-  PulseCard({super.key, required this.scale});
+  PulseCard({
+    super.key,
+    required this.scale,
+    this.percent = 0,
+    this.completed = 0,
+    this.total = 0,
+    this.streakDays = 0,
+    this.recordDays = 0,
+    this.week = const [],
+  });
 
   final double scale;
+  final int percent;
+  final int completed;
+  final int total;
+  final int streakDays;
+  final int recordDays;
+
+  /// Last 7 days, oldest first; the last entry is today.
+  final List<PulseDay> week;
 
   static Color get _ink => p.ink;
   static Color get _brown => p.body;
@@ -44,7 +74,7 @@ class PulseCard extends StatelessWidget {
                 painter: _PulseRingPainter(stroke: 5.25 * s),
                 child: Center(
                   child: figmaText(
-                    '60%',
+                    '$percent%',
                     size: 12 * s,
                     weight: FontWeight.w700,
                     letterSpacing: 0.24 * s,
@@ -71,7 +101,7 @@ class PulseCard extends StatelessWidget {
             left: 80 * s,
             top: 34 * s,
             child: figmaText(
-              '3 of 5',
+              '$completed of $total',
               size: 16 * s,
               weight: FontWeight.w600,
               letterSpacing: -0.4 * s,
@@ -143,7 +173,7 @@ class PulseCard extends StatelessWidget {
                       textBaseline: TextBaseline.alphabetic,
                       children: [
                         figmaText(
-                          '7',
+                          '$streakDays',
                           size: 18 * s,
                           weight: FontWeight.w700,
                           letterSpacing: -0.18 * s,
@@ -166,7 +196,7 @@ class PulseCard extends StatelessWidget {
                     left: 56 * s,
                     top: 25 * s,
                     child: figmaText(
-                      'Record: 14d',
+                      'Record: ${recordDays}d',
                       size: 10 * s,
                       weight: FontWeight.w600,
                       letterSpacing: 0.4 * s,
@@ -194,11 +224,12 @@ class PulseCard extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  for (var i = 0; i < 7; i++)
+                  for (var i = 0; i < week.length; i++)
                     _DayCell(
                       scale: s,
-                      label: const ['Th', 'Fr', 'Sa', 'Su', 'Mo', 'Tu', 'We'][i],
-                      isToday: i == 6,
+                      label: week[i].label,
+                      isToday: week[i].isToday,
+                      done: week[i].done,
                       index: i,
                     ),
                 ],
@@ -217,11 +248,13 @@ class _DayCell extends StatelessWidget {
     required this.label,
     required this.isToday,
     required this.index,
+    this.done = false,
   });
 
   final double scale;
   final String label;
   final bool isToday;
+  final bool done;
   final int index;
 
   @override
@@ -265,7 +298,7 @@ class _DayCell extends StatelessWidget {
                 width: 28 * s,
                 height: 28 * s,
                 decoration: BoxDecoration(
-                  color: isToday ? null : p.mintSoft,
+                  color: isToday ? null : (done ? p.mintSoft : p.panel),
                   gradient: isToday
                       ? LinearGradient(
                           begin: Alignment.topLeft,
@@ -277,9 +310,11 @@ class _DayCell extends StatelessWidget {
                 ),
                 child: Center(
                   child: Icon(
-                    Icons.check_rounded,
+                    done || isToday ? Icons.check_rounded : Icons.remove_rounded,
                     size: 12 * s,
-                    color: isToday ? Colors.white : const Color(0xFF047857),
+                    color: isToday
+                        ? Colors.white
+                        : (done ? const Color(0xFF047857) : p.faint),
                   ),
                 ),
               ),

@@ -7,11 +7,18 @@ import 'package:daily_spark/state/habit_providers.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // `?demo=1` opens the design data set for review in a throw-away in-memory
+  // store — it never touches the user's real data. A normal launch starts
+  // empty and everything the user adds is persisted locally.
+  final demo = Uri.base.queryParameters['demo'] == '1';
+
   runApp(
     ProviderScope(
       overrides: [
-        // Local-first storage: shared_preferences (localStorage on web).
-        habitStoreProvider.overrideWithValue(PrefsHabitStore()),
+        habitStoreProvider
+            .overrideWithValue(demo ? MemoryHabitStore() : PrefsHabitStore()),
+        demoModeProvider.overrideWithValue(demo),
       ],
       child: const _AppBootstrap(child: PreviewShell()),
     ),

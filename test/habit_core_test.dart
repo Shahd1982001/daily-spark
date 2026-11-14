@@ -172,7 +172,10 @@ void main() {
   group('HabitsController', () {
     ProviderContainer containerWith(MemoryHabitStore store) {
       final container = ProviderContainer(
-        overrides: [habitStoreProvider.overrideWithValue(store)],
+        overrides: [
+          habitStoreProvider.overrideWithValue(store),
+          demoModeProvider.overrideWithValue(true),
+        ],
       );
       addTearDown(container.dispose);
       return container;
