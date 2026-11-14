@@ -124,6 +124,36 @@ She asked for the logo to sit directly on the background in both themes ("الخ
 - Favicon + PWA icons keep the cream plate on purpose (a transparent tab/OS icon has no contrast).
 - All 26 gallery thumbnails regenerated again.
 
+## Logic layer — Phase 1: core (done)
+Riverpod + local-first storage, no UI changes yet. 1021 lines across 8 files, **19 unit tests green**.
+
+**Layout**
+```
+lib/data/models/day.dart          calendar-day helpers (dayKey / parseDayKey) — dates stored as yyyy-MM-dd
+lib/data/models/habit.dart        Habit: id, title, note, iconKey, accent, rhythm(+days),
+                                  target, reminder, category, detailTag, sortOrder, createdAt, archivedAt
+lib/data/repositories/…           HabitsSnapshot (habits + completion log) ⇄ JSON, versioned (schemaVersion 1)
+lib/data/local/habit_store.dart   HabitStore interface · PrefsHabitStore (shared_preferences)
+                                  · MemoryHabitStore (tests)
+lib/data/services/streaks.dart    streakFor() / completionPercent() — scheduled days only, today never breaks
+lib/data/seed/seed_data.dart      first-run content = the approved Figma data set (12d/8d/5d/19d/7d)
+lib/state/habit_providers.dart    habitsProvider (AsyncNotifier) + todayHabits / todaySummary / habitStreak
+```
+**Behaviour**
+- First launch seeds 5 habits + a 40-day log, then persists; later launches read the store (no re-seed).
+- `toggle(id)` writes immediately; `addHabit / updateHabit / archiveHabit / deleteHabit` keep the log consistent.
+- Storage key: `daily_spark.snapshot.v1` (web: `localStorage['flutter.daily_spark.snapshot.v1']`).
+  To wipe: clear that key → next load re-seeds.
+- App bootstrap watches `habitsProvider` once at startup so screens open with data ready.
+
+**Verification**
+- `flutter analyze` → 0 errors · `flutter test` → 19/19 pass.
+- Web build loads with 0 page errors; localStorage holds the 5 habits, 5 logs, meditation = 12 days.
+- UI screenshots unchanged vs the approved design.
+
+**Next — Phase 2:** wire Home + Habits to the store (list from `todayHabitsProvider`, check-off taps,
+Daily Pulse / "3 of 5" from `todaySummaryProvider`, streak chips from `habitStreakProvider`).
+
 ## Next (needs her decision)
 1. **Logic layer** — state management choice still open (Provider vs Riverpod).
 2. **Backend** — must stay last.
