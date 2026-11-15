@@ -22,7 +22,10 @@ import 'package:daily_spark/state/habit_providers.dart';
 import 'package:daily_spark/state/details_providers.dart';
 import 'package:daily_spark/state/progress_providers.dart';
 import 'package:daily_spark/state/settings_providers.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:daily_spark/l10n/strings.dart';
 import 'package:daily_spark/state/auth_providers.dart';
+import 'package:daily_spark/state/locale_providers.dart';
 
 /// ⚠️ TEMPORARY PREVIEW SHELL — scaffolding only, zero business logic.
 ///
@@ -421,6 +424,68 @@ class _PreviewShellState extends ConsumerState<PreviewShell> {
     mottoCtrl.dispose();
   }
 
+  /// Bottom sheet: pick the app language (persisted, applies live).
+  Future<void> _showLanguageSheet() async {
+    const options = [
+      ('en', 'English', 'English'),
+      ('ar', 'العربية', 'Arabic'),
+    ];
+    final current = ref.read(localeProvider).languageCode;
+    await showModalBottomSheet<void>(
+      context: _navKey.currentContext!,
+      backgroundColor: Colors.transparent,
+      builder: (ctx) => Container(
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          color: p.surface,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            figmaText('Language',
+                size: 18, weight: FontWeight.w700, color: p.ink),
+            const SizedBox(height: 12),
+            for (final (code, native, english) in options)
+              InkWell(
+                borderRadius: BorderRadius.circular(12),
+                onTap: () {
+                  ref.read(localeProvider.notifier).setLanguage(code);
+                  Navigator.of(ctx).pop();
+                },
+                child: Padding(
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 12, horizontal: 4),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: figmaText(native,
+                            size: 15,
+                            weight: current == code
+                                ? FontWeight.w700
+                                : FontWeight.w400,
+                            color: p.ink),
+                      ),
+                      if (current == code)
+                        Icon(Icons.check_rounded, color: p.ember, size: 20),
+                    ],
+                  ),
+                ),
+              ),
+            const SizedBox(height: 4),
+            Center(
+              child: TextButton(
+                onPressed: () => Navigator.of(ctx).pop(),
+                child: const Text('Close'),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   /// Bottom sheet: a short, real guide to building rituals.
   Future<void> _showGuideSheet() async {
     await showModalBottomSheet<void>(
@@ -559,6 +624,7 @@ class _PreviewShellState extends ConsumerState<PreviewShell> {
         setState(() => _isDark = next.themeMode == ThemeMode.dark);
       }
     });
+    Strings.locale = ref.watch(localeProvider);
     final palette = _isDark ? SparkPalette.darkPalette : SparkPalette.light;
     SparkPalette.active = palette;
     return MaterialApp(
@@ -566,6 +632,13 @@ class _PreviewShellState extends ConsumerState<PreviewShell> {
       debugShowCheckedModeBanner: false,
       scaffoldMessengerKey: _messengerKey,
       navigatorKey: _navKey,
+      locale: ref.watch(localeProvider),
+      supportedLocales: const [Locale('en'), Locale('ar')],
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
       theme: AppTheme.light,
       darkTheme: AppTheme.dark,
       themeMode: _isDark ? ThemeMode.dark : ThemeMode.light,
@@ -686,8 +759,7 @@ class _PreviewShellState extends ConsumerState<PreviewShell> {
                 ref.read(settingsProvider.notifier).setReminders(v),
             onToggleSound: (v) => ref.read(settingsProvider.notifier).setSound(v),
             onAppearance: _toggleTheme,
-            onLanguage: () =>
-                _toast('العربية coming with the translation update 🌙'),
+            onLanguage: _showLanguageSheet,
             onGuide: _showGuideSheet,
             onAbout: _showAboutSpark,
             onLogOut: _logout,

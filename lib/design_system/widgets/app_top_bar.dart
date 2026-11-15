@@ -18,6 +18,7 @@ class AppTopBar extends StatelessWidget {
     this.showSettings = false,
     this.onSettings,
     this.onProfile,
+    this.hasAvatar = true,
   });
 
   final double scale;
@@ -28,6 +29,10 @@ class AppTopBar extends StatelessWidget {
   final bool showSettings;
   final VoidCallback? onSettings;
   final VoidCallback? onProfile;
+
+  /// Whether the user has a profile picture — same source as the Profile
+  /// screen; without one the designed spark mark shows instead.
+  final bool hasAvatar;
 
   @override
   Widget build(BuildContext context) {
@@ -127,9 +132,11 @@ class AppTopBar extends StatelessWidget {
                           top: 6 * s,
                           child: ClipOval(
                             child: Image.asset(
-                              'assets/brand/avatar_shahd.png',
-                              width: 32 * s,
-                              height: 32 * s,
+                              hasAvatar
+                                  ? 'assets/brand/avatar_shahd.png'
+                                  : 'assets/brand/spark_logo.png',
+                              width: hasAvatar ? 32 * s : 22 * s,
+                              height: hasAvatar ? 32 * s : 22 * s,
                               filterQuality: FilterQuality.high,
                             ),
                           ),

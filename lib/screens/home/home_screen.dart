@@ -169,7 +169,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             top: 0,
             left: 0,
             right: 0,
-            child: AppTopBar(scale: s, title: 'Home', onProfile: widget.onProfile),
+            child: AppTopBar(
+                scale: s,
+                title: 'Home',
+                hasAvatar: widget.userName != null,
+                onProfile: widget.onProfile),
           ),
           Positioned(
             left: 16 * s,

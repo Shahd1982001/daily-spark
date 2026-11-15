@@ -2,6 +2,8 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 
+import 'package:daily_spark/l10n/strings.dart';
+
 /// Every screen is drawn on a fixed 390 × 884 canvas (the exact Figma frame)
 /// and then uniformly scaled to the device viewport. This guarantees the
 /// layout ratios stay identical to the design on every phone.
@@ -50,17 +52,18 @@ class DesignCanvas extends StatelessWidget {
 
 /// Convenience text builder that mirrors a Figma text style 1:1.
 Widget figmaText(
-  String text, {
+  String rawText, {
   required double size,
   required FontWeight weight,
   required Color color,
   double? letterSpacing,
   double? lineHeight,
-  TextAlign align = TextAlign.left,
+  TextAlign align = TextAlign.start,
   double? width,
   int? maxLines,
   TextOverflow overflow = TextOverflow.clip,
 }) {
+  final text = tr(rawText);
   final style = TextStyle(
     fontFamily: 'PlusJakartaSans',
     fontSize: size,
@@ -70,10 +73,16 @@ Widget figmaText(
     color: color,
     decoration: TextDecoration.none,
   );
+  // Paragraph direction follows the content script: pure-Latin strings (user
+  // data, untranslated fallbacks) lay out LTR so runs never scramble inside an
+  // RTL page; Arabic strings lay out RTL and anchor right. Keeps every screen
+  // readable in both locales regardless of ambient direction.
+  final hasArabic = RegExp(r'[\u0600-\u06FF]').hasMatch(text);
   final child = Text(
     text,
     style: style,
     textAlign: align,
+    textDirection: hasArabic ? TextDirection.rtl : TextDirection.ltr,
     maxLines: maxLines,
     overflow: overflow,
   );

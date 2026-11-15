@@ -60,8 +60,8 @@ class HabitCard extends StatelessWidget {
         child: Stack(
           children: [
             // Icon tile
-            Positioned(
-              left: 16 * s,
+            PositionedDirectional(
+              start: 16 * s,
               top: 16 * s,
               child: Container(
                 width: 44 * s,
@@ -74,8 +74,8 @@ class HabitCard extends StatelessWidget {
               ),
             ),
             // Title
-            Positioned(
-              left: 68 * s,
+            PositionedDirectional(
+              start: 68 * s,
               top: 18 * s,
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -115,8 +115,8 @@ class HabitCard extends StatelessWidget {
               ),
             ),
             // Meta line
-            Positioned(
-              left: 68 * s,
+            PositionedDirectional(
+              start: 68 * s,
               top: 40 * s,
               child: Row(
                 children: [
@@ -141,7 +141,7 @@ class HabitCard extends StatelessWidget {
                     ),
                   ],
                   Padding(
-                    padding: EdgeInsets.only(left: 6 * s),
+                    padding: EdgeInsetsDirectional.only(start: 6 * s),
                     child: Icon(
                       Icons.bolt_rounded,
                       size: 12 * s,
@@ -160,8 +160,8 @@ class HabitCard extends StatelessWidget {
               ),
             ),
             // Complete toggle
-            Positioned(
-              left: 302 * s,
+            PositionedDirectional(
+              start: 302 * s,
               top: 18 * s,
               child: GestureDetector(
                 onTap: onToggle,

@@ -9,6 +9,7 @@ import 'package:daily_spark/design_system/widgets/design_canvas.dart' show figma
 import 'package:daily_spark/screens/profile/widgets/profile_identity_card.dart';
 import 'package:daily_spark/screens/profile/widgets/settings_group.dart';
 import 'package:daily_spark/screens/profile/widgets/stat_tile.dart';
+import 'package:daily_spark/l10n/strings.dart';
 import 'package:daily_spark/state/habit_providers.dart';
 import 'package:daily_spark/state/progress_providers.dart';
 
@@ -229,7 +230,9 @@ class ProfileScreen extends ConsumerWidget {
                               icon: Icons.translate_rounded,
                               title: 'Language',
                               height: 69,
-                              value: 'English',
+                              value: Strings.locale.languageCode == 'ar'
+                                  ? 'العربية'
+                                  : 'English',
                               onTap: onLanguage,
                             ),
                           ],
@@ -275,6 +278,7 @@ class ProfileScreen extends ConsumerWidget {
             child: AppTopBar(
               scale: s,
               title: 'Profile',
+              hasAvatar: name != null,
               showSettings: true,
               onSettings: onSettings ?? _scrollToSettings,
             ),
