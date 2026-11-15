@@ -11,13 +11,18 @@ void main() {
   // `?demo=1` opens the design data set for review in a throw-away in-memory
   // store — it never touches the user's real data. A normal launch starts
   // empty and everything the user adds is persisted locally.
-  final demo = Uri.base.queryParameters['demo'] == '1';
+  final demo = switch (Uri.base.queryParameters['demo']) {
+    '1' || 'full' => DemoMode.full,
+    'small' => DemoMode.small,
+    _ => DemoMode.none,
+  };
+  final isDemo = demo != DemoMode.none;
 
   runApp(
     ProviderScope(
       overrides: [
         habitStoreProvider
-            .overrideWithValue(demo ? MemoryHabitStore() : PrefsHabitStore()),
+            .overrideWithValue(isDemo ? MemoryHabitStore() : PrefsHabitStore()),
         demoModeProvider.overrideWithValue(demo),
       ],
       child: const _AppBootstrap(child: PreviewShell()),

@@ -164,9 +164,7 @@ class _PreviewShellState extends State<PreviewShell> {
         _Stage.habits => HabitsScreen(
             onProfile: () => _toast('Profile — later ✦'),
             onSort: () => _toast('Sort & filter ✦'),
-            onFilterChanged: (i) => _toast('Filter $i ✦'),
-            onToggleHabit: (i) => _toast('Habit $i toggled ✦'),
-            onHabitTap: (i) => _go(_Stage.habitDetails),
+            onHabitTap: (id) => _go(_Stage.habitDetails),
             onCreateHabit: () => _go(_Stage.addHabit),
             onNavTap: (i) => switch (i) {
               0 => _go(_Stage.home),

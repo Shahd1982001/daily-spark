@@ -59,6 +59,7 @@ Widget figmaText(
   TextAlign align = TextAlign.left,
   double? width,
   int? maxLines,
+  TextOverflow overflow = TextOverflow.clip,
 }) {
   final style = TextStyle(
     fontFamily: 'PlusJakartaSans',
@@ -69,6 +70,12 @@ Widget figmaText(
     color: color,
     decoration: TextDecoration.none,
   );
-  final child = Text(text, style: style, textAlign: align, maxLines: maxLines);
+  final child = Text(
+    text,
+    style: style,
+    textAlign: align,
+    maxLines: maxLines,
+    overflow: overflow,
+  );
   return width == null ? child : SizedBox(width: width, child: child);
 }

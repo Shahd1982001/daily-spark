@@ -8,6 +8,7 @@ import 'package:daily_spark/design_system/widgets/app_bottom_nav.dart';
 import 'package:daily_spark/design_system/widgets/app_top_bar.dart';
 import 'package:daily_spark/design_system/widgets/design_canvas.dart' show figmaText;
 import 'package:daily_spark/screens/home/widgets/habit_card.dart';
+import 'package:daily_spark/screens/home/widgets/habit_card_style.dart' show habitIcon, habitAccentColours, habitMetaParts;
 import 'package:daily_spark/screens/home/widgets/pulse_card.dart';
 import 'package:daily_spark/state/habit_providers.dart';
 
@@ -215,54 +216,18 @@ class _HabitRow extends ConsumerWidget {
   final VoidCallback? onToggle;
   final VoidCallback? onTap;
 
-  static IconData _icon(String key) => switch (key) {
-        'book' => Icons.menu_book_outlined,
-        'water' => Icons.water_drop_outlined,
-        'meditation' => Icons.self_improvement,
-        'walk' => Icons.directions_walk_rounded,
-        'journal' => Icons.edit_note_rounded,
-        'moon' => Icons.nightlight_round,
-        'flame' => Icons.local_fire_department_rounded,
-        _ => Icons.bolt_rounded,
-      };
-
-  static (Color, Color) _accent(HabitAccent accent) => switch (accent) {
-        HabitAccent.sage => (p.success, p.mintSoft),
-        HabitAccent.terracotta => (p.emberDark, p.creamSoft),
-        HabitAccent.ochre => (p.ochre, p.chipGold),
-        HabitAccent.slate => (p.body, p.bone),
-      };
-
-  static String _time(String? hhmm) {
-    if (hhmm == null) return '';
-    final parts = hhmm.split(':');
-    if (parts.length != 2) return '';
-    final hour = int.tryParse(parts[0]);
-    final minute = parts[1];
-    if (hour == null) return '';
-    final suffix = hour >= 12 ? 'PM' : 'AM';
-    final display = hour % 12 == 0 ? 12 : hour % 12;
-    return '$display:$minute $suffix';
-  }
-
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final (iconColor, background) = _accent(habit.accent);
+    final (iconColor, background) = habitAccentColours(habit.accent);
     final streak = ref.watch(habitStreakProvider(habit.id));
-
-    final meta = <String>[
-      if (habit.targetAmount > 1) '${habit.targetAmount} ${habit.targetUnit}',
-      if (habit.detailTag.isNotEmpty) habit.detailTag,
-      if (_time(habit.reminderTime).isNotEmpty) _time(habit.reminderTime),
-      if (habit.targetAmount <= 1 && habit.reminderTime == null) habit.category,
-    ];
+    final meta = habitMetaParts(habit);
 
     return HabitCard(
       scale: scale,
       title: habit.title,
       meta: meta,
       streak: streak == 0 ? '' : '${streak}d',
-      icon: _icon(habit.iconKey),
+      icon: habitIcon(habit.iconKey),
       iconColor: iconColor,
       iconBackground: background,
       completed: completed,

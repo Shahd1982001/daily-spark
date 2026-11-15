@@ -174,7 +174,7 @@ void main() {
       final container = ProviderContainer(
         overrides: [
           habitStoreProvider.overrideWithValue(store),
-          demoModeProvider.overrideWithValue(true),
+          demoModeProvider.overrideWithValue(DemoMode.full),
         ],
       );
       addTearDown(container.dispose);

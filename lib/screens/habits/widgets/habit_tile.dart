@@ -151,13 +151,18 @@ class HabitTile extends StatelessWidget {
               top: 41 * s,
               child: Row(
                 children: [
-                  figmaText(
-                    meta,
-                    size: 12 * s,
-                    weight: FontWeight.w400,
-                    letterSpacing: 0.12 * s,
-                    lineHeight: 16 * s,
-                    color: p.body,
+                  ConstrainedBox(
+                    constraints: BoxConstraints(maxWidth: 190 * s),
+                    child: figmaText(
+                      meta,
+                      size: 12 * s,
+                      weight: FontWeight.w400,
+                      letterSpacing: 0.12 * s,
+                      lineHeight: 16 * s,
+                      color: p.body,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
                   ),
                   if (streakHighlighted) ...[
                     Padding(

@@ -133,3 +133,47 @@ Set<DateTime> _run(DateTime today, int count, {required bool includeToday}) {
   }
   return days;
 }
+
+
+/// Small review data set: two habits, a couple of days of history — the
+/// "just started using the app" state.
+HabitsSnapshot seedSmallSnapshot(DateTime now) {
+  final created = dayOnly(now).subtract(const Duration(days: 3));
+
+  final habits = <Habit>[
+    Habit(
+      id: 'h_meditation',
+      title: 'Morning Meditation',
+      note: 'Ten quiet minutes before the day starts.',
+      iconKey: 'meditation',
+      accent: HabitAccent.sage,
+      category: 'Morning',
+      reminderTime: '08:00',
+      targetAmount: 10,
+      targetUnit: 'mins',
+      sortOrder: 0,
+      createdAt: created,
+    ),
+    Habit(
+      id: 'h_read',
+      title: 'Read 20 Pages',
+      note: 'Building intellectual stillness & depth',
+      iconKey: 'book',
+      accent: HabitAccent.sage,
+      category: 'Anytime',
+      targetAmount: 20,
+      targetUnit: 'pages',
+      sortOrder: 1,
+      createdAt: created,
+    ),
+  ];
+
+  final today = dayOnly(now);
+  return HabitsSnapshot(
+    habits: habits,
+    log: {
+      'h_meditation': {today, today.subtract(const Duration(days: 1))},
+      'h_read': {today.subtract(const Duration(days: 1))},
+    },
+  );
+}

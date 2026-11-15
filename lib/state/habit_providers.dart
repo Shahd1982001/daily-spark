@@ -7,9 +7,12 @@ import '../data/repositories/habit_repository.dart';
 import '../data/seed/seed_data.dart';
 import '../data/services/streaks.dart';
 
-/// True only when the app is opened with `?demo=1` (design review / gallery).
-/// A real first launch starts empty — no habits, no stats.
-final demoModeProvider = Provider<bool>((ref) => false);
+/// Review data sets — a real first launch starts with [DemoMode.none]
+/// (empty: no habits, no stats). `?demo=small` / `?demo=1` seed a throw-away
+/// in-memory store so every state can be reviewed in light and dark.
+enum DemoMode { none, small, full }
+
+final demoModeProvider = Provider<DemoMode>((ref) => DemoMode.none);
 
 /// Overridden in `main()` with the real local store.
 final habitStoreProvider = Provider<HabitStore>(
@@ -19,9 +22,11 @@ final habitStoreProvider = Provider<HabitStore>(
 final habitRepositoryProvider = Provider<HabitRepository>(
   (ref) => HabitRepository(
     ref.watch(habitStoreProvider),
-    seeder: ref.watch(demoModeProvider)
-        ? seedSnapshot
-        : HabitRepository.defaultSeeder,
+    seeder: switch (ref.watch(demoModeProvider)) {
+      DemoMode.full => seedSnapshot,
+      DemoMode.small => seedSmallSnapshot,
+      DemoMode.none => HabitRepository.defaultSeeder,
+    },
   ),
 );
 

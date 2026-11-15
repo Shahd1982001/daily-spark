@@ -1,22 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:daily_spark/data/models/habit.dart';
 import 'package:daily_spark/design_system/theme/spark_palette.dart';
 
 import 'package:daily_spark/design_system/widgets/app_bottom_nav.dart';
 import 'package:daily_spark/design_system/widgets/app_top_bar.dart';
 import 'package:daily_spark/design_system/widgets/design_canvas.dart' show figmaText;
 import 'package:daily_spark/screens/habits/widgets/habit_tile.dart';
+import 'package:daily_spark/screens/home/widgets/habit_card_style.dart' show habitIcon, habitAccentColours, habitTimeLabel, habitMetaLine;
+import 'package:daily_spark/state/habit_providers.dart';
 
-/// PURE UI — Habits.
-/// No state container, no network: taps are reported to the parent.
-/// Figma: node 126:15648 — 390 × 844 viewport, 1208 of scrollable content.
-class HabitsScreen extends StatelessWidget {
+/// Habits — driven by the habit store.
+/// Figma: node 126:15648 (data-filled state) · empty state designed in-system.
+class HabitsScreen extends ConsumerStatefulWidget {
   const HabitsScreen({
     super.key,
     this.onProfile,
     this.onSort,
-    this.onFilterChanged,
-    this.onToggleHabit,
     this.onHabitTap,
     this.onCreateHabit,
     this.onNavTap,
@@ -24,21 +25,49 @@ class HabitsScreen extends StatelessWidget {
 
   final VoidCallback? onProfile;
   final VoidCallback? onSort;
-  final ValueChanged<int>? onFilterChanged;
-  final ValueChanged<int>? onToggleHabit;
-  final ValueChanged<int>? onHabitTap;
+  final ValueChanged<String>? onHabitTap;
   final VoidCallback? onCreateHabit;
   final ValueChanged<int>? onNavTap;
 
-  static Color get _canvas => p.canvas;
+  @override
+  ConsumerState<HabitsScreen> createState() => _HabitsScreenState();
+}
+
+class _HabitsScreenState extends ConsumerState<HabitsScreen> {
+  int _filter = 0;
 
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.sizeOf(context).width;
     final s = (width / 390).clamp(0.86, 1.25);
 
+    final snapshot = ref.watch(habitsProvider).valueOrNull;
+    final todayHabits = ref.watch(todayHabitsProvider);
+    final summary = ref.watch(todaySummaryProvider);
+    final week = ref.watch(lastSevenDaysProvider);
+
+    final allHabits = snapshot?.activeHabits ?? const <Habit>[];
+    final paused = snapshot?.habits.where((h) => h.isArchived).toList() ?? const <Habit>[];
+    final isEmpty = allHabits.isEmpty && paused.isEmpty;
+
+    final labels = [
+      'All (${allHabits.length})',
+      'Today (${todayHabits.length})',
+      'Paused (${paused.length})',
+    ];
+    final active = _filter.clamp(0, labels.length - 1);
+    final visible = switch (active) {
+      1 => todayHabits,
+      2 => paused,
+      _ => allHabits,
+    };
+    final nextUpId = todayHabits
+        .where((h) => !(snapshot?.isCompleted(h.id, DateTime.now()) ?? false))
+        .map((h) => h.id)
+        .firstOrNull;
+
     return Scaffold(
-      backgroundColor: _canvas,
+      backgroundColor: p.canvas,
       body: Stack(
         children: [
           Positioned.fill(
@@ -51,27 +80,82 @@ class HabitsScreen extends StatelessWidget {
                   SizedBox(height: 16 * s),
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 16 * s),
-                    child: _HeaderSection(scale: s, onSort: onSort),
+                    child: _HeaderSection(scale: s, onSort: widget.onSort),
                   ),
-                  SizedBox(height: 24 * s),
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 16 * s),
-                    child: _SnapshotCard(scale: s),
-                  ),
-                  SizedBox(height: 24 * s),
-                  _FilterChips(scale: s, onChanged: onFilterChanged),
-                  SizedBox(height: 24 * s),
-                  ..._tiles(s),
-                  SizedBox(height: 28 * s),
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 16 * s),
-                    child: _MindfulStreakNote(scale: s),
-                  ),
-                  SizedBox(height: 32 * s),
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 16 * s),
-                    child: _CreateHabitCta(scale: s, onTap: onCreateHabit),
-                  ),
+                  if (isEmpty) ...[
+                    SizedBox(height: 24 * s),
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 16 * s),
+                      child: _EmptyHabits(
+                        scale: s,
+                        onCreateHabit: widget.onCreateHabit,
+                      ),
+                    ),
+                  ] else ...[
+                    SizedBox(height: 24 * s),
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 16 * s),
+                      child: _SnapshotCard(
+                        scale: s,
+                        completed: summary.completed,
+                        total: summary.total,
+                        percent: summary.percent,
+                        week: [for (final d in week) d],
+                      ),
+                    ),
+                    SizedBox(height: 24 * s),
+                    _FilterChips(
+                      scale: s,
+                      labels: labels,
+                      selected: active,
+                      onChanged: (i) => setState(() => _filter = i),
+                    ),
+                    SizedBox(height: 24 * s),
+                    if (visible.isEmpty)
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 16 * s),
+                        child: _EmptyFilter(scale: s, label: labels[active]),
+                      ),
+                    for (var i = 0; i < visible.length; i++)
+                      Padding(
+                        padding: EdgeInsets.fromLTRB(
+                          16 * s,
+                          0,
+                          16 * s,
+                          i == visible.length - 1 ? 0 : 8 * s,
+                        ),
+                        child: _HabitTileRow(
+                          key: ValueKey(visible[i].id),
+                          scale: s,
+                          habit: visible[i],
+                          completed: snapshot?.isCompleted(
+                                  visible[i].id, DateTime.now()) ??
+                              false,
+                          nextUp: visible[i].id == nextUpId,
+                          onToggle: () => ref
+                              .read(habitsProvider.notifier)
+                              .toggle(visible[i].id),
+                          onTap: () => widget.onHabitTap?.call(visible[i].id),
+                        ),
+                      ),
+                    SizedBox(height: 28 * s),
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 16 * s),
+                      child: _MindfulStreakNote(
+                        scale: s,
+                        streakDays: ref.watch(routineStreakProvider),
+                      ),
+                    ),
+                    SizedBox(height: 32 * s),
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 16 * s),
+                      child: _CreateHabitCta(
+                        scale: s,
+                        onTap: widget.onCreateHabit,
+                      ),
+                    ),
+                  ],
+                  SizedBox(height: 20 * s),
                 ],
               ),
             ),
@@ -80,7 +164,11 @@ class HabitsScreen extends StatelessWidget {
             top: 0,
             left: 0,
             right: 0,
-            child: AppTopBar(scale: s, title: 'HABITS', onProfile: onProfile),
+            child: AppTopBar(
+              scale: s,
+              title: 'HABITS',
+              onProfile: widget.onProfile,
+            ),
           ),
           Positioned(
             left: 16 * s,
@@ -89,104 +177,184 @@ class HabitsScreen extends StatelessWidget {
             child: AppBottomNav(
               scale: s,
               selectedIndex: 1,
-              onTap: onNavTap,
+              onTap: widget.onNavTap,
             ),
           ),
         ],
       ),
     );
   }
+}
 
-  List<Widget> _tiles(double s) {
-    final data = <Map<String, Object>>[
-      {
-        'title': 'Morning Meditation',
-        'meta': '10 mins \u00b7 Everyday \u00b7 8:00 AM',
-        'streak': '12d',
-        'icon': Icons.self_improvement,
-        'fg': p.pine,
-        'bg': p.mint,
-        'done': true,
-      },
-      {
-        'title': 'Hydrate (2.5L)',
-        'meta': '2.5L goal \u00b7 Throughout day',
-        'streak': '8d',
-        'icon': Icons.water_drop_outlined,
-        'fg': p.ink,
-        'bg': p.container,
-        'done': true,
-      },
-      {
-        'title': 'Read 20 Pages',
-        'meta': 'Atomic Habits \u00b7 Evening',
-        'streak': '5d',
-        'icon': Icons.menu_book_outlined,
-        'fg': p.emberDeep,
-        'bg': p.emberSoft,
-        'done': true,
-      },
-      {
-        'title': '30-Min Workout / Walk',
-        'meta': '5:30 PM \u00b7 4x a week',
-        'streak': '19d',
-        'icon': Icons.directions_walk_rounded,
-        'fg': p.emberDeep,
-        'bg': p.emberDeep.withValues(alpha: 0.4),
-        'done': false,
-        'next': true,
-        'orange_streak': true,
-      },
-      {
-        'title': 'Learn Spanish',
-        'meta': '15 mins \u00b7 Everyday \u00b7 Evening',
-        'streak': '3d',
-        'icon': Icons.translate_rounded,
-        'fg': p.ochre,
-        'bg': p.chipGold,
-        'done': false,
-      },
-      {
-        'title': 'Deep Work Block',
-        'meta': '90 mins \u00b7 Weekdays \u00b7 Morning',
-        'streak': '24d',
-        'icon': Icons.work_outline_rounded,
-        'fg': p.pineDark,
-        'bg': p.mint,
-        'done': true,
-      },
-    ];
+// ─────────────────────────────────────────────────────────────────────────────
+// One habit tile, bound to the store
+// ─────────────────────────────────────────────────────────────────────────────
+class _HabitTileRow extends ConsumerWidget {
+  const _HabitTileRow({
+    super.key,
+    required this.scale,
+    required this.habit,
+    required this.completed,
+    required this.nextUp,
+    this.onToggle,
+    this.onTap,
+  });
 
-    final widgets = <Widget>[];
-    for (var i = 0; i < data.length; i++) {
-      final d = data[i];
-      widgets.add(
-        Padding(
-          padding: EdgeInsets.fromLTRB(
-            16 * s,
-            0,
-            16 * s,
-            i == data.length - 1 ? 0 : 8 * s,
+  final double scale;
+  final Habit habit;
+  final bool completed;
+  final bool nextUp;
+  final VoidCallback? onToggle;
+  final VoidCallback? onTap;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final streak = ref.watch(habitStreakProvider(habit.id));
+    final (fg, bg) = habitAccentColours(habit.accent);
+
+    return HabitTile(
+      scale: scale,
+      title: habit.title,
+      meta: habitMetaLine(habit),
+      streak: streak == 0 ? '' : '${streak}d',
+      icon: habitIcon(habit.iconKey),
+      iconColor: fg,
+      iconBackground: bg,
+      completed: completed,
+      nextUp: nextUp,
+      showStreakPill: !nextUp,
+      streakHighlighted: nextUp,
+      onToggle: onToggle,
+      onTap: onTap,
+    );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Empty states
+// ─────────────────────────────────────────────────────────────────────────────
+class _EmptyHabits extends StatelessWidget {
+  const _EmptyHabits({required this.scale, this.onCreateHabit});
+
+  final double scale;
+  final VoidCallback? onCreateHabit;
+
+  @override
+  Widget build(BuildContext context) {
+    final s = scale;
+    return Container(
+      width: 358 * s,
+      padding: EdgeInsets.fromLTRB(24 * s, 28 * s, 24 * s, 24 * s),
+      decoration: BoxDecoration(
+        color: p.surface,
+        borderRadius: BorderRadius.circular(20 * s),
+        border: Border.all(color: p.border, width: 1),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: 48 * s,
+            height: 48 * s,
+            decoration: BoxDecoration(
+              color: p.chipEmber,
+              shape: BoxShape.circle,
+            ),
+            child: Center(
+              child: Image.asset(
+                'assets/brand/spark_logo.png',
+                width: 26 * s,
+                height: 26 * s,
+                filterQuality: FilterQuality.high,
+              ),
+            ),
           ),
-          child: HabitTile(
-            scale: s,
-            title: d['title'] as String,
-            meta: d['meta'] as String,
-            streak: d['streak'] as String,
-            icon: d['icon'] as IconData,
-            iconColor: d['fg'] as Color,
-            iconBackground: d['bg'] as Color,
-            completed: d['done'] as bool,
-            nextUp: d['next'] == true,
-            showStreakPill: d['orange_streak'] != true,
-            streakHighlighted: d['orange_streak'] == true,
-            onToggle: () => onToggleHabit?.call(i),
-            onTap: () => onHabitTap?.call(i),
+          SizedBox(height: 18 * s),
+          figmaText(
+            'No habits yet',
+            size: 20 * s,
+            weight: FontWeight.w600,
+            letterSpacing: -0.5 * s,
+            lineHeight: 26 * s,
+            color: p.ink,
           ),
+          SizedBox(height: 6 * s),
+          figmaText(
+            'Your habit library lives here. Add your first ritual and it will '
+            'show up on Home every day.',
+            size: 13 * s,
+            weight: FontWeight.w400,
+            lineHeight: 20 * s,
+            color: p.body,
+            width: 300 * s,
+          ),
+          SizedBox(height: 20 * s),
+          GestureDetector(
+            onTap: onCreateHabit,
+            behavior: HitTestBehavior.opaque,
+            child: Container(
+              height: 44 * s,
+              decoration: BoxDecoration(
+                color: p.ember,
+                borderRadius: BorderRadius.circular(14 * s),
+              ),
+              child: Center(
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    figmaText(
+                      'Add your first habit',
+                      size: 13 * s,
+                      weight: FontWeight.w600,
+                      letterSpacing: 0.2 * s,
+                      lineHeight: 18 * s,
+                      color: Colors.white,
+                    ),
+                    SizedBox(width: 8 * s),
+                    Icon(Icons.arrow_forward_rounded,
+                        size: 15 * s, color: Colors.white),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _EmptyFilter extends StatelessWidget {
+  const _EmptyFilter({required this.scale, required this.label});
+
+  final double scale;
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    final s = scale;
+    final name = label.split(' (').first;
+    return Container(
+      width: 358 * s,
+      padding: EdgeInsets.symmetric(vertical: 22 * s, horizontal: 16 * s),
+      decoration: BoxDecoration(
+        color: p.panel,
+        borderRadius: BorderRadius.circular(16 * s),
+      ),
+      child: Center(
+        child: figmaText(
+          name == 'Paused'
+              ? 'Nothing paused. Every habit is still running.'
+              : 'Nothing here yet.',
+          size: 12 * s,
+          weight: FontWeight.w500,
+          lineHeight: 16 * s,
+          color: p.body,
+          align: TextAlign.center,
+          width: 300 * s,
         ),
-      );
-    }
-    return widgets;
+      ),
+    );
   }
 }
 
@@ -269,9 +437,21 @@ class _HeaderSection extends StatelessWidget {
 // Daily spark rhythm snapshot
 // ─────────────────────────────────────────────────────────────────────────────
 class _SnapshotCard extends StatelessWidget {
-  const _SnapshotCard({required this.scale});
+  const _SnapshotCard({
+    required this.scale,
+    required this.completed,
+    required this.total,
+    required this.percent,
+    required this.week,
+  });
 
   final double scale;
+  final int completed;
+  final int total;
+  final int percent;
+  final List<DayStat> week;
+
+  static const _weekdayLong = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
   @override
   Widget build(BuildContext context) {
@@ -318,7 +498,7 @@ class _SnapshotCard extends StatelessWidget {
               left: 56 * s,
               top: 16 * s,
               child: figmaText(
-                '4 of 6 Completed',
+                '$completed of $total Completed',
                 size: 16 * s,
                 weight: FontWeight.w600,
                 letterSpacing: -0.08 * s,
@@ -332,7 +512,7 @@ class _SnapshotCard extends StatelessWidget {
               child: Row(
                 children: [
                   figmaText(
-                    '66% daily spark ignited',
+                    '$percent% daily spark ignited',
                     size: 12 * s,
                     weight: FontWeight.w400,
                     letterSpacing: 0.12 * s,
@@ -354,7 +534,7 @@ class _SnapshotCard extends StatelessWidget {
               left: 246 * s,
               top: 20 * s,
               child: figmaText(
-                '66%',
+                '$percent%',
                 size: 14 * s,
                 weight: FontWeight.w600,
                 letterSpacing: 0.14 * s,
@@ -388,7 +568,7 @@ class _SnapshotCard extends StatelessWidget {
                 child: Align(
                   alignment: Alignment.centerLeft,
                   child: Container(
-                    width: 217 * s,
+                    width: 326 * s * (percent / 100).clamp(0.0, 1.0),
                     height: 8 * s,
                     decoration: BoxDecoration(
                       color: p.emberDeep,
@@ -406,16 +586,16 @@ class _SnapshotCard extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  for (final label in const ['Mon', 'Tue', 'Wed', 'Thu (Today)', 'Fri', 'Sat', 'Sun'])
+                  for (final day in week)
                     figmaText(
-                      label,
+                      day.isToday
+                          ? '${_weekdayLong[day.day.weekday - 1]} (Today)'
+                          : _weekdayLong[day.day.weekday - 1],
                       size: 10 * s,
                       weight: FontWeight.w600,
                       letterSpacing: 0.4 * s,
                       lineHeight: 12 * s,
-                      color: label.startsWith('Thu')
-                          ? p.emberDeep
-                          : p.body,
+                      color: day.isToday ? p.emberDeep : p.body,
                     ),
                 ],
               ),
@@ -431,49 +611,53 @@ class _SnapshotCard extends StatelessWidget {
 // Filter chips (horizontally scrollable, as designed)
 // ─────────────────────────────────────────────────────────────────────────────
 class _FilterChips extends StatelessWidget {
-  const _FilterChips({required this.scale, this.onChanged});
+  const _FilterChips({
+    required this.scale,
+    required this.labels,
+    required this.selected,
+    this.onChanged,
+  });
 
   final double scale;
+  final List<String> labels;
+  final int selected;
   final ValueChanged<int>? onChanged;
 
   @override
   Widget build(BuildContext context) {
     final s = scale;
-    const labels = ['All (6)', 'Active Today (5)', 'Paused (1)', 'Morning'];
     return SizedBox(
-      height: 36 * s,
-      child: SingleChildScrollView(
+      height: 28 * s,
+      child: ListView.separated(
         scrollDirection: Axis.horizontal,
-        physics: const ClampingScrollPhysics(),
         padding: EdgeInsets.symmetric(horizontal: 16 * s),
-        child: Row(
-          children: [
-            for (var i = 0; i < labels.length; i++) ...[
-              if (i > 0) SizedBox(width: 7 * s),
-              GestureDetector(
-                onTap: () => onChanged?.call(i),
-                behavior: HitTestBehavior.opaque,
-                child: Container(
-                  height: 32 * s,
-                  padding: EdgeInsets.symmetric(horizontal: 16 * s),
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                    color: i == 0 ? p.slate : p.panel,
-                    borderRadius: BorderRadius.circular(999),
-                  ),
-                  child: figmaText(
-                    labels[i],
-                    size: 12 * s,
-                    weight: FontWeight.w500,
-                    letterSpacing: 0.24 * s,
-                    lineHeight: 16 * s,
-                    color: i == 0 ? p.panel : p.body,
-                  ),
-                ),
+        physics: const ClampingScrollPhysics(),
+        itemCount: labels.length,
+        separatorBuilder: (_, _) => SizedBox(width: 8 * s),
+        itemBuilder: (context, i) {
+          final isSelected = i == selected;
+          return GestureDetector(
+            onTap: () => onChanged?.call(i),
+            behavior: HitTestBehavior.opaque,
+            child: Container(
+              height: 28 * s,
+              padding: EdgeInsets.symmetric(horizontal: 14 * s),
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                color: isSelected ? p.slate : p.panel,
+                borderRadius: BorderRadius.circular(999),
               ),
-            ],
-          ],
-        ),
+              child: figmaText(
+                labels[i],
+                size: 12 * s,
+                weight: FontWeight.w500,
+                letterSpacing: 0.24 * s,
+                lineHeight: 16 * s,
+                color: isSelected ? p.panel : p.body,
+              ),
+            ),
+          );
+        },
       ),
     );
   }
@@ -483,9 +667,10 @@ class _FilterChips extends StatelessWidget {
 // Mindful streak prompt
 // ─────────────────────────────────────────────────────────────────────────────
 class _MindfulStreakNote extends StatelessWidget {
-  const _MindfulStreakNote({required this.scale});
+  const _MindfulStreakNote({required this.scale, this.streakDays = 0});
 
   final double scale;
+  final int streakDays;
 
   @override
   Widget build(BuildContext context) {
