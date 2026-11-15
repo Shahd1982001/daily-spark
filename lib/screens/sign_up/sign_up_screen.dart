@@ -12,9 +12,17 @@ class SignUpScreen extends StatelessWidget {
     super.key,
     this.fullName = '',
     this.email = '',
-    this.password = 'SuperSecret123',
-    this.confirmPassword = 'SuperSecret123',
+    this.password = '',
+    this.confirmPassword = '',
     this.obscurePassword = false,
+    this.nameController,
+    this.emailController,
+    this.passwordController,
+    this.confirmController,
+    this.nameError,
+    this.emailError,
+    this.passwordError,
+    this.confirmError,
     this.onBack,
     this.onTogglePasswordVisibility,
     this.onCreateAccount,
@@ -27,6 +35,14 @@ class SignUpScreen extends StatelessWidget {
   final String password;
   final String confirmPassword;
   final bool obscurePassword;
+  final TextEditingController? nameController;
+  final TextEditingController? emailController;
+  final TextEditingController? passwordController;
+  final TextEditingController? confirmController;
+  final String? nameError;
+  final String? emailError;
+  final String? passwordError;
+  final String? confirmError;
 
   final VoidCallback? onBack;
   final VoidCallback? onTogglePasswordVisibility;
@@ -107,6 +123,8 @@ class SignUpScreen extends StatelessWidget {
                     _Field(
                       scale: s,
                       value: fullName,
+                      controller: nameController,
+                      errorText: nameError,
                       hint: 'e.g. Maya Lin',
                       icon: Icons.person_outline_rounded,
                       iconBox: const Size(13, 13),
@@ -117,6 +135,8 @@ class SignUpScreen extends StatelessWidget {
                     _Field(
                       scale: s,
                       value: email,
+                      controller: emailController,
+                      errorText: emailError,
                       hint: 'maya.lin@example.com',
                       icon: Icons.mail_outline_rounded,
                       iconBox: const Size(17, 14),
@@ -155,6 +175,8 @@ class SignUpScreen extends StatelessWidget {
                     _Field(
                       scale: s,
                       value: password,
+                      controller: passwordController,
+                      errorText: passwordError,
                       obscure: obscurePassword,
                       letterSpacing: 1.4,
                       icon: Icons.lock_outline_rounded,
@@ -212,6 +234,8 @@ class SignUpScreen extends StatelessWidget {
                     _Field(
                       scale: s,
                       value: confirmPassword,
+                      controller: confirmController,
+                      errorText: confirmError,
                       obscure: obscurePassword,
                       letterSpacing: 1.4,
                       icon: Icons.lock_reset_rounded,
@@ -506,10 +530,12 @@ class _Label extends StatelessWidget {
 class _Field extends StatelessWidget {
   const _Field({
     required this.scale,
-    required this.value,
     required this.icon,
     required this.iconBox,
+    this.value = '',
     this.hint,
+    this.controller,
+    this.errorText,
     this.obscure = false,
     this.letterSpacing = 0,
     this.gapAfterIcon = 12,
@@ -519,6 +545,8 @@ class _Field extends StatelessWidget {
   final double scale;
   final String value;
   final String? hint;
+  final TextEditingController? controller;
+  final String? errorText;
   final IconData icon;
   final Size iconBox;
   final bool obscure;
@@ -529,8 +557,12 @@ class _Field extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final s = scale;
-    final isEmpty = value.isEmpty;
-    return Container(
+    final isEmpty = controller == null && value.isEmpty;
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+      Container(
       height: 52 * s,
       decoration: BoxDecoration(
         color: p.surface,
@@ -557,7 +589,8 @@ class _Field extends StatelessWidget {
           SizedBox(width: gapAfterIcon * s),
           Expanded(
             child: TextFormField(
-              initialValue: value,
+              controller: controller,
+              initialValue: controller == null ? value : null,
               obscureText: obscure,
               style: TextStyle(
                 fontFamily: 'PlusJakartaSans',
@@ -573,7 +606,7 @@ class _Field extends StatelessWidget {
                 isCollapsed: true,
                 border: InputBorder.none,
                 contentPadding: EdgeInsets.zero,
-                hintText: isEmpty ? hint : null,
+                hintText: controller != null ? hint : (isEmpty ? hint : null),
                 hintStyle: TextStyle(
                   fontFamily: 'PlusJakartaSans',
                   fontSize: 14 * s,
@@ -591,6 +624,20 @@ class _Field extends StatelessWidget {
           ],
         ],
       ),
+      ),
+      if (errorText != null)
+        Padding(
+          padding: EdgeInsets.only(left: 14 * s, top: 6 * s),
+          child: Text(
+            errorText!,
+            style: TextStyle(
+              fontFamily: 'PlusJakartaSans',
+              fontSize: 11 * s,
+              color: p.error,
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

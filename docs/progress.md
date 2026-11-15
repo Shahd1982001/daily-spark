@@ -328,3 +328,29 @@ summary live, and edits propagate to Home/Progress/Profile.
 - Tests: +4 settings/profile-info core tests → **42/42 green**. Verified in-browser:
   add→Home sync, toggle→summary sync, back-spine, name→greeting, dark flip +
   persistence, guide/about/share, 0 page errors.
+
+---
+
+## 🔐 Phase 3 — Auth: login, sign up, guest — 2026-11-15
+
+Local-first accounts complete the loop (the cloud backend swaps in later):
+`state/auth_providers.dart` keeps one account per device in SharedPreferences —
+name, email, password — plus the session (`none / guest / account`).
+
+- **Sign up** validates inline (name ≥2, real email, password ≥6, passwords
+  match) with error text under the exact field; success stores the account and
+  the name flows straight into the greeting ("Good evening, Noor") and profile.
+- **Log in** checks the stored account: "No account on this device yet" /
+  "That account is not on this device" / "Incorrect password" appear under the
+  right field. Success restores the name and the session.
+- **Continue as Guest** (welcome + login + sign up) enters the app nameless —
+  "Good evening" with the empty state, everything else fully functional.
+- **Session** persists: a returning user's splash skips straight to Home;
+  **Log Out** clears the session and the account name and returns to Welcome.
+- **Forgot password** is honest: recovery arrives with Spark Cloud accounts ☁️.
+- The auth fields lost their fake prefilled credentials (`sarah.miller@…` /
+  `SuperSecret123`) — they open blank with hints, per the no-fake-data rule.
+- Tests: +4 auth core tests (validation, sign-up/sign-in round trip, guest
+  session persistence) → **46/46 green**. Verified in-browser end-to-end:
+  sign up → greeting with name → log out → wrong password error → log in →
+  name back → reload keeps the session → guest enters nameless, 0 page errors.

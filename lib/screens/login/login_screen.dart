@@ -10,9 +10,15 @@ import 'package:daily_spark/design_system/widgets/design_canvas.dart' show figma
 class LoginScreen extends StatelessWidget {
   const LoginScreen({
     super.key,
-    this.email = 'sarah.miller@example.com',
-    this.password = 'masterRitual2024!',
+    this.email = '',
+    this.password = '',
     this.obscurePassword = false,
+    this.emailController,
+    this.passwordController,
+    this.emailError,
+    this.passwordError,
+    this.emailHint = 'you@example.com',
+    this.passwordHint = 'Your password',
     this.onBack,
     this.onForgotPassword,
     this.onTogglePasswordVisibility,
@@ -24,6 +30,12 @@ class LoginScreen extends StatelessWidget {
   final String email;
   final String password;
   final bool obscurePassword;
+  final TextEditingController? emailController;
+  final TextEditingController? passwordController;
+  final String? emailError;
+  final String? passwordError;
+  final String emailHint;
+  final String passwordHint;
 
   final VoidCallback? onBack;
   final VoidCallback? onForgotPassword;
@@ -109,6 +121,9 @@ class LoginScreen extends StatelessWidget {
                     _InputField(
                       scale: s,
                       value: email,
+                      hint: emailHint,
+                      controller: emailController,
+                      errorText: emailError,
                       icon: Icons.mail_outline_rounded,
                       iconWidth: 17 * s,
                       iconHeight: 16 * s,
@@ -139,6 +154,9 @@ class LoginScreen extends StatelessWidget {
                     _InputField(
                       scale: s,
                       value: password,
+                      hint: passwordHint,
+                      controller: passwordController,
+                      errorText: passwordError,
                       obscure: obscurePassword,
                       icon: Icons.lock_outline_rounded,
                       iconWidth: 14 * s,
@@ -404,10 +422,13 @@ class _FieldLabel extends StatelessWidget {
 class _InputField extends StatelessWidget {
   const _InputField({
     required this.scale,
-    required this.value,
     required this.icon,
     required this.iconWidth,
     required this.iconHeight,
+    this.value = '',
+    this.hint,
+    this.controller,
+    this.errorText,
     this.obscure = false,
     this.iconGap,
     this.trailing,
@@ -415,6 +436,9 @@ class _InputField extends StatelessWidget {
 
   final double scale;
   final String value;
+  final String? hint;
+  final TextEditingController? controller;
+  final String? errorText;
   final IconData icon;
   final double iconWidth;
   final double iconHeight;
@@ -425,7 +449,12 @@ class _InputField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final s = scale;
-    return Container(
+    final isEmpty = controller == null && value.isEmpty;
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+      Container(
       height: 52 * s,
       decoration: BoxDecoration(
         color: p.surface,
@@ -452,7 +481,8 @@ class _InputField extends StatelessWidget {
           SizedBox(width: iconGap ?? 9 * s),
           Expanded(
             child: TextFormField(
-              initialValue: value,
+              controller: controller,
+              initialValue: controller == null ? value : null,
               obscureText: obscure,
               style: TextStyle(
                 fontFamily: 'PlusJakartaSans',
@@ -464,10 +494,16 @@ class _InputField extends StatelessWidget {
               ),
               cursorColor: p.ember,
               cursorWidth: 1.2 * s,
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 isCollapsed: true,
                 border: InputBorder.none,
                 contentPadding: EdgeInsets.zero,
+                hintText: controller != null ? hint : (isEmpty ? hint : null),
+                hintStyle: TextStyle(
+                  fontFamily: 'PlusJakartaSans',
+                  fontSize: 14 * s,
+                  color: p.muted,
+                ),
               ),
             ),
           ),
@@ -477,6 +513,20 @@ class _InputField extends StatelessWidget {
           ],
         ],
       ),
+      ),
+      if (errorText != null)
+        Padding(
+          padding: EdgeInsets.only(left: 18 * s, top: 6 * s),
+          child: Text(
+            errorText!,
+            style: TextStyle(
+              fontFamily: 'PlusJakartaSans',
+              fontSize: 11 * s,
+              color: p.error,
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

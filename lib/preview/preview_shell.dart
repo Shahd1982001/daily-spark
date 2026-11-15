@@ -22,6 +22,7 @@ import 'package:daily_spark/state/habit_providers.dart';
 import 'package:daily_spark/state/details_providers.dart';
 import 'package:daily_spark/state/progress_providers.dart';
 import 'package:daily_spark/state/settings_providers.dart';
+import 'package:daily_spark/state/auth_providers.dart';
 
 /// ⚠️ TEMPORARY PREVIEW SHELL — scaffolding only, zero business logic.
 ///
@@ -68,6 +69,16 @@ class _PreviewShellState extends ConsumerState<PreviewShell> {
   /// Navigation spine history — `_back()` returns to where a screen was
   /// opened from (details/add), so the app moves like one connected flow.
   final _history = <_Stage>[];
+
+  // Auth form state (local accounts until the backend lands).
+  final _loginEmail = TextEditingController();
+  final _loginPass = TextEditingController();
+  final _suName = TextEditingController();
+  final _suEmail = TextEditingController();
+  final _suPass = TextEditingController();
+  final _suConfirm = TextEditingController();
+  String? _loginEmailError, _loginPassError;
+  String? _suNameError, _suEmailError, _suPassError, _suConfirmError;
 
   /// Theme bookkeeping: `?theme=…` forces the start value; a user tap wins
   /// afterwards; otherwise the persisted setting is adopted once it loads.
@@ -116,7 +127,10 @@ class _PreviewShellState extends ConsumerState<PreviewShell> {
     if (_stage == _Stage.splash && _param('s') == null) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         _timer = Timer(const Duration(milliseconds: 2600), () {
-          if (mounted) setState(() => _stage = _Stage.onboarding);
+          if (!mounted) return;
+          // A signed-in (or guest) session skips straight to the app.
+          final signedIn = ref.read(authProvider).signedIn;
+          setState(() => _stage = signedIn ? _Stage.home : _Stage.onboarding);
         });
       });
     }
@@ -125,6 +139,9 @@ class _PreviewShellState extends ConsumerState<PreviewShell> {
   @override
   void dispose() {
     _timer?.cancel();
+    for (final c in [_loginEmail, _loginPass, _suName, _suEmail, _suPass, _suConfirm]) {
+      c.dispose();
+    }
     super.dispose();
   }
 
@@ -170,6 +187,10 @@ class _PreviewShellState extends ConsumerState<PreviewShell> {
       if (_mainStages.contains(_stage) && _stage != stage) {
         _history.add(_stage);
       }
+      if (stage == _Stage.login || stage == _Stage.signUp) {
+        _loginEmailError = _loginPassError = null;
+        _suNameError = _suEmailError = _suPassError = _suConfirmError = null;
+      }
       _stage = stage;
     });
   }
@@ -183,6 +204,98 @@ class _PreviewShellState extends ConsumerState<PreviewShell> {
 
   /// Tapping the already-selected bottom-nav tab does nothing.
   static void _noop() {}
+
+  /// Validates and signs in to the account stored on this device.
+  Future<void> _submitLogin() async {
+    final email = _loginEmail.text;
+    final pass = _loginPass.text;
+    final emailError = validateEmail(email);
+    final passError =
+        pass.isEmpty ? 'Please enter your password' : null;
+    if (emailError != null || passError != null) {
+      setState(() {
+        _loginEmailError = emailError;
+        _loginPassError = passError;
+      });
+      return;
+    }
+    final error = await ref
+        .read(authProvider.notifier)
+        .signIn(email: email, password: pass);
+    if (!mounted) return;
+    if (error != null) {
+      setState(() {
+        if (error.toLowerCase().contains('password')) {
+          _loginPassError = error;
+        } else {
+          _loginEmailError = error;
+        }
+      });
+      return;
+    }
+    setState(() {
+      _loginEmailError = _loginPassError = null;
+      _history.clear();
+    });
+    _toast('Welcome back ✦');
+    _go(_Stage.home);
+  }
+
+  /// Creates the local account and enters the app.
+  Future<void> _submitSignUp() async {
+    final name = _suName.text;
+    final email = _suEmail.text;
+    final pass = _suPass.text;
+    final confirm = _suConfirm.text;
+    final nameError = validateName(name);
+    final emailError = validateEmail(email);
+    final passError = validatePassword(pass);
+    final confirmError =
+        pass == confirm ? null : 'The passwords do not match';
+    if (nameError != null || emailError != null || passError != null || confirmError != null) {
+      setState(() {
+        _suNameError = nameError;
+        _suEmailError = emailError;
+        _suPassError = passError;
+        _suConfirmError = confirmError;
+      });
+      return;
+    }
+    final error = await ref.read(authProvider.notifier).signUp(
+          name: name,
+          email: email,
+          password: pass,
+          confirmPassword: confirm,
+        );
+    if (!mounted) return;
+    if (error != null) {
+      _toast(error);
+      return;
+    }
+    setState(() {
+      _suNameError = _suEmailError = _suPassError = _suConfirmError = null;
+      _history.clear();
+    });
+    _toast('Welcome, ${name.trim()} ✦');
+    _go(_Stage.home);
+  }
+
+  /// Enters the app without an account.
+  Future<void> _submitGuest() async {
+    await ref.read(authProvider.notifier).signInAsGuest();
+    if (!mounted) return;
+    setState(_history.clear);
+    _go(_Stage.home);
+  }
+
+  /// Ends the session and returns to the welcome screen.
+  Future<void> _logout() async {
+    await ref.read(authProvider.notifier).signOut();
+    if (!mounted) return;
+    setState(_history.clear);
+    _toast('Logged out ✦');
+    _go(_Stage.welcome);
+  }
 
   void _toast(String message) {
     _messengerKey.currentState
@@ -345,6 +458,34 @@ class _PreviewShellState extends ConsumerState<PreviewShell> {
     );
   }
 
+  /// Honest note: recovery arrives with the cloud accounts.
+  void _showForgotDialog() {
+    showDialog<void>(
+      context: _navKey.currentContext!,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: p.surface,
+        shape:
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        title: figmaText('Password recovery',
+            size: 18, weight: FontWeight.w700, color: p.ink),
+        content: figmaText(
+          'Your account lives on this device for now. Password recovery '
+          'arrives together with Spark Cloud accounts ☁️',
+          size: 13,
+          weight: FontWeight.w400,
+          lineHeight: 19,
+          color: p.body,
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(),
+            child: const Text('Close'),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _guideStep(String number, String title, String body) => Padding(
         padding: const EdgeInsets.only(bottom: 12),
         child: Row(
@@ -433,7 +574,10 @@ class _PreviewShellState extends ConsumerState<PreviewShell> {
         child: child ?? const SizedBox.shrink(),
       ),
       home: switch (_stage) {
-        _Stage.splash => SplashScreen(onTap: () => _go(_Stage.onboarding)),
+        _Stage.splash => SplashScreen(onTap: () {
+            final signedIn = ref.read(authProvider).signedIn;
+            _go(signedIn ? _Stage.home : _Stage.onboarding);
+          }),
         _Stage.onboarding => OnboardingScreen(
             initialPage: _initialPage,
             onSkip: () => _go(_Stage.welcome),
@@ -443,25 +587,37 @@ class _PreviewShellState extends ConsumerState<PreviewShell> {
         _Stage.welcome => WelcomeScreen(
             onGetStarted: () => _go(_Stage.signUp),
             onLogin: () => _go(_Stage.login),
-            onGuest: () => _go(_Stage.home),
+            onGuest: _submitGuest,
           ),
         _Stage.login => LoginScreen(
             obscurePassword: _obscurePassword,
+            emailController: _loginEmail,
+            passwordController: _loginPass,
+            emailError: _loginEmailError,
+            passwordError: _loginPassError,
             onBack: () => _go(_Stage.welcome),
-            onForgotPassword: () => _toast('Forgot password — later ✦'),
+            onForgotPassword: _showForgotDialog,
             onTogglePasswordVisibility: () =>
                 setState(() => _obscurePassword = !_obscurePassword),
-            onLogin: () => _go(_Stage.home),
-            onGuest: () => _go(_Stage.home),
+            onLogin: _submitLogin,
+            onGuest: _submitGuest,
             onSignUp: () => _go(_Stage.signUp),
           ),
         _Stage.signUp => SignUpScreen(
             obscurePassword: _obscurePassword,
+            nameController: _suName,
+            emailController: _suEmail,
+            passwordController: _suPass,
+            confirmController: _suConfirm,
+            nameError: _suNameError,
+            emailError: _suEmailError,
+            passwordError: _suPassError,
+            confirmError: _suConfirmError,
             onBack: () => _go(_Stage.welcome),
             onTogglePasswordVisibility: () =>
                 setState(() => _obscurePassword = !_obscurePassword),
-            onCreateAccount: () => _go(_Stage.home),
-            onGuest: () => _go(_Stage.home),
+            onCreateAccount: _submitSignUp,
+            onGuest: _submitGuest,
             onLogIn: () => _go(_Stage.login),
           ),
         _Stage.home => HomeScreen(
@@ -534,7 +690,7 @@ class _PreviewShellState extends ConsumerState<PreviewShell> {
                 _toast('العربية coming with the translation update 🌙'),
             onGuide: _showGuideSheet,
             onAbout: _showAboutSpark,
-            onLogOut: () => _go(_Stage.welcome),
+            onLogOut: _logout,
             onNavTap: (i) => switch (i) {
               0 => _go(_Stage.home),
               1 => _go(_Stage.habits),
