@@ -296,3 +296,35 @@ edits in place (id, logs, streak untouched), `Ignite This Habit` creates `h_<mic
   the draft, edit prefills + saves) → **38/38 green**. Verified live: title typing, symbol→unit switch,
   preset tap, reminder toggle + 8:30 pill, ignite lands the habit in the Habits list with its toast,
   edit prefills Read 20 Pages (light + dark).
+
+---
+
+## 🔗 Phase 2e++ — One connected app (sync + live settings) — 2026-11-15
+
+Everything is now wired to the same Riverpod store, so **any change updates every
+screen**: igniting a habit from Home's "+ New Ritual" bumps Home's routine count and
+daily pulse immediately (5→6 total, 3 of 5→3 of 6), toggling a circle updates the
+summary live, and edits propagate to Home/Progress/Profile.
+
+- **Navigation spine**: `_go` keeps a history of the tab screens; `onBack` from
+  Details and `onClose/onDiscard` from the Add sheet return to where they were
+  opened from (Home → Details → back lands on Home, not Habits). Edit-saves return
+  to their origin; a fresh ignite lands on the Habits list.
+- **Profile settings are live** (`state/settings_providers.dart`, SharedPreferences):
+  - *Daily Reminders* / *Sound & Haptic* toggles persist across reloads.
+  - *Appearance* flips the theme live and persists it (`?theme=dark` still forces
+    the start value for screenshots).
+  - *Personal Details* opens a real sheet (display name + ritual motto) — the name
+    drives Home's greeting ("Good evening, Noor") and the Profile identity card;
+    the motto becomes the profile bio. Nothing is hardcoded: a nameless user sees
+    just "Good evening".
+  - *Ritual Guide* opens a real 3-step sheet; *About* a real dialog; *Share* copies
+    the app link; the gear scrolls to the settings section; stat tiles open Progress.
+- **Honest status**: Spark Cloud Sync shows **Local** ("Stored on this device") —
+  it flips to Active when the backend arrives. Language says Arabic arrives with the
+  i18n update. Guest mode enters the app (Home) instead of dead-ending.
+- Fixed a real bug found in testing: shell-level handlers opened modal sheets with
+  the State context above `MaterialApp` (no Navigator) — now via `navigatorKey`.
+- Tests: +4 settings/profile-info core tests → **42/42 green**. Verified in-browser:
+  add→Home sync, toggle→summary sync, back-spine, name→greeting, dark flip +
+  persistence, guide/about/share, 0 page errors.

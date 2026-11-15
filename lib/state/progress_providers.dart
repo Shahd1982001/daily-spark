@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../data/models/day.dart';
 import '../data/models/habit.dart';
 import 'habit_providers.dart';
+import 'settings_providers.dart';
 
 /// Which window the Progress screen is showing.
 enum ProgressRange { week, month, all }
@@ -246,8 +247,14 @@ final profileLevelProvider = Provider<ProfileLevel>((ref) {
   );
 });
 
-/// Display name — `null` until the user sets one (no auth yet).
+/// Display name — the stored one when set; demo seeds show 'Shahd'.
+/// `null` for a fresh user (no auth yet).
 final userNameProvider = Provider<String?>((ref) {
-  if (ref.watch(demoModeProvider) != DemoMode.none) return 'Shahd';
-  return null;
+  final stored = ref.watch(profileInfoProvider.select((i) => i.name));
+  if (ref.watch(demoModeProvider) != DemoMode.none) return stored ?? 'Shahd';
+  return stored;
 });
+
+/// The user's ritual motto, `null` until set.
+final userMottoProvider = Provider<String?>(
+    (ref) => ref.watch(profileInfoProvider.select((i) => i.motto)));

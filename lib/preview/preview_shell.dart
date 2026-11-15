@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:daily_spark/design_system/theme/app_theme.dart';
 import 'package:daily_spark/design_system/theme/spark_palette.dart';
@@ -15,9 +16,12 @@ import 'package:daily_spark/screens/profile/profile_screen.dart';
 import 'package:daily_spark/screens/progress/progress_screen.dart';
 import 'package:daily_spark/screens/sign_up/sign_up_screen.dart';
 import 'package:daily_spark/screens/welcome/welcome_screen.dart';
+import 'package:daily_spark/design_system/widgets/design_canvas.dart' show figmaText;
 import 'package:daily_spark/state/add_habit_providers.dart';
 import 'package:daily_spark/state/habit_providers.dart';
 import 'package:daily_spark/state/details_providers.dart';
+import 'package:daily_spark/state/progress_providers.dart';
+import 'package:daily_spark/state/settings_providers.dart';
 
 /// ⚠️ TEMPORARY PREVIEW SHELL — scaffolding only, zero business logic.
 ///
@@ -51,11 +55,24 @@ enum _Stage {
 
 class _PreviewShellState extends ConsumerState<PreviewShell> {
   final _messengerKey = GlobalKey<ScaffoldMessengerState>();
+
+  /// Lets modal sheets/dialogs open from shell-level handlers: the State's own
+  /// context sits above `MaterialApp` and has no Navigator.
+  final _navKey = GlobalKey<NavigatorState>();
   late _Stage _stage = _initialStage();
   late final int _initialPage = _intParam('p', 0);
   late bool _isDark = _param('theme') == 'dark';
   Timer? _timer;
   bool _obscurePassword = false;
+
+  /// Navigation spine history — `_back()` returns to where a screen was
+  /// opened from (details/add), so the app moves like one connected flow.
+  final _history = <_Stage>[];
+
+  /// Theme bookkeeping: `?theme=…` forces the start value; a user tap wins
+  /// afterwards; otherwise the persisted setting is adopted once it loads.
+  bool _themeTouched = false;
+  late final bool _themeForced = _param('theme') != null;
 
   static String? _param(String key) =>
       Uri.base.queryParameters[key]?.toLowerCase();
@@ -138,10 +155,34 @@ class _PreviewShellState extends ConsumerState<PreviewShell> {
   }
 
 
+  /// True for the screens that form the app's navigation spine.
+  static const _mainStages = {
+    _Stage.home,
+    _Stage.habits,
+    _Stage.progress,
+    _Stage.profile,
+    _Stage.habitDetails,
+  };
+
   void _go(_Stage stage) {
     _timer?.cancel();
-    setState(() => _stage = stage);
+    setState(() {
+      if (_mainStages.contains(_stage) && _stage != stage) {
+        _history.add(_stage);
+      }
+      _stage = stage;
+    });
   }
+
+  /// Pops back to the screen the current one was opened from.
+  void _back() {
+    _timer?.cancel();
+    setState(
+        () => _stage = _history.isEmpty ? _Stage.habits : _history.removeLast());
+  }
+
+  /// Tapping the already-selected bottom-nav tab does nothing.
+  static void _noop() {}
 
   void _toast(String message) {
     _messengerKey.currentState
@@ -149,14 +190,241 @@ class _PreviewShellState extends ConsumerState<PreviewShell> {
       ..showSnackBar(SnackBar(content: Text(message)));
   }
 
+  /// Toggles the app theme and persists the choice.
+  void _toggleTheme() {
+    setState(() {
+      _isDark = !_isDark;
+      _themeTouched = true;
+    });
+    ref
+        .read(settingsProvider.notifier)
+        .setThemeMode(_isDark ? ThemeMode.dark : ThemeMode.light);
+  }
+
+  /// Copies the app link (real share for now; the OS share sheet comes later).
+  Future<void> _shareApp() async {
+    await Clipboard.setData(
+        const ClipboardData(text: 'https://shahd1982001.github.io/daily-spark/'));
+    if (mounted) _toast('Link copied ✦');
+  }
+
+  /// Bottom sheet: edit display name + ritual motto (real, persisted, and
+  /// reflected on Home's greeting and the Profile identity card).
+  Future<void> _showProfileSheet() async {
+    final info = ref.read(profileInfoProvider);
+    final nameCtrl = TextEditingController(text: info.name ?? '');
+    final mottoCtrl = TextEditingController(text: info.motto ?? '');
+    final saved = await showModalBottomSheet<bool>(
+      context: _navKey.currentContext!,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (ctx) {
+        final bottom = MediaQuery.viewInsetsOf(ctx).bottom;
+        return Padding(
+          padding: EdgeInsets.only(left: 16, right: 16, bottom: 16 + bottom),
+          child: Container(
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: p.surface,
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                figmaText('Personal Details',
+                    size: 18, weight: FontWeight.w700, color: p.ink),
+                const SizedBox(height: 4),
+                figmaText('Your name and motto travel with you across the app.',
+                    size: 13,
+                    weight: FontWeight.w400,
+                    lineHeight: 18,
+                    color: p.body),
+                const SizedBox(height: 16),
+                TextField(
+                  controller: nameCtrl,
+                  maxLength: 24,
+                  style: const TextStyle(fontFamily: 'PlusJakartaSans'),
+                  decoration: InputDecoration(
+                    labelText: 'Display name',
+                    counterText: '',
+                    filled: true,
+                    fillColor: p.canvas,
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(14),
+                        borderSide: BorderSide.none),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                TextField(
+                  controller: mottoCtrl,
+                  maxLength: 80,
+                  style: const TextStyle(fontFamily: 'PlusJakartaSans'),
+                  decoration: InputDecoration(
+                    labelText: 'Ritual motto',
+                    counterText: '',
+                    filled: true,
+                    fillColor: p.canvas,
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(14),
+                        borderSide: BorderSide.none),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                SizedBox(
+                  width: double.infinity,
+                  height: 52,
+                  child: Material(
+                    color: p.ember,
+                    borderRadius: BorderRadius.circular(26),
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(26),
+                      onTap: () => Navigator.of(ctx).pop(true),
+                      child: Center(
+                        child: figmaText('Save',
+                            size: 15,
+                            weight: FontWeight.w700,
+                            color: Colors.white),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+    if (saved == true) {
+      final name = nameCtrl.text.trim();
+      final motto = mottoCtrl.text.trim();
+      await ref.read(profileInfoProvider.notifier).set(
+            name: name.isEmpty ? null : name,
+            motto: motto.isEmpty ? null : motto,
+          );
+      if (mounted) _toast('Profile updated ✦');
+    }
+    nameCtrl.dispose();
+    mottoCtrl.dispose();
+  }
+
+  /// Bottom sheet: a short, real guide to building rituals.
+  Future<void> _showGuideSheet() async {
+    await showModalBottomSheet<void>(
+      context: _navKey.currentContext!,
+      backgroundColor: Colors.transparent,
+      builder: (ctx) => Container(
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          color: p.surface,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            figmaText('The Ritual Guide',
+                size: 18, weight: FontWeight.w700, color: p.ink),
+            const SizedBox(height: 14),
+            _guideStep('1', 'Ignite',
+                'Name one small ritual, pick its symbol and a daily target.'),
+            _guideStep('2', 'Track',
+                'Tap the circle on the days you keep the promise — one tap per habit.'),
+            _guideStep('3', 'Stack',
+                'Tie each ritual to something you already do, and let streaks compound.'),
+            const SizedBox(height: 4),
+            Center(
+              child: TextButton(
+                onPressed: () => Navigator.of(ctx).pop(),
+                child: const Text('Close'),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _guideStep(String number, String title, String body) => Padding(
+        padding: const EdgeInsets.only(bottom: 12),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              width: 26,
+              height: 26,
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                color: p.ember.withValues(alpha: 0.12),
+                shape: BoxShape.circle,
+              ),
+              child: figmaText(number,
+                  size: 12, weight: FontWeight.w700, color: p.emberDeep),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  figmaText(title,
+                      size: 14, weight: FontWeight.w700, color: p.ink),
+                  const SizedBox(height: 2),
+                  figmaText(body,
+                      size: 13,
+                      weight: FontWeight.w400,
+                      lineHeight: 18,
+                      color: p.body),
+                ],
+              ),
+            ),
+          ],
+        ),
+      );
+
+  /// Dialog: what Daily Spark is, honestly.
+  void _showAboutSpark() {
+    showDialog<void>(
+      context: _navKey.currentContext!,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: p.surface,
+        shape:
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        title: figmaText('Daily Spark',
+            size: 18, weight: FontWeight.w700, color: p.ink),
+        content: figmaText(
+          'Version 2.4.0\n\nA local-first ritual companion: your habits, '
+          'streaks and spark live on this device. Accounts and cloud '
+          'sync arrive later.',
+          size: 13,
+          weight: FontWeight.w400,
+          lineHeight: 19,
+          color: p.body,
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(),
+            child: const Text('Close'),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    // Adopt the persisted theme once it loads (?theme=… still forces it).
+    ref.listen(settingsProvider, (prev, next) {
+      if (!_themeForced && !_themeTouched && next.loaded) {
+        setState(() => _isDark = next.themeMode == ThemeMode.dark);
+      }
+    });
     final palette = _isDark ? SparkPalette.darkPalette : SparkPalette.light;
     SparkPalette.active = palette;
     return MaterialApp(
       title: 'Daily Spark',
       debugShowCheckedModeBanner: false,
       scaffoldMessengerKey: _messengerKey,
+      navigatorKey: _navKey,
       theme: AppTheme.light,
       darkTheme: AppTheme.dark,
       themeMode: _isDark ? ThemeMode.dark : ThemeMode.light,
@@ -175,7 +443,7 @@ class _PreviewShellState extends ConsumerState<PreviewShell> {
         _Stage.welcome => WelcomeScreen(
             onGetStarted: () => _go(_Stage.signUp),
             onLogin: () => _go(_Stage.login),
-            onGuest: () => _toast('Guest mode — الشاشة الجاية ✦'),
+            onGuest: () => _go(_Stage.home),
           ),
         _Stage.login => LoginScreen(
             obscurePassword: _obscurePassword,
@@ -184,7 +452,7 @@ class _PreviewShellState extends ConsumerState<PreviewShell> {
             onTogglePasswordVisibility: () =>
                 setState(() => _obscurePassword = !_obscurePassword),
             onLogin: () => _go(_Stage.home),
-            onGuest: () => _toast('Guest mode — الشاشة الجاية ✦'),
+            onGuest: () => _go(_Stage.home),
             onSignUp: () => _go(_Stage.signUp),
           ),
         _Stage.signUp => SignUpScreen(
@@ -193,10 +461,11 @@ class _PreviewShellState extends ConsumerState<PreviewShell> {
             onTogglePasswordVisibility: () =>
                 setState(() => _obscurePassword = !_obscurePassword),
             onCreateAccount: () => _go(_Stage.home),
-            onGuest: () => _toast('Guest mode — الشاشة الجاية ✦'),
+            onGuest: () => _go(_Stage.home),
             onLogIn: () => _go(_Stage.login),
           ),
         _Stage.home => HomeScreen(
+            userName: ref.watch(userNameProvider),
             onProfile: () => _go(_Stage.profile),
             onHabitTap: _openDetails,
             onNewRitual: _newHabit,
@@ -204,23 +473,23 @@ class _PreviewShellState extends ConsumerState<PreviewShell> {
               1 => _go(_Stage.habits),
               2 => _go(_Stage.progress),
               3 => _go(_Stage.profile),
-              _ => _toast('Nav $i ✦'),
+              _ => _noop(),
             },
           ),
         _Stage.habits => HabitsScreen(
             onProfile: () => _go(_Stage.profile),
-            onSort: () => _toast('Sort & filter ✦'),
+            onSort: () => _toast('Sort & filter — coming in a later piece ✦'),
             onHabitTap: _openDetails,
             onCreateHabit: _newHabit,
             onNavTap: (i) => switch (i) {
               0 => _go(_Stage.home),
               2 => _go(_Stage.progress),
               3 => _go(_Stage.profile),
-              _ => _toast('Nav $i ✦'),
+              _ => _noop(),
             },
           ),
         _Stage.habitDetails => HabitDetailsScreen(
-            onBack: () => _go(_Stage.habits),
+            onBack: _back,
             onEdit: _editCurrentHabit,
             onAvatar: () => _go(_Stage.profile),
             onEditRitual: _editCurrentHabit,
@@ -228,48 +497,61 @@ class _PreviewShellState extends ConsumerState<PreviewShell> {
           ),
         _Stage.addHabit => AddHabitScreen(
             key: ValueKey('add-${ref.watch(editingHabitIdProvider)}'),
-            onClose: () => _go(_Stage.habits),
+            onClose: _back,
             onAvatar: () => _go(_Stage.profile),
             onSaved: (habit) {
               final editing = ref.read(editingHabitIdProvider) != null;
               _toast(editing
                   ? '${habit.title} updated ✦'
                   : '${habit.title} ignited ✦');
-              _go(_Stage.habits);
+              // Edits return to where they were opened from (details/list);
+              // a new habit lands on the Habits list so it is visible at once.
+              if (editing) {
+                _back();
+              } else {
+                _go(_Stage.habits);
+              }
             },
-            onDiscard: () => _go(_Stage.habits),
+            onDiscard: _back,
           ),
         _Stage.profile => ProfileScreen(
             themeDark: _isDark,
-            onSettings: () => _toast('Settings ✦'),
-            onShare: () => _toast('Share summary ✦'),
-            onEdit: () => _toast('Edit profile ✦'),
-            onStatTap: (i) => _toast('Stat $i ✦'),
-            onPersonalDetails: () => _toast('Personal details ✦'),
-            onCloudSync: () => _toast('Cloud sync ✦'),
-            onToggleReminders: (v) => _toast('Reminders ${v ? 'on' : 'off'} ✦'),
-            onToggleSound: (v) => _toast('Sound ${v ? 'on' : 'off'} ✦'),
-            onAppearance: () => setState(() => _isDark = !_isDark),
-            onLanguage: () => _toast('Language ✦'),
-            onGuide: () => _toast('Ritual guide ✦'),
-            onAbout: () => _toast('About ✦'),
+            remindersOn: ref.watch(settingsProvider.select((s) => s.remindersOn)),
+            soundOn: ref.watch(settingsProvider.select((s) => s.soundOn)),
+            syncLabel: 'Local',
+            syncSubtitle: 'Stored on this device · private & safe',
+            onShare: _shareApp,
+            onEdit: _showProfileSheet,
+            onStatTap: (_) => _go(_Stage.progress),
+            onPersonalDetails: _showProfileSheet,
+            onCloudSync: () => _toast(
+                'Your data lives on this device for now — Spark Cloud arrives with accounts ☁️'),
+            onToggleReminders: (v) =>
+                ref.read(settingsProvider.notifier).setReminders(v),
+            onToggleSound: (v) => ref.read(settingsProvider.notifier).setSound(v),
+            onAppearance: _toggleTheme,
+            onLanguage: () =>
+                _toast('العربية coming with the translation update 🌙'),
+            onGuide: _showGuideSheet,
+            onAbout: _showAboutSpark,
             onLogOut: () => _go(_Stage.welcome),
             onNavTap: (i) => switch (i) {
               0 => _go(_Stage.home),
               1 => _go(_Stage.habits),
               2 => _go(_Stage.progress),
-              _ => _toast('Nav $i ✦'),
+              _ => _noop(),
             },
           ),
         _Stage.progress => ProgressScreen(
-            onProfile: () => _toast('Profile ✦'),
-            onBell: () => _toast('Notifications ✦'),
-            onShare: () => _toast('Share achievement ✦'),
+            onProfile: () => _go(_Stage.profile),
+            onBell: () =>
+                _toast('Notifications arrive with the accounts update 🔔'),
+            onShare: _shareApp,
             onNavTap: (i) => switch (i) {
               0 => _go(_Stage.home),
               1 => _go(_Stage.habits),
               3 => _go(_Stage.profile),
-              _ => _toast('Nav $i ✦'),
+              _ => _noop(),
             },
           ),
       },

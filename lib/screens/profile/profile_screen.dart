@@ -12,6 +12,21 @@ import 'package:daily_spark/screens/profile/widgets/stat_tile.dart';
 import 'package:daily_spark/state/habit_providers.dart';
 import 'package:daily_spark/state/progress_providers.dart';
 
+/// Anchor for the gear button: scrolls the page to the settings section.
+final _settingsAnchor = GlobalKey();
+
+void _scrollToSettings() {
+  final ctx = _settingsAnchor.currentContext;
+  if (ctx != null) {
+    Scrollable.ensureVisible(
+      ctx,
+      duration: const Duration(milliseconds: 420),
+      curve: Curves.easeOutCubic,
+      alignment: 0.02,
+    );
+  }
+}
+
 /// PURE UI — Profile ("Shahd's Journey").
 /// No state container, no network: taps are reported to the parent.
 /// Figma: node 126:16289 — 390 × 844 viewport, 1585 of content.
@@ -35,6 +50,8 @@ class ProfileScreen extends ConsumerWidget {
     this.remindersOn = true,
     this.soundOn = true,
     this.themeDark = false,
+    this.syncLabel = 'Local',
+    this.syncSubtitle = 'Stored on this device · private & safe',
   });
 
   final VoidCallback? onSettings;
@@ -55,6 +72,10 @@ class ProfileScreen extends ConsumerWidget {
   final bool soundOn;
   final bool themeDark;
 
+  /// Honest sync status until the backend lands ('Local' today, 'Active' then).
+  final String syncLabel;
+  final String syncSubtitle;
+
   static Color get _brown => p.body;
 
   @override
@@ -68,6 +89,7 @@ class ProfileScreen extends ConsumerWidget {
     final completed = ref.watch(totalCompletionsProvider);
     final level = ref.watch(profileLevelProvider);
     final name = ref.watch(userNameProvider);
+    final motto = ref.watch(userMottoProvider);
     final hasData = (snapshot?.log.isNotEmpty ?? false);
 
     return Scaffold(
@@ -91,9 +113,10 @@ class ProfileScreen extends ConsumerWidget {
                         ProfileIdentityCard(
                           scale: s,
                           name: name ?? 'Your Journey',
-                          bio: hasData
-                              ? 'Building better habits, one deliberate day at a time.'
-                              : 'Add your first ritual and this page starts telling your story.',
+                          bio: motto ??
+                              (hasData
+                                  ? 'Building better habits, one deliberate day at a time.'
+                                  : 'Add your first ritual and this page starts telling your story.'),
                           status: level.label,
                           hasAvatar: name != null,
                         ),
@@ -140,6 +163,7 @@ class ProfileScreen extends ConsumerWidget {
                         ),
                         SizedBox(height: 24 * s),
                         SettingsGroup(
+                          key: _settingsAnchor,
                           scale: s,
                           label: 'ACCOUNT & SYNC',
                           rows: [
@@ -157,9 +181,9 @@ class ProfileScreen extends ConsumerWidget {
                               icon: Icons.cloud_outlined,
                               iconColor: p.sage,
                               title: 'Spark Cloud Sync',
-                              subtitle: 'Synced just now · 100% safe',
+                              subtitle: syncSubtitle,
                               height: 71,
-                              valuePill: 'Active',
+                              valuePill: syncLabel,
                               valuePillColor:
                                   p.sage.withValues(alpha: 0.10),
                               onTap: onCloudSync,
@@ -252,7 +276,7 @@ class ProfileScreen extends ConsumerWidget {
               scale: s,
               title: 'Profile',
               showSettings: true,
-              onSettings: onSettings,
+              onSettings: onSettings ?? _scrollToSettings,
             ),
           ),
           Positioned(

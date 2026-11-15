@@ -21,14 +21,14 @@ class HomeScreen extends ConsumerStatefulWidget {
     this.onHabitTap,
     this.onNewRitual,
     this.onNavTap,
-    this.userName = 'Shahd',
+    this.userName,
   });
 
   final VoidCallback? onProfile;
   final ValueChanged<String>? onHabitTap;
   final VoidCallback? onNewRitual;
   final ValueChanged<int>? onNavTap;
-  final String userName;
+  final String? userName;
 
   @override
   ConsumerState<HomeScreen> createState() => _HomeScreenState();
@@ -385,7 +385,7 @@ class _Greeting extends StatelessWidget {
   });
 
   final double scale;
-  final String name;
+  final String? name;
   final int completed;
   final int total;
 
@@ -460,7 +460,7 @@ class _Greeting extends StatelessWidget {
         ),
         SizedBox(height: 4 * s),
         figmaText(
-          '$_greetingWord, $name',
+          (name == null || name!.isEmpty) ? _greetingWord : '$_greetingWord, $name',
           size: 22 * s,
           weight: FontWeight.w600,
           letterSpacing: -0.55 * s,
