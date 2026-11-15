@@ -3,12 +3,16 @@ import 'package:flutter/material.dart';
 import 'package:daily_spark/design_system/theme/spark_palette.dart';
 
 import 'package:daily_spark/design_system/widgets/design_canvas.dart' show figmaText;
+import 'package:daily_spark/state/progress_providers.dart' show RhythmDay;
 
 /// Progress · Weekly Rhythm — Figma 358 × 248, r16.
 class WeeklyRhythmCard extends StatelessWidget {
-  WeeklyRhythmCard({super.key, required this.scale});
+  WeeklyRhythmCard({super.key, required this.scale, this.days = const []});
 
   final double scale;
+
+  /// Last 7 days, oldest first (index 6 = today).
+  final List<RhythmDay> days;
 
   static Color get _brown => p.body;
   static Color get _ink => p.ink;
@@ -23,19 +27,36 @@ class WeeklyRhythmCard extends StatelessWidget {
   static Color get _well => p.dark ? const Color(0xFFEDEEEB) : p.container;
   static Color get _wellToday => p.dark ? const Color(0xFFFFDBCF) : p.emberSoft;
 
-  static List<_BarData> get _bars => <_BarData>[
-    _BarData('85%', 105, _barSage, 'M', FontWeight.w500,
-        p.body),
-    _BarData('70%', 87, _barSage, 'T', FontWeight.w500,
-        p.body),
-    _BarData('100%', 124, _barGold, 'W', FontWeight.w700, p.ink),
-    _BarData('90%', 112, _barSage, 'T', FontWeight.w500,
-        p.body),
-    _BarData('80%', 99, _barEmber, 'F', FontWeight.w700,
-        _barEmber),
-    _BarData('60%', 74, _well, 'S', FontWeight.w500, p.body),
-    _BarData('75%', 93, _well, 'S', FontWeight.w500, p.body),
-  ];
+  static const _letters = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
+
+  List<_BarData> get _bars => [
+        for (final day in days)
+          _BarData(
+            '${day.percent}%',
+            74 + (day.percent / 100).clamp(0.0, 1.0) * 50,
+            day.percent >= 90
+                ? _barGold
+                : day.percent >= 70
+                    ? _barSage
+                    : day.percent >= 40
+                        ? _barEmber
+                        : _well,
+            _letters[day.day.weekday - 1],
+            day.isToday ? FontWeight.w700 : FontWeight.w500,
+            day.isToday
+                ? p.emberDeep
+                : (day.percent >= 90 ? p.ink : p.body),
+          ),
+      ];
+
+  int get _peakIndex {
+    if (days.isEmpty) return -1;
+    var best = 0;
+    for (var i = 1; i < days.length; i++) {
+      if (days[i].percent > days[best].percent) best = i;
+    }
+    return days[best].percent > 0 ? best : -1;
+  }
 
   static const _columnLeft = <double>[4, 51, 97, 144, 190, 237, 283];
 
@@ -61,13 +82,13 @@ class WeeklyRhythmCard extends StatelessWidget {
               child: _Column(
                 data: _bars[i],
                 scale: s,
-                isToday: i == 4,
-                isPeak: i == 2,
+                isToday: i == _bars.length - 1,
+                isPeak: i == _peakIndex,
               ),
             ),
           // NOW chip
           Positioned(
-            left: 211 * s,
+            left: (16 + _columnLeft[(_bars.length - 1).clamp(0, 6)]) * s,
             top: 21 * s,
             child: Container(
               width: 30 * s,
@@ -105,7 +126,9 @@ class WeeklyRhythmCard extends StatelessWidget {
                       size: 13 * s, color: p.emberDeep),
                   SizedBox(width: 6 * s),
                   figmaText(
-                    'Friday (Today)',
+                    days.isEmpty
+                        ? 'Today'
+                        : '${_weekdayName(days.last.day)} (Today)',
                     size: 12 * s,
                     weight: FontWeight.w500,
                     letterSpacing: 0.12 * s,
@@ -114,7 +137,9 @@ class WeeklyRhythmCard extends StatelessWidget {
                   ),
                   Spacer(),
                   figmaText(
-                    '4 of 5 habits fulfilled',
+                    days.isEmpty || days.last.percent == 0
+                        ? 'Nothing completed yet today'
+                        : '${days.last.percent}% of today fulfilled',
                     size: 12 * s,
                     weight: FontWeight.w600,
                     letterSpacing: 0.12 * s,
@@ -130,6 +155,16 @@ class WeeklyRhythmCard extends StatelessWidget {
     );
   }
 }
+
+String _weekdayName(DateTime day) => const [
+      'Monday',
+      'Tuesday',
+      'Wednesday',
+      'Thursday',
+      'Friday',
+      'Saturday',
+      'Sunday',
+    ][day.weekday - 1];
 
 class _BarData {
   const _BarData(this.label, this.height, this.fill, this.letter, this.weight,

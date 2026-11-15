@@ -225,7 +225,6 @@ class _PreviewShellState extends State<PreviewShell> {
         _Stage.progress => ProgressScreen(
             onProfile: () => _toast('Profile ✦'),
             onBell: () => _toast('Notifications ✦'),
-            onTimeframeSelected: (i) => _toast('Timeframe $i ✦'),
             onShare: () => _toast('Share achievement ✦'),
             onNavTap: (i) => switch (i) {
               0 => _go(_Stage.home),

@@ -12,11 +12,17 @@ class MomentumHeroCard extends StatelessWidget {
   const MomentumHeroCard({
     super.key,
     required this.scale,
-    this.percent = 0.78,
+    this.percent = 0,
+    this.hits = 0,
+    this.scheduled = 0,
   });
 
   final double scale;
+
+  /// 0..1 for the ring.
   final double percent;
+  final int hits;
+  final int scheduled;
 
   static Color get _brown => p.body;
 
@@ -83,7 +89,7 @@ class MomentumHeroCard extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           figmaText(
-                            '78',
+                            '${(percent * 100).round()}',
                             size: 40 * s,
                             weight: FontWeight.w700,
                             letterSpacing: -2 * s,
@@ -150,7 +156,9 @@ class MomentumHeroCard extends StatelessWidget {
                     ),
                     SizedBox(width: 5 * s),
                     figmaText(
-                      'On fire · 28 of 35 habits hit',
+                      scheduled == 0
+                          ? 'No habits scheduled yet'
+                          : '$hits of $scheduled habits hit',
                       size: 12 * s,
                       weight: FontWeight.w600,
                       lineHeight: 16 * s,

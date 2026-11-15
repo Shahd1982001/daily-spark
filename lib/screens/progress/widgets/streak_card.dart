@@ -6,9 +6,16 @@ import 'package:daily_spark/design_system/widgets/design_canvas.dart' show figma
 
 /// Progress · Streak card — Figma 358 × 199, r24, ember gradient.
 class StreakCard extends StatelessWidget {
-  const StreakCard({super.key, required this.scale});
+  const StreakCard({
+    super.key,
+    required this.scale,
+    this.days = 0,
+    this.personalBest = 0,
+  });
 
   final double scale;
+  final int days;
+  final int personalBest;
 
   @override
   Widget build(BuildContext context) {
@@ -60,7 +67,7 @@ class StreakCard extends StatelessWidget {
               child: Row(
                 children: [
                   figmaText(
-                    '12-Day Streak',
+                    '$days-Day Streak',
                     size: 22 * s,
                     weight: FontWeight.w600,
                     letterSpacing: -0.33 * s,
@@ -77,7 +84,10 @@ class StreakCard extends StatelessWidget {
               left: 80 * s,
               top: 52 * s,
               child: figmaText(
-                'Personal best: 18 days · 6 days to record!',
+                days >= personalBest && personalBest > 0
+                    ? 'Personal best: $personalBest days · keep it going!'
+                    : 'Personal best: $personalBest days · '
+                        '${(personalBest - days).clamp(0, 999)} days to record!',
                 size: 12 * s,
                 weight: FontWeight.w500,
                 letterSpacing: 0.24 * s,
