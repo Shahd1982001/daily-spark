@@ -7,9 +7,28 @@ import 'package:daily_spark/design_system/widgets/design_canvas.dart' show figma
 /// "Habit Loop Configuration" card on Habit Details.
 /// Figma: 358 × 484 at (16, 1388).
 class HabitLoopCard extends StatelessWidget {
-  const HabitLoopCard({super.key, required this.scale});
+  const HabitLoopCard({
+    super.key,
+    required this.scale,
+    required this.cadence,
+    required this.anchor,
+    required this.dosage,
+    required this.cue,
+  });
 
   final double scale;
+
+  /// `Every Day (Daily Ritual)`.
+  final String cadence;
+
+  /// `8:00 AM · Morning anchor`.
+  final String anchor;
+
+  /// `20 pages / day`.
+  final String dosage;
+
+  /// The implementation intention, quotes included.
+  final String cue;
 
   @override
   Widget build(BuildContext context) {
@@ -57,7 +76,7 @@ class HabitLoopCard extends StatelessWidget {
             height: 110,
             icon: Icons.repeat_rounded,
             label: 'CADENCE',
-            value: 'Every Day (Daily Ritual)',
+            value: cadence,
           ),
           _row(
             s,
@@ -65,7 +84,7 @@ class HabitLoopCard extends StatelessWidget {
             height: 90,
             icon: Icons.schedule_rounded,
             label: 'SCHEDULED ANCHOR',
-            value: '08:30 PM \u00b7 Bedside Lamp loop',
+            value: anchor,
           ),
           _row(
             s,
@@ -73,7 +92,7 @@ class HabitLoopCard extends StatelessWidget {
             height: 70,
             icon: Icons.flag_outlined,
             label: 'TARGET DOSAGE',
-            value: '20 pages / day',
+            value: dosage,
           ),
           // stacking cue
           Positioned(
@@ -113,9 +132,10 @@ class HabitLoopCard extends StatelessWidget {
                   Padding(
                     padding: EdgeInsets.fromLTRB(20 * s, 6 * s, 20 * s, 0),
                     child: figmaText(
-                      '\u201cRight after I turn off the bedside lamp, I will read '
-                      '20 pages.\u201d',
+                      cue,
                       size: 14 * s,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
                       weight: FontWeight.w400,
                       lineHeight: 20 * s,
                       color: p.emberDeep,
@@ -182,6 +202,8 @@ class HabitLoopCard extends StatelessWidget {
                     figmaText(
                       value,
                       size: 14 * s,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                       weight: FontWeight.w600,
                       lineHeight: 20 * s,
                       color: p.ink,

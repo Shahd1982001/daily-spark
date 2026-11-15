@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:daily_spark/design_system/theme/app_theme.dart';
 import 'package:daily_spark/design_system/theme/spark_palette.dart';
 import 'package:daily_spark/screens/onboarding/onboarding_screen.dart';
@@ -14,6 +15,7 @@ import 'package:daily_spark/screens/profile/profile_screen.dart';
 import 'package:daily_spark/screens/progress/progress_screen.dart';
 import 'package:daily_spark/screens/sign_up/sign_up_screen.dart';
 import 'package:daily_spark/screens/welcome/welcome_screen.dart';
+import 'package:daily_spark/state/details_providers.dart';
 
 /// ⚠️ TEMPORARY PREVIEW SHELL — scaffolding only, zero business logic.
 ///
@@ -24,11 +26,11 @@ import 'package:daily_spark/screens/welcome/welcome_screen.dart';
 ///   /?s=welcome          → welcome screen
 ///
 /// This shell will be replaced by the real app router later.
-class PreviewShell extends StatefulWidget {
+class PreviewShell extends ConsumerStatefulWidget {
   const PreviewShell({super.key});
 
   @override
-  State<PreviewShell> createState() => _PreviewShellState();
+  ConsumerState<PreviewShell> createState() => _PreviewShellState();
 }
 
 enum _Stage {
@@ -45,7 +47,7 @@ enum _Stage {
   profile,
 }
 
-class _PreviewShellState extends State<PreviewShell> {
+class _PreviewShellState extends ConsumerState<PreviewShell> {
   final _messengerKey = GlobalKey<ScaffoldMessengerState>();
   late _Stage _stage = _initialStage();
   late final int _initialPage = _intParam('p', 0);
@@ -76,6 +78,15 @@ class _PreviewShellState extends State<PreviewShell> {
   @override
   void initState() {
     super.initState();
+    // `?id=<habitId>` opens the details screen on a specific habit.
+    final habitId = Uri.base.queryParameters['id'];
+    if (habitId != null && habitId.isNotEmpty) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          ref.read(selectedHabitIdProvider.notifier).state = habitId;
+        }
+      });
+    }
     // Only auto-advance when the splash was reached naturally (no ?s= route).
     if (_stage == _Stage.splash && _param('s') == null) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -90,6 +101,12 @@ class _PreviewShellState extends State<PreviewShell> {
   void dispose() {
     _timer?.cancel();
     super.dispose();
+  }
+
+  /// Opens Habit Details for [habitId].
+  void _openDetails(String habitId) {
+    ref.read(selectedHabitIdProvider.notifier).state = habitId;
+    _go(_Stage.habitDetails);
   }
 
   void _go(_Stage stage) {
@@ -151,8 +168,8 @@ class _PreviewShellState extends State<PreviewShell> {
             onLogIn: () => _go(_Stage.login),
           ),
         _Stage.home => HomeScreen(
-            onProfile: () => _toast('Profile — later ✦'),
-            onHabitTap: (id) => _go(_Stage.habitDetails),
+            onProfile: () => _go(_Stage.profile),
+            onHabitTap: _openDetails,
             onNewRitual: () => _go(_Stage.addHabit),
             onNavTap: (i) => switch (i) {
               1 => _go(_Stage.habits),
@@ -162,9 +179,9 @@ class _PreviewShellState extends State<PreviewShell> {
             },
           ),
         _Stage.habits => HabitsScreen(
-            onProfile: () => _toast('Profile — later ✦'),
+            onProfile: () => _go(_Stage.profile),
             onSort: () => _toast('Sort & filter ✦'),
-            onHabitTap: (id) => _go(_Stage.habitDetails),
+            onHabitTap: _openDetails,
             onCreateHabit: () => _go(_Stage.addHabit),
             onNavTap: (i) => switch (i) {
               0 => _go(_Stage.home),
@@ -176,14 +193,9 @@ class _PreviewShellState extends State<PreviewShell> {
         _Stage.habitDetails => HabitDetailsScreen(
             onBack: () => _go(_Stage.habits),
             onEdit: () => _toast('Edit habit ✦'),
-            onAvatar: () => _toast('Profile ✦'),
-            onDecrement: () => _toast('−5 pages ✦'),
-            onPlusFive: () => _toast('+5 pages ✦'),
-            onPlusTen: () => _toast('+10 pages ✦'),
-            onToggleComplete: () => _toast('Toggle complete ✦'),
+            onAvatar: () => _go(_Stage.profile),
             onEditRitual: () => _go(_Stage.addHabit),
-            onArchive: () => _toast('Archive ✦'),
-            onDelete: () => _toast('Delete ✦'),
+            onCreateHabit: () => _go(_Stage.addHabit),
           ),
         _Stage.addHabit => AddHabitScreen(
             onClose: () => _go(_Stage.habits),

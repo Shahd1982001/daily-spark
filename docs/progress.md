@@ -231,8 +231,34 @@ Side-by-side: `review/progress_figma_vs_app.png`.
 
 Verified empty + filled, light + dark, 0 page errors; analyze 0 errors; 19/19 tests.
 
+## Logic layer — Phase 2e: Habit Details is live
+- Data: `HabitsSnapshot.amounts` (habit → day → amount) stores *partial* progress, so amount habits
+  (20 pages, 1.5 L, 30 min) can sit between 0 and the target. `log` stays the single source of truth for
+  "done": reaching the target adds the day, dropping below removes it. Old snapshots stay readable
+  (missing field → `{}`).
+- Controller: `setAmount(id, n)` (clamped 0…target) · `stepAmount(id, ±n)`; `toggle` now writes the full
+  target instead of a bare boolean, so the two paths never disagree.
+- New `state/details_providers.dart`: `selectedHabitIdProvider` (set by the card she tapped) ·
+  `detailsHabitProvider` (falls back to today's first habit, null when there are no habits) ·
+  `habitDetailProvider` → streak, best run **and the month it was set**, lifetime consistency, 7-day
+  gauge, month calendar (per-day completed / today / missed / before-start / future), 30-day trend,
+  today amount, target, and the quick-step sizes (5/10 for a 20-page target, scaled for bigger ones).
+- Screen: header/edit/avatar stay, title + chips + hero + today card + month calendar + stats mosaic +
+  habit loop + editorial card + actions are all data-driven. `spark` insight line, "+5 / +10" labels,
+  "Archive to Vault", delete confirmation → all real. Archive/delete actually hit the store.
+- Month calendar height adapts to 5- or 6-week months (no legend spill).
+- Empty state: "No ritual to open yet" + Create a habit, no fake "Mindful Reading" demo.
+- Dark: completed cells use the bright ember token (Figma dark), editorial cover fade follows the theme.
+
+Verified light + dark, empty + 2-habit + full seed, partial amounts, stepper clicks (20 → 15 → 10 → 5 →
+0 → back up), archive, delete dialog, tile → details selection; 0 page errors, analyze 0 errors, 28/28 tests.
+
+Fixes picked up on the way: `habitMetaLine` was printing a literal `\u00b7` (now a real `·`), the
+Habits tile meta line overlapped the toggle when the streak badge was shown, and the streak token in
+that line is now the compact `19d`.
+
 ## Next (needs her decision)
-1. **Logic layer** — state management choice still open (Provider vs Riverpod).
+1. **Add Habit** (`?s=add`) — last screen of the build order, then auth/onboarding, then backend.
 2. **Backend** — must stay last.
 3. **i18n / RTL Arabic** — after logic.
 

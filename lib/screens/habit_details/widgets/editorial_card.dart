@@ -7,9 +7,24 @@ import 'package:daily_spark/design_system/widgets/design_canvas.dart' show figma
 /// Editorial inspiration card (current book) on Habit Details.
 /// Figma: 358 × 226 at (16, 1896).
 class EditorialCard extends StatelessWidget {
-  const EditorialCard({super.key, required this.scale});
+  const EditorialCard({
+    super.key,
+    required this.scale,
+    required this.tag,
+    required this.title,
+    required this.quote,
+  });
 
   final double scale;
+
+  /// `Current Read` — the chip on the left.
+  final String tag;
+
+  /// The habit's own detail tag (`Atomic Habits`).
+  final String title;
+
+  /// The line quoted under the cover.
+  final String quote;
 
   @override
   Widget build(BuildContext context) {
@@ -70,9 +85,9 @@ class EditorialCard extends StatelessWidget {
                   begin: Alignment.bottomCenter,
                   end: Alignment.topCenter,
                   colors: [
-                    Colors.white,
-                    Colors.white.withValues(alpha: 0.3),
-                    Colors.white.withValues(alpha: 0.0),
+                    p.surface,
+                    p.surface.withValues(alpha: 0.3),
+                    p.surface.withValues(alpha: 0.0),
                   ],
                   stops: const [0.0, 0.5, 1.0],
                 ),
@@ -85,9 +100,9 @@ class EditorialCard extends StatelessWidget {
             top: 144 * s,
             child: Row(
               children: [
-                _GlassChip(scale: s, label: 'Current Read'),
+                _GlassChip(scale: s, label: tag),
                 SizedBox(width: 68 * s),
-                _GlassChip(scale: s, label: 'Marcus Aurelius \u00b7 Meditations'),
+                _GlassChip(scale: s, label: title),
               ],
             ),
           ),
@@ -107,7 +122,10 @@ class EditorialCard extends StatelessWidget {
                   ),
                   SizedBox(width: 8 * s),
                   figmaText(
-                    '\u201cQuiet minds grasp deep truths.\u201d',
+                    quote,
+                    width: 240 * s,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
                     size: 12 * s,
                     weight: FontWeight.w400,
                     letterSpacing: 0.12 * s,

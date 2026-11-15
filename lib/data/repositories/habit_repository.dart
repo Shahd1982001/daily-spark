@@ -9,10 +9,20 @@ class HabitsSnapshot {
   const HabitsSnapshot({
     required this.habits,
     required this.log,
+    this.amounts = const {},
   });
 
   final List<Habit> habits;
+
+  /// Which calendar days a habit was *completed* on.
   final Map<String, Set<DateTime>> log;
+
+  /// Partial progress for amount-based habits:
+  /// habit id → `yyyy-MM-dd` → amount logged that day.
+  ///
+  /// A day is complete when the amount reaches the habit's target; `log` stays
+  /// the single source of truth for "done", `amounts` only adds the in-between.
+  final Map<String, Map<String, int>> amounts;
 
   static const int schemaVersion = 1;
 
@@ -37,6 +47,15 @@ class HabitsSnapshot {
   bool isCompleted(String habitId, DateTime day) =>
       daysFor(habitId).map(dayOnly).contains(dayOnly(day));
 
+  /// Amount logged for [habitId] on [day] (0 when nothing is recorded).
+  int amountFor(String habitId, DateTime day) {
+    final stored = amounts[habitId]?[dayKey(day)];
+    if (stored != null) return stored;
+    return isCompleted(habitId, day)
+        ? (habitById(habitId)?.targetAmount ?? 1)
+        : 0;
+  }
+
   int completedOn(DateTime day) {
     final key = dayOnly(day);
     return scheduledOn(day)
@@ -54,15 +73,20 @@ class HabitsSnapshot {
   HabitsSnapshot copyWith({
     List<Habit>? habits,
     Map<String, Set<DateTime>>? log,
+    Map<String, Map<String, int>>? amounts,
   }) =>
       HabitsSnapshot(
         habits: habits ?? this.habits,
         log: log ?? this.log,
+        amounts: amounts ?? this.amounts,
       );
 
   Map<String, dynamic> toJson() => {
         'schemaVersion': schemaVersion,
         'habits': habits.map((h) => h.toJson()).toList(),
+        'amounts': amounts.map(
+          (habitId, days) => MapEntry(habitId, Map<String, int>.from(days)),
+        ),
         'log': log.map(
           (habitId, days) => MapEntry(
             habitId,
@@ -87,7 +111,18 @@ class HabitsSnapshot {
           .toSet();
       if (days.isNotEmpty) log[key as String] = days;
     });
-    return HabitsSnapshot(habits: habits, log: log);
+    final amounts = <String, Map<String, int>>{};
+    final rawAmounts = (json['amounts'] as Map?) ?? const {};
+    rawAmounts.forEach((key, value) {
+      if (value is! Map) return;
+      final perDay = <String, int>{};
+      value.forEach((day, amount) {
+        final parsed = (amount as num?)?.toInt();
+        if (parsed != null) perDay[day as String] = parsed;
+      });
+      if (perDay.isNotEmpty) amounts[key as String] = perDay;
+    });
+    return HabitsSnapshot(habits: habits, log: log, amounts: amounts);
   }
 }
 

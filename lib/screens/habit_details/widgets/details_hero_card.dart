@@ -10,9 +10,34 @@ import 'package:daily_spark/design_system/widgets/design_canvas.dart' show figma
 /// Hero momentum card on Habit Details.
 /// Figma: "Habit Visual Momentum Hero" 358 × 208 at (16, 202).
 class DetailsHeroCard extends StatelessWidget {
-  DetailsHeroCard({super.key, required this.scale});
+  const DetailsHeroCard({
+    super.key,
+    required this.scale,
+    required this.weekPercent,
+    required this.streak,
+    required this.headline,
+    required this.subline,
+    required this.trendLabel,
+    required this.anchorLabel,
+    required this.primeTag,
+    required this.isEvening,
+  });
 
   final double scale;
+
+  /// 0–100 completion of the last seven scheduled days.
+  final int weekPercent;
+  final int streak;
+  final String headline;
+  final String subline;
+  final String trendLabel;
+
+  /// `8:00 AM · Morning ritual` or `Anytime during the day`.
+  final String anchorLabel;
+
+  /// `PRIME TIME` / `FLEXIBLE`.
+  final String primeTag;
+  final bool isEvening;
 
   static Color get _ink => p.ink;
   static Color get _brown => p.body;
@@ -52,13 +77,16 @@ class DetailsHeroCard extends StatelessWidget {
                 width: 112 * s,
                 height: 112 * s,
                 child: CustomPaint(
-                  painter: _GaugePainter(stroke: 8.96 * s),
+                  painter: _GaugePainter(
+                    stroke: 8.96 * s,
+                    percent: weekPercent,
+                  ),
                   child: Center(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         figmaText(
-                          '76%',
+                          '$weekPercent%',
                           size: 18 * s,
                           weight: FontWeight.w600,
                           letterSpacing: -0.45 * s,
@@ -100,7 +128,7 @@ class DetailsHeroCard extends StatelessWidget {
                     ),
                     SizedBox(width: 6 * s),
                     figmaText(
-                      '12 Day Streak',
+                      '$streak Day Streak',
                       size: 12 * s,
                       weight: FontWeight.w600,
                       letterSpacing: 0.24 * s,
@@ -115,24 +143,30 @@ class DetailsHeroCard extends StatelessWidget {
               left: 136 * s,
               top: 68 * s,
               child: figmaText(
-                'In your flow state',
+                headline,
                 size: 16 * s,
                 weight: FontWeight.w600,
                 letterSpacing: -0.08 * s,
                 lineHeight: 22 * s,
                 color: _ink,
+                width: 198 * s,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
               ),
             ),
             Positioned(
               left: 136 * s,
               top: 92 * s,
               child: figmaText(
-                '12 days compound momentum',
+                subline,
                 size: 12 * s,
                 weight: FontWeight.w400,
                 letterSpacing: 0.12 * s,
                 lineHeight: 16 * s,
                 color: _brown,
+                width: 198 * s,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
               ),
             ),
             Positioned(
@@ -147,12 +181,14 @@ class DetailsHeroCard extends StatelessWidget {
                   ),
                   SizedBox(width: 4 * s),
                   figmaText(
-                    '+3 days longer than last month',
+                    trendLabel,
                     size: 10 * s,
                     weight: FontWeight.w500,
                     letterSpacing: 0.4 * s,
                     lineHeight: 12 * s,
                     color: p.sage,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ],
               ),
@@ -172,13 +208,18 @@ class DetailsHeroCard extends StatelessWidget {
                   children: [
                     SizedBox(width: 16 * s),
                     Icon(
-                      Icons.nightlight_round,
+                      isEvening
+                          ? Icons.nightlight_round
+                          : Icons.wb_sunny_outlined,
                       size: 15 * s,
                       color: p.body,
                     ),
                     SizedBox(width: 8 * s),
                     figmaText(
-                      'Evening wind-down ritual',
+                      anchorLabel,
+                      width: 170 * s,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                       size: 12 * s,
                       weight: FontWeight.w400,
                       letterSpacing: 0.12 * s,
@@ -187,7 +228,7 @@ class DetailsHeroCard extends StatelessWidget {
                     ),
                     Spacer(),
                     figmaText(
-                      'PRIME TIME',
+                      primeTag,
                       size: 10 * s,
                       weight: FontWeight.w600,
                       letterSpacing: 0.5 * s,
@@ -207,9 +248,12 @@ class DetailsHeroCard extends StatelessWidget {
 }
 
 class _GaugePainter extends CustomPainter {
-  _GaugePainter({required this.stroke});
+  _GaugePainter({required this.stroke, required this.percent});
 
   final double stroke;
+
+  /// 0–100.
+  final int percent;
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -229,10 +273,12 @@ class _GaugePainter extends CustomPainter {
       ..strokeWidth = stroke
       ..strokeCap = StrokeCap.round
       ..color = p.ember;
-    canvas.drawArc(rect, -math.pi / 2, math.pi * 2 * 0.76, false, progress);
+    if (percent <= 0) return;
+    final sweep = math.pi * 2 * (percent.clamp(0, 100) / 100);
+    canvas.drawArc(rect, -math.pi / 2, sweep, false, progress);
   }
 
   @override
   bool shouldRepaint(covariant _GaugePainter oldDelegate) =>
-      oldDelegate.stroke != stroke;
+      oldDelegate.stroke != stroke || oldDelegate.percent != percent;
 }

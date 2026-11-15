@@ -1,64 +1,40 @@
 import 'package:flutter/material.dart';
 
 import 'package:daily_spark/design_system/theme/spark_palette.dart';
+import 'package:daily_spark/state/details_providers.dart';
 
 import 'package:daily_spark/design_system/widgets/design_canvas.dart' show figmaText;
 
-/// "November Consistency" calendar card on Habit Details.
-/// Figma: 358 × 390 at (16, 718).
+/// Month consistency calendar on Habit Details.
+/// Figma: 358 × 390 at (16, 718) — the height follows the number of weeks in
+/// the month so a six-week month never spills past the legend.
 class ConsistencyCard extends StatelessWidget {
-  ConsistencyCard({super.key, required this.scale});
+  const ConsistencyCard({
+    super.key,
+    required this.scale,
+    required this.detail,
+  });
 
   final double scale;
+  final HabitDetail detail;
 
   static Color get _ink => p.ink;
   static Color get _brown => p.body;
 
-  /// day label, background, text colour, bold
-  static List<List<Object>> _days = [
-    ['28', p.panel, p.body.withValues(alpha: 0.4), false],
-    ['29', p.panel, p.body.withValues(alpha: 0.4), false],
-    ['30', p.panel, p.body.withValues(alpha: 0.4), false],
-    ['1', p.emberDeep, Colors.white, false],
-    ['2', p.emberDeep, Colors.white, false],
-    ['3', p.container, p.body, false],
-    ['4', p.emberDeep, Colors.white, false],
-    ['5', p.emberDeep, Colors.white, false],
-    ['6', p.emberDeep, Colors.white, false],
-    ['7', p.emberDeep, Colors.white, false],
-    ['8', p.emberDeep, Colors.white, false],
-    ['9', p.container, p.body, false],
-    ['10', p.emberDeep, Colors.white, false],
-    ['11', p.emberDeep, Colors.white, false],
-    ['12', p.emberDeep, Colors.white, false],
-    ['13', p.emberDeep, Colors.white, false],
-    ['14', p.emberDeep, Colors.white, false],
-    ['15', p.emberDeep, Colors.white, false],
-    ['16', p.emberDeep, Colors.white, false],
-    ['17', p.emberDeep, Colors.white, false],
-    ['18', p.emberDeep, Colors.white, false],
-    ['19', p.emberDeep, Colors.white, false],
-    ['20', p.emberDeep, Colors.white, false],
-    ['21', p.emberDeep, Colors.white, false],
-    ['22', p.emberDeep, Colors.white, false],
-    ['23', p.emberDeep, Colors.white, false],
-    ['24', p.sage, Colors.white, true],
-    ['25', p.panel, p.ink, false],
-    ['26', p.panel, p.ink, false],
-    ['27', p.panel, p.ink, false],
-    ['28', p.panel, p.ink, false],
-    ['29', p.panel, p.ink, false],
-    ['30', p.panel, p.ink, false],
-    ['1', p.panel, p.body.withValues(alpha: 0.4), false],
-    ['2', p.panel, p.body.withValues(alpha: 0.4), false],
-  ];
+  static const _cell = 39.0;
+  static const _gap = 6.0;
 
   @override
   Widget build(BuildContext context) {
     final s = scale;
+    final rows = ((detail.monthStartOffset + detail.monthDays.length) / 7).ceil();
+    final gridTop = 114.0;
+    final legendTop = gridTop + rows * (_cell + _gap) - _gap + 16;
+    final height = legendTop + 40;
+
     return Container(
       width: 358 * s,
-      height: 390 * s,
+      height: height * s,
       decoration: BoxDecoration(
         color: p.surface,
         borderRadius: BorderRadius.circular(16 * s),
@@ -76,7 +52,7 @@ class ConsistencyCard extends StatelessWidget {
             left: 24 * s,
             top: 24 * s,
             child: figmaText(
-              'November Consistency',
+              '${detail.monthLabel} Consistency',
               size: 16 * s,
               weight: FontWeight.w600,
               letterSpacing: -0.08 * s,
@@ -88,7 +64,11 @@ class ConsistencyCard extends StatelessWidget {
             left: 24 * s,
             top: 46 * s,
             child: figmaText(
-              '26 completed days (84% consistency)',
+              detail.monthScheduled == 0
+                  ? 'No scheduled days yet this month'
+                  : '${detail.monthCompleted} completed '
+                      '${detail.monthCompleted == 1 ? 'day' : 'days'} '
+                      '(${detail.monthPercent}% consistency)',
               size: 12 * s,
               weight: FontWeight.w400,
               letterSpacing: 0.12 * s,
@@ -100,7 +80,7 @@ class ConsistencyCard extends StatelessWidget {
             left: 302 * s,
             top: 35 * s,
             child: figmaText(
-              '2024',
+              '${detail.year}',
               size: 12 * s,
               weight: FontWeight.w600,
               letterSpacing: 0.24 * s,
@@ -139,32 +119,16 @@ class ConsistencyCard extends StatelessWidget {
           // day grid
           Positioned(
             left: 24 * s,
-            top: 114 * s,
+            top: gridTop * s,
             child: SizedBox(
               width: 310 * s,
               child: Wrap(
-                spacing: 6 * s,
-                runSpacing: 6 * s,
+                spacing: _gap * s,
+                runSpacing: _gap * s,
                 children: [
-                  for (final day in _days)
-                    Container(
-                      width: 39 * s,
-                      height: 39 * s,
-                      decoration: BoxDecoration(
-                        color: day[1] as Color,
-                        borderRadius: BorderRadius.circular(8 * s),
-                      ),
-                      child: Center(
-                        child: figmaText(
-                          day[0] as String,
-                          size: 10 * s,
-                          weight: day[3] == true ? FontWeight.w700 : FontWeight.w600,
-                          letterSpacing: 0.4 * s,
-                          lineHeight: 12 * s,
-                          color: day[2] as Color,
-                        ),
-                      ),
-                    ),
+                  for (var i = 0; i < detail.monthStartOffset; i++)
+                    _cellBox(s, null),
+                  for (final day in detail.monthDays) _cellBox(s, day),
                 ],
               ),
             ),
@@ -172,10 +136,10 @@ class ConsistencyCard extends StatelessWidget {
           // legend
           Positioned(
             left: 24 * s,
-            top: 350 * s,
+            top: legendTop * s,
             child: Row(
               children: [
-                _LegendDot(scale: s, color: p.emberDeep),
+                _LegendDot(scale: s, color: p.dark ? p.ember : p.emberDeep),
                 SizedBox(width: 6 * s),
                 _legendText(s, 'Completed'),
                 SizedBox(width: 30 * s),
@@ -190,6 +154,59 @@ class ConsistencyCard extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _cellBox(double s, DetailDay? day) {
+    if (day == null) {
+      return SizedBox(width: _cell * s, height: _cell * s);
+    }
+
+    final Color background;
+    final Color textColour;
+    final FontWeight weight;
+
+    if (day.isToday) {
+      background = p.sage;
+      textColour = Colors.white;
+      weight = FontWeight.w700;
+    } else if (day.completed) {
+      // Light: deep ember. Dark: the brighter ember so the cell still reads
+      // against the near-black card (same as the Figma dark frame).
+      background = p.dark ? p.ember : p.emberDeep;
+      textColour = Colors.white;
+      weight = FontWeight.w600;
+    } else if (day.beforeStart || day.inFuture) {
+      background = p.panel;
+      textColour = p.body.withValues(alpha: 0.4);
+      weight = FontWeight.w600;
+    } else if (day.scheduled) {
+      background = p.container;
+      textColour = p.body;
+      weight = FontWeight.w600;
+    } else {
+      background = p.panel;
+      textColour = p.ink;
+      weight = FontWeight.w600;
+    }
+
+    return Container(
+      width: _cell * s,
+      height: _cell * s,
+      decoration: BoxDecoration(
+        color: background,
+        borderRadius: BorderRadius.circular(8 * s),
+      ),
+      child: Center(
+        child: figmaText(
+          '${day.day}',
+          size: 10 * s,
+          weight: weight,
+          letterSpacing: 0.4 * s,
+          lineHeight: 12 * s,
+          color: textColour,
+        ),
       ),
     );
   }

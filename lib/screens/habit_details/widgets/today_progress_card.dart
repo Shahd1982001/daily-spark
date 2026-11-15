@@ -10,16 +10,41 @@ class TodayProgressCard extends StatelessWidget {
   const TodayProgressCard({
     super.key,
     required this.scale,
+    required this.targetLabel,
+    required this.amount,
+    required this.targetAmount,
+    required this.unitLabel,
+    required this.isDone,
+    required this.insight,
+    required this.stepSmall,
+    required this.stepLarge,
     this.onDecrement,
-    this.onPlusFive,
-    this.onPlusTen,
+    this.onStepSmall,
+    this.onStepLarge,
     this.onToggleComplete,
   });
 
   final double scale;
+
+  /// `Target: 20 Pages`.
+  final String targetLabel;
+  final int amount;
+  final int targetAmount;
+
+  /// `pages`, `mins`, `times` …
+  final String unitLabel;
+  final bool isDone;
+
+  /// Spark's one-line nudge, derived from today's progress.
+  final String insight;
+
+  /// Button labels for the two quick steps (`5` → `+5`).
+  final int stepSmall;
+  final int stepLarge;
+
   final VoidCallback? onDecrement;
-  final VoidCallback? onPlusFive;
-  final VoidCallback? onPlusTen;
+  final VoidCallback? onStepSmall;
+  final VoidCallback? onStepLarge;
   final VoidCallback? onToggleComplete;
 
   static Color get _ink => p.ink;
@@ -61,7 +86,7 @@ class TodayProgressCard extends StatelessWidget {
             top: 38 * s,
             width: 200 * s,
             child: figmaText(
-              'Target: 20 Pages',
+              targetLabel,
               size: 18 * s,
               weight: FontWeight.w600,
               letterSpacing: -0.18 * s,
@@ -76,7 +101,7 @@ class TodayProgressCard extends StatelessWidget {
               width: 99 * s,
               height: 24 * s,
               decoration: BoxDecoration(
-                color: p.chipGreen,
+                color: isDone ? p.chipGreen : p.chipNeutral,
                 borderRadius: BorderRadius.all(Radius.circular(999)),
               ),
               child: Row(
@@ -86,19 +111,23 @@ class TodayProgressCard extends StatelessWidget {
                     width: 13 * s,
                     height: 13 * s,
                     decoration: BoxDecoration(
-                      color: p.pineDark,
+                      color: isDone ? p.pineDark : p.body.withValues(alpha: 0.45),
                       shape: BoxShape.circle,
                     ),
-                    child: Icon(Icons.check_rounded, size: 9 * s, color: Colors.white),
+                    child: Icon(
+                      isDone ? Icons.check_rounded : Icons.bolt_rounded,
+                      size: 9 * s,
+                      color: Colors.white,
+                    ),
                   ),
                   SizedBox(width: 6 * s),
                   figmaText(
-                    'Complete!',
+                    isDone ? 'Complete!' : (amount > 0 ? 'In progress' : 'Not started'),
                     size: 12 * s,
                     weight: FontWeight.w500,
                     letterSpacing: 0.24 * s,
                     lineHeight: 16 * s,
-                    color: p.pineDark,
+                    color: isDone ? p.pineDark : p.body,
                   ),
                 ],
               ),
@@ -115,10 +144,17 @@ class TodayProgressCard extends StatelessWidget {
                 color: p.container,
                 borderRadius: BorderRadius.circular(999),
               ),
-              child: Container(
-                decoration: BoxDecoration(
-                  color: p.sage,
-                  borderRadius: BorderRadius.circular(999),
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 220),
+                  width: 310 * s * (targetAmount == 0
+                      ? 0
+                      : (amount / targetAmount).clamp(0, 1)),
+                  decoration: BoxDecoration(
+                    color: isDone ? p.pineDark : p.sage,
+                    borderRadius: BorderRadius.circular(999),
+                  ),
                 ),
               ),
             ),
@@ -132,7 +168,7 @@ class TodayProgressCard extends StatelessWidget {
               textBaseline: TextBaseline.alphabetic,
               children: [
                 figmaText(
-                  '20',
+                  '$amount',
                   size: 22 * s,
                   weight: FontWeight.w700,
                   letterSpacing: -0.33 * s,
@@ -141,7 +177,7 @@ class TodayProgressCard extends StatelessWidget {
                 ),
                 SizedBox(width: 4 * s),
                 figmaText(
-                  '/ 20 pages',
+                  '/ $targetAmount $unitLabel',
                   size: 14 * s,
                   weight: FontWeight.w400,
                   lineHeight: 20 * s,
@@ -166,9 +202,9 @@ class TodayProgressCard extends StatelessWidget {
             child: _StepperButton(
               scale: s,
               width: 32,
-              onTap: onPlusFive,
+              onTap: onStepSmall,
               child: figmaText(
-                '+5',
+                '+$stepSmall',
                 size: 12 * s,
                 weight: FontWeight.w500,
                 letterSpacing: 0.24 * s,
@@ -183,9 +219,9 @@ class TodayProgressCard extends StatelessWidget {
             child: _StepperButton(
               scale: s,
               width: 38,
-              onTap: onPlusTen,
+              onTap: onStepLarge,
               child: figmaText(
-                '+10',
+                '+$stepLarge',
                 size: 12 * s,
                 weight: FontWeight.w500,
                 letterSpacing: 0.24 * s,
@@ -204,14 +240,21 @@ class TodayProgressCard extends StatelessWidget {
                 width: 40 * s,
                 height: 40 * s,
                 decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [Color(0xFF16C48C), p.success],
-                  ),
+                  gradient: isDone
+                      ? LinearGradient(
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                          colors: [Color(0xFF16C48C), p.success],
+                        )
+                      : null,
+                  color: isDone ? null : p.container,
                   borderRadius: BorderRadius.circular(12 * s),
                 ),
-                child: Icon(Icons.check_rounded, size: 18 * s, color: Colors.white),
+                child: Icon(
+                  Icons.check_rounded,
+                  size: 18 * s,
+                  color: isDone ? Colors.white : p.body,
+                ),
               ),
             ),
           ),
@@ -223,7 +266,9 @@ class TodayProgressCard extends StatelessWidget {
               width: 310 * s,
               height: 48 * s,
               decoration: BoxDecoration(
-                color: p.dark ? p.chipGreen : p.panel,
+                color: p.dark
+                    ? (isDone ? p.chipGreen : p.panel)
+                    : p.panel,
                 borderRadius: BorderRadius.circular(12 * s),
               ),
               child: Row(
@@ -244,7 +289,7 @@ class TodayProgressCard extends StatelessWidget {
                   SizedBox(width: 8 * s),
                   Expanded(
                     child: figmaText(
-                      'Goal achieved today! 20 pages absorbed with pure presence.',
+                      insight,
                       size: 12 * s,
                       weight: FontWeight.w400,
                       letterSpacing: 0.12 * s,

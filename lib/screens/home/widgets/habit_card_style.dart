@@ -61,5 +61,5 @@ String habitMetaLine(Habit habit) {
       habitTimeLabel(habit.reminderTime),
   ];
   if (parts.isEmpty) return habit.category;
-  return parts.join(' \\u00b7 ');
+  return parts.join(' · ');
 }

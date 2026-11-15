@@ -7,6 +7,7 @@ import 'package:daily_spark/data/models/habit.dart';
 import 'package:daily_spark/data/repositories/habit_repository.dart';
 import 'package:daily_spark/data/seed/seed_data.dart';
 import 'package:daily_spark/data/services/streaks.dart';
+import 'package:daily_spark/state/details_providers.dart';
 import 'package:daily_spark/state/habit_providers.dart';
 
 Habit _habit({
@@ -269,6 +270,153 @@ void main() {
       final container = containerWith(MemoryHabitStore());
       await container.read(habitsProvider.future);
       expect(container.read(habitStreakProvider('h_workout')), 19);
+    });
+  });
+
+  group('Habit Details', () {
+    ProviderContainer containerWith(MemoryHabitStore store) {
+      final container = ProviderContainer(
+        overrides: [
+          habitStoreProvider.overrideWithValue(store),
+          demoModeProvider.overrideWithValue(DemoMode.full),
+        ],
+      );
+      addTearDown(container.dispose);
+      return container;
+    }
+
+    test('details follow the selected habit', () async {
+      final container = containerWith(MemoryHabitStore());
+      await container.read(habitsProvider.future);
+
+      container.read(selectedHabitIdProvider.notifier).state = 'h_read';
+      final detail = container.read(habitDetailProvider)!;
+      expect(detail.habit.id, 'h_read');
+      expect(detail.targetAmount, 20);
+      expect(detail.doneToday, isTrue);
+      expect(detail.amountToday, 20);
+      expect(detail.streak, 5);
+    });
+
+    test('an unknown id falls back to the first habit of the day', () async {
+      final container = containerWith(MemoryHabitStore());
+      await container.read(habitsProvider.future);
+
+      container.read(selectedHabitIdProvider.notifier).state = 'nope';
+      final detail = container.read(habitDetailProvider)!;
+      expect(detail.habit.id, container.read(todayHabitsProvider).first.id);
+    });
+
+    test('stepping the amount moves between open, partial and complete',
+        () async {
+      final container = containerWith(MemoryHabitStore());
+      await container.read(habitsProvider.future);
+      final controller = container.read(habitsProvider.notifier);
+      const habitId = 'h_read'; // target 20, seeded complete today
+
+      final snapshot = container.read(habitsProvider).value!;
+      expect(snapshot.isCompleted(habitId, DateTime.now()), isTrue);
+
+      await controller.setAmount(habitId, 10);
+      var updated = container.read(habitsProvider).value!;
+      expect(updated.isCompleted(habitId, DateTime.now()), isFalse);
+      expect(updated.amountFor(habitId, DateTime.now()), 10);
+
+      await controller.stepAmount(habitId, 10);
+      updated = container.read(habitsProvider).value!;
+      expect(updated.isCompleted(habitId, DateTime.now()), isTrue);
+      expect(updated.amountFor(habitId, DateTime.now()), 20);
+
+      // Never above the target, never below zero.
+      await controller.stepAmount(habitId, 10);
+      expect(container.read(habitsProvider).value!.amountFor(habitId, DateTime.now()), 20);
+      await controller.setAmount(habitId, -5);
+      expect(container.read(habitsProvider).value!.amountFor(habitId, DateTime.now()), 0);
+      expect(
+        container.read(habitsProvider).value!.isCompleted(habitId, DateTime.now()),
+        isFalse,
+      );
+    });
+
+    test('toggle writes the full target amount', () async {
+      final container = containerWith(MemoryHabitStore());
+      await container.read(habitsProvider.future);
+      final controller = container.read(habitsProvider.notifier);
+      const habitId = 'h_workout'; // target 30, open today
+
+      await controller.toggle(habitId);
+      expect(
+        container.read(habitsProvider).value!.amountFor(habitId, DateTime.now()),
+        30,
+      );
+    });
+
+    test('amounts survive a round-trip through the store', () async {
+      final store = MemoryHabitStore();
+      final container = containerWith(store);
+      await container.read(habitsProvider.future);
+      await container.read(habitsProvider.notifier).setAmount('h_read', 7);
+
+      final reloaded = await HabitRepository(store, seeder: seedSnapshot)
+          .load(now: DateTime.now());
+      expect(reloaded.amountFor('h_read', DateTime.now()), 7);
+    });
+
+    test('best run is the longest complete stretch of scheduled days', () async {
+      final habit = _habit();
+      final done = {
+        DateTime(2026, 10, 1),
+        DateTime(2026, 10, 2),
+        DateTime(2026, 10, 3),
+        DateTime(2026, 10, 6),
+      };
+      final best = bestRunFor(habit, done, today: DateTime(2026, 10, 6));
+      expect(best.length, 3);
+      expect(best.endedOn, DateTime(2026, 10, 3));
+    });
+
+    test('a missed scheduled day breaks the best run', () async {
+      final habit = _habit();
+      final done = {
+        DateTime(2026, 10, 1),
+        DateTime(2026, 10, 3),
+        DateTime(2026, 10, 4),
+      };
+      final best = bestRunFor(habit, done, today: DateTime(2026, 10, 4));
+      expect(best.length, 2);
+    });
+
+    test('the month grid starts on the right weekday and marks today',
+        () async {
+      final container = containerWith(MemoryHabitStore());
+      await container.read(habitsProvider.future);
+      container.read(selectedHabitIdProvider.notifier).state = 'h_read';
+
+      final detail = container.read(habitDetailProvider)!;
+      final today = DateTime.now();
+      final firstWeekday = DateTime(today.year, today.month, 1).weekday;
+      expect(detail.monthStartOffset, firstWeekday - 1);
+      expect(detail.monthDays.length,
+          DateTime(today.year, today.month + 1, 0).day);
+      expect(detail.monthDays.where((d) => d.isToday).length, 1);
+      expect(detail.monthLabel, monthName(today.month));
+    });
+
+    test('digit grouping and empty details', () async {
+      expect(groupDigits(1420), '1,420');
+      expect(groupDigits(51), '51');
+      expect(groupDigits(0), '0');
+
+      final container = ProviderContainer(
+        overrides: [
+          habitStoreProvider.overrideWithValue(MemoryHabitStore()),
+          demoModeProvider.overrideWithValue(DemoMode.none),
+        ],
+      );
+      addTearDown(container.dispose);
+      await container.read(habitsProvider.future);
+      expect(container.read(detailsHabitProvider), isNull);
+      expect(container.read(habitDetailProvider), isNull);
     });
   });
 }

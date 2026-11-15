@@ -43,25 +43,67 @@ class HabitsController extends AsyncNotifier<HabitsSnapshot> {
   /// Marks a habit done / not done on [day] (defaults to today).
   Future<void> toggle(String habitId, {DateTime? day}) async {
     final current = state.valueOrNull;
-    if (current == null) return;
+    final habit = current?.habitById(habitId);
+    if (current == null || habit == null) return;
+    final day_ = dayOnly(day ?? DateTime.now());
+    final done = current.isCompleted(habitId, day_);
+    await setAmount(habitId, done ? 0 : _targetOf(habit), day: day_);
+  }
 
-    final target = dayOnly(day ?? DateTime.now());
+  /// Logs progress on an amount-based habit (today by default).
+  ///
+  /// The amount is clamped to `0…target`; reaching the target marks the day
+  /// complete, dropping below it clears the completion. Nothing is stored for
+  /// amount-less days, so the log stays the single source of truth.
+  Future<void> setAmount(String habitId, int amount, {DateTime? day}) async {
+    final current = state.valueOrNull;
+    final habit = current?.habitById(habitId);
+    if (current == null || habit == null) return;
+
+    final targetDay = dayOnly(day ?? DateTime.now());
+    final key = dayKey(targetDay);
+    final targetAmount = _targetOf(habit);
+    final clamped = amount.clamp(0, targetAmount);
+
+    final amounts = <String, Map<String, int>>{
+      for (final entry in current.amounts.entries)
+        entry.key: Map<String, int>.from(entry.value),
+    };
+    final perDay = amounts[habitId] ?? <String, int>{};
+    perDay[key] = clamped;
+    amounts[habitId] = perDay;
+
     final log = <String, Set<DateTime>>{
       for (final entry in current.log.entries) entry.key: {...entry.value},
     };
     final days = log[habitId] ?? <DateTime>{};
-    final wasDone = days.map(dayOnly).contains(target);
-    if (wasDone) {
-      days.removeWhere((d) => dayOnly(d) == target);
+    if (clamped >= targetAmount) {
+      days.add(targetDay);
     } else {
-      days.add(target);
+      days.removeWhere((d) => dayOnly(d) == targetDay);
     }
     log[habitId] = days;
 
-    final next = current.copyWith(log: log);
+    final next = current.copyWith(log: log, amounts: amounts);
     state = AsyncData(next);
     await _repo.save(next);
   }
+
+  /// Steps the logged amount by [delta], clamped to the habit target.
+  Future<void> stepAmount(String habitId, int delta, {DateTime? day}) async {
+    final current = state.valueOrNull;
+    final habit = current?.habitById(habitId);
+    if (current == null || habit == null) return;
+    final targetDay = dayOnly(day ?? DateTime.now());
+    await setAmount(
+      habitId,
+      current.amountFor(habitId, targetDay) + delta,
+      day: targetDay,
+    );
+  }
+
+  static int _targetOf(Habit habit) =>
+      habit.targetAmount <= 0 ? 1 : habit.targetAmount;
 
   Future<void> addHabit(Habit habit) async {
     final current = state.valueOrNull ?? HabitsSnapshot.empty;
@@ -138,6 +180,14 @@ final todaySummaryProvider = Provider<TodaySummary>((ref) {
     completed: snapshot.completedOn(now),
     total: habits.length,
   );
+});
+
+/// Amount logged for one habit today (partial progress included).
+final habitTodayAmountProvider =
+    Provider.family<int, String>((ref, habitId) {
+  final snapshot = ref.watch(habitsProvider).valueOrNull;
+  if (snapshot == null) return 0;
+  return snapshot.amountFor(habitId, DateTime.now());
 });
 
 /// Streak for one habit, as shown on cards (`12d`).

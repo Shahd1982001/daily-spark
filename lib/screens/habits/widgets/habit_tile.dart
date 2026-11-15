@@ -152,7 +152,9 @@ class HabitTile extends StatelessWidget {
               child: Row(
                 children: [
                   ConstrainedBox(
-                    constraints: BoxConstraints(maxWidth: 190 * s),
+                    constraints: BoxConstraints(
+                      maxWidth: (streakHighlighted ? 160 : 190) * s,
+                    ),
                     child: figmaText(
                       meta,
                       size: 12 * s,
@@ -182,7 +184,7 @@ class HabitTile extends StatelessWidget {
                     ),
                     SizedBox(width: 2 * s),
                     figmaText(
-                      '$streak streak',
+                      streak,
                       size: 10 * s,
                       weight: FontWeight.w600,
                       letterSpacing: 0.4 * s,

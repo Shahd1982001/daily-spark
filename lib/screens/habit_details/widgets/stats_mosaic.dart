@@ -7,18 +7,50 @@ import 'package:daily_spark/design_system/widgets/design_canvas.dart' show figma
 /// 2 × 2 habit stats mosaic on Habit Details.
 /// Figma: "Habit Stats Mosaic" 358 × 232 at (16, 1132).
 class StatsMosaic extends StatelessWidget {
-  StatsMosaic({super.key, required this.scale});
+  const StatsMosaic({
+    super.key,
+    required this.scale,
+    required this.currentRun,
+    required this.bestRecord,
+    required this.bestCaption,
+    required this.totalLabel,
+    required this.totalValue,
+    required this.totalCaption,
+    required this.consistency,
+    required this.sinceLabel,
+  });
 
   final double scale;
+
+  /// `12 Days` — the live streak.
+  final String currentRun;
+  final String bestRecord;
+
+  /// `Set in September` / `No record yet`.
+  final String bestCaption;
+
+  /// `TOTAL PAGES`, `4,200 pgs`.
+  final String totalLabel;
+  final String totalValue;
+  final String totalCaption;
+
+  /// `88%`.
+  final String consistency;
+
+  /// `Since September`.
+  final String sinceLabel;
 
   @override
   Widget build(BuildContext context) {
     final s = scale;
     final cards = [
-      ('CURRENT RUN', Icons.local_fire_department_rounded, p.ochre, '12 Days', 'Personal momentum'),
-      ('BEST RECORD', Icons.emoji_events_rounded, p.emberDeep, '28 Days', 'Set in September'),
-      ('TOTAL READ', Icons.menu_book_outlined, p.sage, '1,420 pgs', 'Approx. 5.6 books'),
-      ('CONSISTENCY', Icons.check_circle_outline_rounded, p.pine, '88%', 'Lifetime success rate'),
+      ('CURRENT RUN', Icons.local_fire_department_rounded, p.ochre, currentRun,
+          'Personal momentum'),
+      ('BEST RECORD', Icons.emoji_events_rounded, p.emberDeep, bestRecord,
+          bestCaption),
+      (totalLabel, Icons.menu_book_outlined, p.sage, totalValue, totalCaption),
+      ('CONSISTENCY', Icons.check_circle_outline_rounded, p.pine, consistency,
+          sinceLabel),
     ];
 
     return SizedBox(
@@ -86,6 +118,9 @@ class _StatCard extends StatelessWidget {
             top: 16 * s,
             child: figmaText(
               label,
+              width: 122 * s,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
               size: 10 * s,
               weight: FontWeight.w600,
               letterSpacing: 0.5 * s,
@@ -103,6 +138,9 @@ class _StatCard extends StatelessWidget {
             top: 51 * s,
             child: figmaText(
               value,
+              width: 143 * s,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
               size: 22 * s,
               weight: FontWeight.w700,
               letterSpacing: -0.33 * s,
@@ -115,6 +153,9 @@ class _StatCard extends StatelessWidget {
             top: 80 * s,
             child: figmaText(
               caption,
+              width: 143 * s,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
               size: 12 * s,
               weight: FontWeight.w400,
               letterSpacing: 0.12 * s,
