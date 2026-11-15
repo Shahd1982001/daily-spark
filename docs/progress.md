@@ -176,6 +176,33 @@ empty home → CTA tap lands on Add Habit · demo home tap on the workout circle
 ring `60% → 80%`, streak chip `19d → 20d` · `Morning (2)` filter shows exactly the 2 morning habits ·
 light + dark both correct · `flutter analyze` 0 errors · 19/19 tests still green.
 
+## Logic layer — Phase 2b: Habits is live + 3 review data sets
+Her rule (confirmed): **the Figma numbers are placeholder** — the design shows what a *filled* account
+looks like, and the app must compute every value from the user's own data.
+
+- `?demo=` review modes: `none` (a real launch, empty) · `small` (2 habits, 2 days — "just started") ·
+  `1`/`full` (the design data set). Demo data always lives in a throw-away `MemoryHabitStore`.
+- **Habits screen is store-driven**: tiles ← active habits with `iconKey`/accent mapping shared with Home
+  (`screens/home/widgets/habit_card_style.dart`), meta line, streak chip, done state, "NextUp" badge ←
+  first unfinished habit of today · snapshot card ← `todaySummaryProvider` (n of m, %, progress bar, the
+  Mon→Sun strip with "(Today)" on the real weekday) · chips ← `All / Today / Paused` with live counts ·
+  toggle writes through the controller · tile tap → details · empty state + empty-filter state.
+- Meta lines are ellipsised inside the tile so a long habit name or long unit never runs under the toggle.
+- `figmaText` now takes `maxLines` + `overflow`.
+
+**Verified** (local + the deployed site, 0 page errors): empty / small / full in light and dark; toggle
+changes the numbers immediately; `flutter analyze` 0 errors; 19/19 tests green.
+
+### Review links (deployed)
+```
+https://shahd1982001.github.io/daily-spark/?s=home              Home, empty (new user)
+https://shahd1982001.github.io/daily-spark/?s=habits            Habits, empty
+https://shahd1982001.github.io/daily-spark/?s=habits&demo=small Habits, 2 habits
+https://shahd1982001.github.io/daily-spark/?s=home&demo=1       Home, filled (design parity)
+https://shahd1982001.github.io/daily-spark/?s=habits&demo=1     Habits, filled
+(+ &theme=dark on any of them)
+```
+
 ## Next (needs her decision)
 1. **Logic layer** — state management choice still open (Provider vs Riverpod).
 2. **Backend** — must stay last.
