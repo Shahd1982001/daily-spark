@@ -180,3 +180,74 @@ final personalBestProvider = Provider<int>((ref) {
   }
   return best;
 });
+
+// ── Profile summaries ───────────────────────────────────────────────────────
+
+/// Every completed check-in the user has ever logged.
+final totalCompletionsProvider = Provider<int>((ref) {
+  final snapshot = ref.watch(habitsProvider).valueOrNull;
+  if (snapshot == null) return 0;
+  return snapshot.log.values.fold<int>(0, (sum, days) => sum + days.length);
+});
+
+/// Overall completion over the last [days] days (Profile consistency score).
+final consistencyScoreProvider = Provider<int>((ref) {
+  final snapshot = ref.watch(habitsProvider).valueOrNull;
+  if (snapshot == null || snapshot.habits.isEmpty) return 0;
+  final today = dayOnly(DateTime.now());
+  var scheduled = 0;
+  var completed = 0;
+  for (var i = 0; i < 14; i++) {
+    final day = today.subtract(Duration(days: i));
+    scheduled += snapshot.scheduledOn(day).length;
+    completed += snapshot.completedOn(day);
+  }
+  if (scheduled == 0) return 0;
+  return ((completed / scheduled) * 100).round();
+});
+
+/// Level derived from lifetime completions (1 level per 30 check-ins).
+class ProfileLevel {
+  const ProfileLevel({
+    required this.level,
+    required this.title,
+    required this.score,
+    required this.nextLabel,
+  });
+
+  final int level;
+  final String title;
+  final int score;
+  final String nextLabel;
+
+  static const _titles = [
+    'Sprout',
+    'Builder',
+    'Achiever',
+    'Explorer',
+    'Navigator',
+    'Master',
+    'Luminary',
+  ];
+
+  String get label => 'Level $level $title';
+}
+
+final profileLevelProvider = Provider<ProfileLevel>((ref) {
+  final done = ref.watch(totalCompletionsProvider);
+  final score = ref.watch(consistencyScoreProvider);
+  final level = (1 + done ~/ 30).clamp(1, ProfileLevel._titles.length);
+  final toNext = 30 - (done % 30);
+  return ProfileLevel(
+    level: level,
+    title: ProfileLevel._titles[level - 1],
+    score: score,
+    nextLabel: 'Next: $toNext more check-ins',
+  );
+});
+
+/// Display name — `null` until the user sets one (no auth yet).
+final userNameProvider = Provider<String?>((ref) {
+  if (ref.watch(demoModeProvider) != DemoMode.none) return 'Shahd';
+  return null;
+});

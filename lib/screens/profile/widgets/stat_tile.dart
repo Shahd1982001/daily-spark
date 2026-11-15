@@ -95,9 +95,18 @@ class StatTile extends StatelessWidget {
 
 /// Profile · Level & mastery card — Figma 358 × 88, r16.
 class LevelCard extends StatelessWidget {
-  const LevelCard({super.key, required this.scale});
+  const LevelCard({
+    super.key,
+    required this.scale,
+    this.label = 'Level 1 Sprout',
+    this.score = 0,
+    this.nextLabel = '',
+  });
 
   final double scale;
+  final String label;
+  final int score;
+  final String nextLabel;
 
   @override
   Widget build(BuildContext context) {
@@ -144,7 +153,7 @@ class LevelCard extends StatelessWidget {
             left: 80 * s,
             top: 14 * s,
             child: figmaText(
-              'Level 4 Explorer',
+              label,
               size: 16 * s,
               weight: FontWeight.w600,
               letterSpacing: -0.08 * s,
@@ -156,7 +165,7 @@ class LevelCard extends StatelessWidget {
             right: 16 * s,
             top: 19 * s,
             child: figmaText(
-              '94%',
+              '$score%',
               size: 10 * s,
               weight: FontWeight.w600,
               letterSpacing: 0.4 * s,
@@ -177,7 +186,7 @@ class LevelCard extends StatelessWidget {
               child: Align(
                 alignment: Alignment.centerLeft,
                 child: Container(
-                  width: 246.3 * s,
+                  width: 262 * s * (score / 100).clamp(0.0, 1.0),
                   height: 8 * s,
                   decoration: BoxDecoration(
                     color: p.ember,
@@ -203,7 +212,7 @@ class LevelCard extends StatelessWidget {
             right: 16 * s,
             top: 58 * s,
             child: figmaText(
-              'Next: 14d Streak',
+              nextLabel,
               size: 10 * s,
               weight: FontWeight.w500,
               letterSpacing: 0.4 * s,

@@ -12,10 +12,12 @@ class ProfileIdentityCard extends StatelessWidget {
     this.name = 'Shahd',
     this.bio = 'Building better habits, one deliberate day at a time.',
     this.status = 'Mindful Builder · Since Oct 2023',
+    this.hasAvatar = true,
   });
 
   final double scale;
   final String name;
+  final bool hasAvatar;
   final String bio;
   final String status;
 
@@ -76,15 +78,22 @@ class ProfileIdentityCard extends StatelessWidget {
                   ],
                 ),
                 child: Center(
-                  child: ClipOval(
-                    child: Image.asset(
-                      'assets/brand/avatar_shahd_lg.png',
-                      width: 72 * s,
-                      height: 72 * s,
-                      fit: BoxFit.cover,
-                      filterQuality: FilterQuality.high,
-                    ),
-                  ),
+                  child: hasAvatar
+                      ? ClipOval(
+                          child: Image.asset(
+                            'assets/brand/avatar_shahd_lg.png',
+                            width: 72 * s,
+                            height: 72 * s,
+                            fit: BoxFit.cover,
+                            filterQuality: FilterQuality.high,
+                          ),
+                        )
+                      : Image.asset(
+                          'assets/brand/spark_logo.png',
+                          width: 44 * s,
+                          height: 44 * s,
+                          filterQuality: FilterQuality.high,
+                        ),
                 ),
               ),
             ),

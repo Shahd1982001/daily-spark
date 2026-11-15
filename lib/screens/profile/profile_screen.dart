@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:daily_spark/design_system/theme/spark_palette.dart';
 
@@ -8,11 +9,13 @@ import 'package:daily_spark/design_system/widgets/design_canvas.dart' show figma
 import 'package:daily_spark/screens/profile/widgets/profile_identity_card.dart';
 import 'package:daily_spark/screens/profile/widgets/settings_group.dart';
 import 'package:daily_spark/screens/profile/widgets/stat_tile.dart';
+import 'package:daily_spark/state/habit_providers.dart';
+import 'package:daily_spark/state/progress_providers.dart';
 
 /// PURE UI — Profile ("Shahd's Journey").
 /// No state container, no network: taps are reported to the parent.
 /// Figma: node 126:16289 — 390 × 844 viewport, 1585 of content.
-class ProfileScreen extends StatelessWidget {
+class ProfileScreen extends ConsumerWidget {
   const ProfileScreen({
     super.key,
     this.onSettings,
@@ -55,9 +58,17 @@ class ProfileScreen extends StatelessWidget {
   static Color get _brown => p.body;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final width = MediaQuery.sizeOf(context).width;
     final s = (width / 390).clamp(0.86, 1.25);
+
+    final snapshot = ref.watch(habitsProvider).valueOrNull;
+    final activeHabits = snapshot?.activeHabits.length ?? 0;
+    final streak = ref.watch(bestHabitStreakProvider);
+    final completed = ref.watch(totalCompletionsProvider);
+    final level = ref.watch(profileLevelProvider);
+    final name = ref.watch(userNameProvider);
+    final hasData = (snapshot?.log.isNotEmpty ?? false);
 
     return Scaffold(
       backgroundColor: p.canvas,
@@ -75,15 +86,23 @@ class ProfileScreen extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        _subHeader(s),
+                        _subHeader(s, name),
                         SizedBox(height: 24 * s),
-                        ProfileIdentityCard(scale: s),
+                        ProfileIdentityCard(
+                          scale: s,
+                          name: name ?? 'Your Journey',
+                          bio: hasData
+                              ? 'Building better habits, one deliberate day at a time.'
+                              : 'Add your first ritual and this page starts telling your story.',
+                          status: level.label,
+                          hasAvatar: name != null,
+                        ),
                         SizedBox(height: 24 * s),
                         Row(
                           children: [
                             StatTile(
                               scale: s,
-                              value: '12d',
+                              value: streak == 0 ? '0d' : '${streak}d',
                               label: 'Streak',
                               icon: Icons.local_fire_department_rounded,
                               iconColor: p.emberDeep,
@@ -93,7 +112,7 @@ class ProfileScreen extends StatelessWidget {
                             SizedBox(width: 8 * s),
                             StatTile(
                               scale: s,
-                              value: '100',
+                              value: '$completed',
                               label: 'Completed',
                               icon: Icons.check_circle_rounded,
                               iconColor: p.sage,
@@ -103,7 +122,7 @@ class ProfileScreen extends StatelessWidget {
                             SizedBox(width: 8 * s),
                             StatTile(
                               scale: s,
-                              value: '6',
+                              value: '$activeHabits',
                               label: 'Active Habits',
                               icon: Icons.format_list_bulleted_rounded,
                               iconColor: p.ochre,
@@ -113,7 +132,12 @@ class ProfileScreen extends StatelessWidget {
                           ],
                         ),
                         SizedBox(height: 24 * s),
-                        LevelCard(scale: s),
+                        LevelCard(
+                          scale: s,
+                          label: level.label,
+                          score: level.score,
+                          nextLabel: level.nextLabel,
+                        ),
                         SizedBox(height: 24 * s),
                         SettingsGroup(
                           scale: s,
@@ -254,7 +278,7 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
-  Widget _subHeader(double s) {
+  Widget _subHeader(double s, String? name) {
     return SizedBox(
       height: 48 * s,
       child: Stack(
@@ -275,7 +299,7 @@ class ProfileScreen extends StatelessWidget {
             left: 0,
             top: 20 * s,
             child: figmaText(
-              "Shahd's Journey",
+              name == null ? 'Your Journey' : "$name's Journey",
               size: 18 * s,
               weight: FontWeight.w600,
               letterSpacing: -0.45 * s,
