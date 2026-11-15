@@ -203,6 +203,22 @@ https://shahd1982001.github.io/daily-spark/?s=habits&demo=1     Habits, filled
 (+ &theme=dark on any of them)
 ```
 
+## Logic layer — Phase 2c: Progress is live
+- New `state/progress_providers.dart`: `progressRangeProvider` (week / month / all) ·
+  `rangeStatsProvider` (scheduled vs completed + per-habit ratios for the window) ·
+  `weeklyRhythmProvider` (7 days) · `bestHabitStreakProvider` · `personalBestProvider`.
+- Hero card: ring %, "N of M habits hit", all computed. Weekly Rhythm bars: height + pigment +
+  star + NOW chip + "Top Day" + footer ribbon all derived from the data. Streak card: real streak and
+  personal best. Consistency list: one row per habit with `completed of scheduled days` and the bar width.
+  The This Week / This Month / All Time segmented control now really switches the window.
+- Empty state for a user with no habits ("Your progress starts here").
+
+**Answer to her question "will it look like Figma when filled?"** — structure, spacing, colours and
+components match (same tokens); the numbers differ because they now come from real data. Example with
+the same seed: our 5 habits × 7 days = 35 slots, 31 completed → **89% / 31 of 35**, while the Figma mock
+shows 78% / 28 of 35 and "Top Day: Thursday". Same layout, different (truthful) numbers.
+Side-by-side: `review/progress_figma_vs_app.png`.
+
 ## Next (needs her decision)
 1. **Logic layer** — state management choice still open (Provider vs Riverpod).
 2. **Backend** — must stay last.
