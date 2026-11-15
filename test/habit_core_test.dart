@@ -7,6 +7,7 @@ import 'package:daily_spark/data/models/habit.dart';
 import 'package:daily_spark/data/repositories/habit_repository.dart';
 import 'package:daily_spark/data/seed/seed_data.dart';
 import 'package:daily_spark/data/services/streaks.dart';
+import 'package:daily_spark/state/add_habit_providers.dart';
 import 'package:daily_spark/state/details_providers.dart';
 import 'package:daily_spark/state/habit_providers.dart';
 
@@ -417,6 +418,136 @@ void main() {
       await container.read(habitsProvider.future);
       expect(container.read(detailsHabitProvider), isNull);
       expect(container.read(habitDetailProvider), isNull);
+    });
+  });
+
+  group('Add Habit form', () {
+    ProviderContainer containerWith(MemoryHabitStore store) {
+      final container = ProviderContainer(
+        overrides: [
+          habitStoreProvider.overrideWithValue(store),
+          demoModeProvider.overrideWithValue(DemoMode.none),
+        ],
+      );
+      addTearDown(container.dispose);
+      return container;
+    }
+
+    test('a new draft is empty and waits for a name', () async {
+      final container = containerWith(MemoryHabitStore());
+      await container.read(habitsProvider.future);
+
+      final draft = container.read(habitDraftProvider);
+      expect(draft.title, isEmpty);
+      expect(draft.hasTitle, isFalse);
+      expect(draft.isValid, isFalse);
+      expect(draft.unit, 'pages');
+      expect(draft.targetAmount, 20);
+      expect(draft.category, 'Anytime');
+
+      expect(await container.read(habitDraftProvider.notifier).save(), isNull);
+      expect(container.read(habitsProvider).value!.habits, isEmpty);
+    });
+
+    test('picking a symbol rebases the dosage unit and default target', () async {
+      final container = containerWith(MemoryHabitStore());
+      await container.read(habitsProvider.future);
+      final notifier = container.read(habitDraftProvider.notifier);
+
+      notifier.setIcon('water');
+      expect(container.read(habitDraftProvider).unit, 'ml');
+      expect(container.read(habitDraftProvider).targetAmount, 1500);
+      expect(container.read(habitDraftProvider).presets, [250, 500, 1000, 1500]);
+      expect(container.read(habitDraftProvider).step, 250);
+    });
+
+    test('rhythm presets fill the day set, a day tap switches to custom',
+        () async {
+      final container = containerWith(MemoryHabitStore());
+      await container.read(habitsProvider.future);
+      final notifier = container.read(habitDraftProvider.notifier);
+
+      notifier.setRhythm(HabitRhythm.weekdays);
+      expect(container.read(habitDraftProvider).days, {1, 2, 3, 4, 5});
+
+      notifier.setRhythm(HabitRhythm.weekends);
+      expect(container.read(habitDraftProvider).days, {6, 7});
+
+      notifier.toggleDay(3);
+      final draft = container.read(habitDraftProvider);
+      expect(draft.rhythm, HabitRhythm.custom);
+      expect(draft.days, {3, 6, 7});
+    });
+
+    test('ignite writes a real habit with the derived fields', () async {
+      final container = containerWith(MemoryHabitStore());
+      await container.read(habitsProvider.future);
+      final notifier = container.read(habitDraftProvider.notifier);
+
+      notifier.setTitle('Morning Walk');
+      notifier.setNote('Ten minutes of daylight');
+      notifier.setIcon('walk');
+      notifier.setAccent(HabitAccent.ochre);
+      notifier.setReminderTime('07:15');
+      notifier.setTarget(15);
+
+      final habit = await notifier.save();
+      expect(habit, isNotNull);
+      expect(habit!.title, 'Morning Walk');
+      expect(habit.note, 'Ten minutes of daylight');
+      expect(habit.iconKey, 'walk');
+      expect(habit.accent, HabitAccent.ochre);
+      expect(habit.targetUnit, 'mins');
+      expect(habit.targetAmount, 15);
+      expect(habit.reminderTime, '07:15');
+      expect(habit.category, 'Morning');
+
+      final stored = container.read(habitsProvider).value!.habitById(habit.id);
+      expect(stored, isNotNull);
+      expect(container.read(todayHabitsProvider).map((h) => h.id),
+          contains(habit.id));
+    });
+
+    test('editing loads the habit and saves instead of adding', () async {
+      final store = MemoryHabitStore();
+      final container = containerWith(store);
+      await container.read(habitsProvider.future);
+      final notifier = container.read(habitDraftProvider.notifier);
+
+      notifier.setTitle('Stretch');
+      final created = await notifier.save();
+      notifier.reset();
+
+      container.read(editingHabitIdProvider.notifier).state = created!.id;
+      final loaded = container.read(habitDraftProvider);
+      expect(loaded.title, 'Stretch');
+
+      container.read(habitDraftProvider.notifier).setTitle('Deep Stretch');
+      final updated =
+          await container.read(habitDraftProvider.notifier).save();
+
+      final habits = container.read(habitsProvider).value!.habits;
+      expect(habits.length, 1);
+      expect(updated!.id, created.id);
+      expect(habits.single.title, 'Deep Stretch');
+    });
+
+    test('removing the reminder clears the time', () async {
+      final container = containerWith(MemoryHabitStore());
+      await container.read(habitsProvider.future);
+      final notifier = container.read(habitDraftProvider.notifier);
+
+      notifier.setReminderEnabled(true);
+      expect(container.read(habitDraftProvider).reminderTime, '08:30');
+      expect(container.read(habitDraftProvider).category, 'Morning');
+
+      notifier.setReminderEnabled(false);
+      expect(container.read(habitDraftProvider).reminderEnabled, isFalse);
+
+      notifier.setTitle('Read');
+      final habit = await notifier.save();
+      expect(habit!.reminderTime, isNull);
+      expect(habit.category, 'Anytime');
     });
   });
 }

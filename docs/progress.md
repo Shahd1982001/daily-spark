@@ -269,3 +269,30 @@ flutter build web --release --no-web-resources-cdn --no-wasm-dry-run -O2 --base-
 python3 /home/user/.cache/patch_index.py build/web        # service-worker killer + cache bust
 # copy build/web + web_extra (gallery + screens) → .cache/pages → force push gh-pages
 ```
+
+---
+
+## 🧩 Phase 2e+ — Add / Edit Habit (logic) — 2026-11-12
+
+One draft drives both flows (`habitDraftProvider` + `editingHabitIdProvider`): the Add form is a
+**blank** sheet for a new user, and Edit reuses the exact same sheet prefilled — `Save Changes`
+edits in place (id, logs, streak untouched), `Ignite This Habit` creates `h_<micros>` at sortOrder+1.
+
+- **Symbol ↔ unit contract:** book=pages · water=ml · meditation/walk/moon=mins · flame=times.
+  Switching the symbol re-bases unit, presets and step (pages 10–50 · ml 250–1500 · mins 5–30 · times 1–5),
+  keeping the current amount when the unit holds.
+- **Rhythm segments** (Every Day / Weekdays / Weekends / Custom) write the real weekday set; tapping any
+  day drops to Custom — mirroring the 2b calendar semantics.
+- **Reminder** toggle arms an 08:30 default, the Scheduled Moment pill opens the time picker; off clears
+  the time (repository `copyWith(clearReminder: true)`).
+- **Category** (Morning/Afternoon/Evening/Night) derived from the chosen hour; `DRAFT SAVED` pill while
+  dirty, `EDITING` in edit mode; CTA switches label accordingly.
+- Wired into the preview shell: `?s=add`, `?s=add&demo=1&id=h_read` (edit), `onEdit/onEditRitual`
+  from Details and the habits `onCreateHabit` empty-state all land in the sheet.
+- Chip rows are scrollable with true min-widths (no clipped `1500 ml`), reminder rows are
+  overflow-proof at 390px.
+- Tests: +6 core (draft defaults, symbol rebase, rhythm, ignite fields, edit-in-place, reminder clear)
+  and a new `add_habit_widget_test.dart` (CTA inert until named, ignite writes the store, chips write
+  the draft, edit prefills + saves) → **38/38 green**. Verified live: title typing, symbol→unit switch,
+  preset tap, reminder toggle + 8:30 pill, ignite lands the habit in the Habits list with its toast,
+  edit prefills Read 20 Pages (light + dark).

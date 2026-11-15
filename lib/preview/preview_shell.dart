@@ -15,6 +15,8 @@ import 'package:daily_spark/screens/profile/profile_screen.dart';
 import 'package:daily_spark/screens/progress/progress_screen.dart';
 import 'package:daily_spark/screens/sign_up/sign_up_screen.dart';
 import 'package:daily_spark/screens/welcome/welcome_screen.dart';
+import 'package:daily_spark/state/add_habit_providers.dart';
+import 'package:daily_spark/state/habit_providers.dart';
 import 'package:daily_spark/state/details_providers.dart';
 
 /// ⚠️ TEMPORARY PREVIEW SHELL — scaffolding only, zero business logic.
@@ -81,9 +83,15 @@ class _PreviewShellState extends ConsumerState<PreviewShell> {
     // `?id=<habitId>` opens the details screen on a specific habit.
     final habitId = Uri.base.queryParameters['id'];
     if (habitId != null && habitId.isNotEmpty) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (mounted) {
-          ref.read(selectedHabitIdProvider.notifier).state = habitId;
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
+        // Wait for the first load so `?s=details&id=` / `?s=add&id=` can find
+        // the habit (the store read is async on a cold start).
+        await ref.read(habitsProvider.future);
+        if (!mounted) return;
+        ref.read(selectedHabitIdProvider.notifier).state = habitId;
+        if (_stage == _Stage.addHabit) {
+          // `?s=add&id=…` opens the form in edit mode.
+          ref.read(editingHabitIdProvider.notifier).state = habitId;
         }
       });
     }
@@ -104,10 +112,31 @@ class _PreviewShellState extends ConsumerState<PreviewShell> {
   }
 
   /// Opens Habit Details for [habitId].
+  /// Opens the Add form in create mode.
+  void _newHabit() {
+    ref.read(editingHabitIdProvider.notifier).state = null;
+    ref.read(habitDraftProvider.notifier).reset();
+    _go(_Stage.addHabit);
+  }
+
+  /// Opens the Add form prefilled for [habitId].
+  Future<void> _editHabit(String habitId) async {
+    await ref.read(habitsProvider.future);
+    ref.read(editingHabitIdProvider.notifier).state = habitId;
+    if (mounted) _go(_Stage.addHabit);
+  }
+
   void _openDetails(String habitId) {
     ref.read(selectedHabitIdProvider.notifier).state = habitId;
     _go(_Stage.habitDetails);
   }
+
+  /// Opens the form for whichever habit the details screen is showing.
+  void _editCurrentHabit() {
+    final id = ref.read(detailsHabitProvider)?.id;
+    if (id != null) _editHabit(id);
+  }
+
 
   void _go(_Stage stage) {
     _timer?.cancel();
@@ -170,7 +199,7 @@ class _PreviewShellState extends ConsumerState<PreviewShell> {
         _Stage.home => HomeScreen(
             onProfile: () => _go(_Stage.profile),
             onHabitTap: _openDetails,
-            onNewRitual: () => _go(_Stage.addHabit),
+            onNewRitual: _newHabit,
             onNavTap: (i) => switch (i) {
               1 => _go(_Stage.habits),
               2 => _go(_Stage.progress),
@@ -182,7 +211,7 @@ class _PreviewShellState extends ConsumerState<PreviewShell> {
             onProfile: () => _go(_Stage.profile),
             onSort: () => _toast('Sort & filter ✦'),
             onHabitTap: _openDetails,
-            onCreateHabit: () => _go(_Stage.addHabit),
+            onCreateHabit: _newHabit,
             onNavTap: (i) => switch (i) {
               0 => _go(_Stage.home),
               2 => _go(_Stage.progress),
@@ -192,24 +221,22 @@ class _PreviewShellState extends ConsumerState<PreviewShell> {
           ),
         _Stage.habitDetails => HabitDetailsScreen(
             onBack: () => _go(_Stage.habits),
-            onEdit: () => _toast('Edit habit ✦'),
+            onEdit: _editCurrentHabit,
             onAvatar: () => _go(_Stage.profile),
-            onEditRitual: () => _go(_Stage.addHabit),
-            onCreateHabit: () => _go(_Stage.addHabit),
+            onEditRitual: _editCurrentHabit,
+            onCreateHabit: _newHabit,
           ),
         _Stage.addHabit => AddHabitScreen(
+            key: ValueKey('add-${ref.watch(editingHabitIdProvider)}'),
             onClose: () => _go(_Stage.habits),
-            onAvatar: () => _toast('Profile ✦'),
-            onIconSelected: (i) => _toast('Icon $i ✦'),
-            onAccentSelected: (i) => _toast('Accent $i ✦'),
-            onRhythmSelected: (i) => _toast('Rhythm $i ✦'),
-            onDayToggled: (i) => _toast('Day $i ✦'),
-            onDecrement: () => _toast('−5 ✦'),
-            onIncrement: () => _toast('+5 ✦'),
-            onPresetSelected: (i) => _toast('Preset $i ✦'),
-            onReminderToggled: () => _toast('Reminder toggled ✦'),
-            onTimeTap: () => _toast('Time picker ✦'),
-            onIgnite: () => _toast('Habit created ✦'),
+            onAvatar: () => _go(_Stage.profile),
+            onSaved: (habit) {
+              final editing = ref.read(editingHabitIdProvider) != null;
+              _toast(editing
+                  ? '${habit.title} updated ✦'
+                  : '${habit.title} ignited ✦');
+              _go(_Stage.habits);
+            },
             onDiscard: () => _go(_Stage.habits),
           ),
         _Stage.profile => ProfileScreen(
