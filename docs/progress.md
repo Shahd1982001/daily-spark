@@ -219,6 +219,18 @@ the same seed: our 5 habits × 7 days = 35 slots, 31 completed → **89% / 31 of
 shows 78% / 28 of 35 and "Top Day: Thursday". Same layout, different (truthful) numbers.
 Side-by-side: `review/progress_figma_vs_app.png`.
 
+## Logic layer — Phase 2d: Profile is live
+- New providers: `totalCompletionsProvider` (every check-in ever) · `consistencyScoreProvider`
+  (14-day completion rate) · `profileLevelProvider` (1 level per 30 check-ins → Sprout/B builder/…) ·
+  `userNameProvider` (null until the user has an account; `?demo=` shows "Shahd").
+- Profile reads: streak tile ← `bestHabitStreakProvider`, completed ← lifetime log, active habits ←
+  store, level card ← level + score + "next" hint, identity card + "X's Journey" title ← user name.
+- **No fake identity for a new user**: no name → "Your Journey", the spark logo instead of a photo,
+  Level 1 Sprout, 0 % consistency and a bio that invites the first ritual.
+- Theme toggle in Preferences still flips the whole app.
+
+Verified empty + filled, light + dark, 0 page errors; analyze 0 errors; 19/19 tests.
+
 ## Next (needs her decision)
 1. **Logic layer** — state management choice still open (Provider vs Riverpod).
 2. **Backend** — must stay last.
