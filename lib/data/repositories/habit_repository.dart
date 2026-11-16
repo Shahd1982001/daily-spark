@@ -33,7 +33,7 @@ class HabitsSnapshot {
 
   /// Habits expected on [day], in display order.
   List<Habit> scheduledOn(DateTime day) {
-    final list = activeHabits.where((h) => h.isScheduledOn(day)).toList()
+    final list = habits.where((h) => h.isScheduledOn(day)).toList()
       ..sort((a, b) {
         final byOrder = a.sortOrder.compareTo(b.sortOrder);
         if (byOrder != 0) return byOrder;

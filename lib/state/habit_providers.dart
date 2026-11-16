@@ -44,7 +44,7 @@ class HabitsController extends AsyncNotifier<HabitsSnapshot> {
   Future<void> toggle(String habitId, {DateTime? day}) async {
     final current = state.valueOrNull;
     final habit = current?.habitById(habitId);
-    if (current == null || habit == null) return;
+    if (current == null || habit == null || habit.isArchived) return;
     final day_ = dayOnly(day ?? DateTime.now());
     final done = current.isCompleted(habitId, day_);
     await setAmount(habitId, done ? 0 : _targetOf(habit), day: day_);
@@ -58,7 +58,7 @@ class HabitsController extends AsyncNotifier<HabitsSnapshot> {
   Future<void> setAmount(String habitId, int amount, {DateTime? day}) async {
     final current = state.valueOrNull;
     final habit = current?.habitById(habitId);
-    if (current == null || habit == null) return;
+    if (current == null || habit == null || habit.isArchived) return;
 
     final targetDay = dayOnly(day ?? DateTime.now());
     final key = dayKey(targetDay);
@@ -126,8 +126,21 @@ class HabitsController extends AsyncNotifier<HabitsSnapshot> {
   Future<void> archiveHabit(String habitId) async {
     final current = state.valueOrNull;
     final habit = current?.habitById(habitId);
-    if (current == null || habit == null) return;
+    if (current == null || habit == null || habit.isArchived) return;
     await updateHabit(habit.copyWith(archivedAt: DateTime.now()));
+  }
+
+  /// Restores the habit without losing its log or counting paused days as missed.
+  Future<void> restoreHabit(String habitId, {DateTime? now}) async {
+    final habit = state.valueOrNull?.habitById(habitId);
+    final pausedAt = habit?.archivedAt;
+    if (habit == null || pausedAt == null) return;
+    final restoredAt = now ?? DateTime.now();
+    if (dayOnly(restoredAt).isBefore(dayOnly(pausedAt))) return;
+    await updateHabit(habit.copyWith(
+      clearArchived: true,
+      pauseHistory: [...habit.pauseHistory, HabitPause(pausedAt, restoredAt)],
+    ));
   }
 
   Future<void> deleteHabit(String habitId) async {

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:daily_spark/l10n/strings.dart';
 
 import 'package:daily_spark/design_system/theme/spark_palette.dart';
 
@@ -19,6 +20,7 @@ class HabitTile extends StatelessWidget {
     this.streakHighlighted = false,
     this.showStreakPill = true,
     this.nextUp = false,
+    this.archived = false,
     this.onToggle,
     this.onTap,
   });
@@ -34,6 +36,7 @@ class HabitTile extends StatelessWidget {
   final bool streakHighlighted;
   final bool showStreakPill;
   final bool nextUp;
+  final bool archived;
   final VoidCallback? onToggle;
   final VoidCallback? onTap;
 
@@ -203,20 +206,23 @@ class HabitTile extends StatelessWidget {
               child: GestureDetector(
                 onTap: onToggle,
                 behavior: HitTestBehavior.opaque,
-                child: Container(
+                child: Tooltip(
+                  message: tr(archived ? 'Restore habit' : (completed ? 'Mark incomplete' : 'Mark complete')),
+                  child: Container(
                   width: 44 * s,
                   height: 44 * s,
                   decoration: BoxDecoration(
-                    color: completed ? p.success : p.container,
+                    color: completed && !archived ? p.success : p.container,
                     shape: BoxShape.circle,
                   ),
                   child: Icon(
-                    completed
+                    archived ? Icons.restore_rounded : completed
                         ? Icons.check_rounded
                         : Icons.radio_button_unchecked_rounded,
                     size: completed ? 18 * s : 20 * s,
-                    color: completed ? Colors.white : p.body,
+                    color: completed && !archived ? Colors.white : p.body,
                   ),
+                ),
                 ),
               ),
             ),

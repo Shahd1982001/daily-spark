@@ -37,6 +37,27 @@ enum HabitAccent {
       );
 }
 
+/// Calendar interval during which a habit was paused: [start, end).
+class HabitPause {
+  const HabitPause(this.start, this.end);
+  final DateTime start;
+  final DateTime end;
+
+  Map<String, dynamic> toJson() => {
+    'start': start.toIso8601String(), 'end': end.toIso8601String(),
+  };
+
+  static HabitPause? fromJson(Object? raw) {
+    if (raw is! Map) return null;
+    final start = DateTime.tryParse(raw['start'] as String? ?? '');
+    final end = DateTime.tryParse(raw['end'] as String? ?? '');
+    return start == null || end == null || end.isBefore(start)
+        ? null : HabitPause(start, end);
+  }
+}
+
+DateTime _calendarDay(DateTime value) => DateTime(value.year, value.month, value.day);
+
 /// A single habit the user is tracking.
 ///
 /// `days` uses ISO weekdays (1 = Monday … 7 = Sunday) and only matters for
@@ -58,6 +79,7 @@ class Habit {
     this.sortOrder = 0,
     required this.createdAt,
     this.archivedAt,
+    this.pauseHistory = const [],
   });
 
   final String id;
@@ -82,12 +104,18 @@ class Habit {
   final int sortOrder;
   final DateTime createdAt;
   final DateTime? archivedAt;
+  final List<HabitPause> pauseHistory;
 
   bool get isArchived => archivedAt != null;
 
   /// Is this habit expected on [day]?
   bool isScheduledOn(DateTime day) {
-    if (isArchived) return false;
+    final date = _calendarDay(day);
+    if (date.isBefore(_calendarDay(createdAt))) return false;
+    if (archivedAt != null && !date.isBefore(_calendarDay(archivedAt!))) return false;
+    for (final pause in pauseHistory) {
+      if (!date.isBefore(_calendarDay(pause.start)) && date.isBefore(_calendarDay(pause.end))) return false;
+    }
     final weekday = day.weekday;
     return switch (rhythm) {
       HabitRhythm.everyDay => true,
@@ -113,6 +141,7 @@ class Habit {
     int? sortOrder,
     DateTime? archivedAt,
     bool clearArchived = false,
+    List<HabitPause>? pauseHistory,
   }) {
     return Habit(
       id: id,
@@ -130,6 +159,7 @@ class Habit {
       sortOrder: sortOrder ?? this.sortOrder,
       createdAt: createdAt,
       archivedAt: clearArchived ? null : (archivedAt ?? this.archivedAt),
+      pauseHistory: pauseHistory ?? this.pauseHistory,
     );
   }
 
@@ -149,6 +179,7 @@ class Habit {
         'sortOrder': sortOrder,
         'createdAt': createdAt.toIso8601String(),
         'archivedAt': archivedAt?.toIso8601String(),
+        'pauseHistory': pauseHistory.map((p) => p.toJson()).toList(),
       };
 
   factory Habit.fromJson(Map<String, dynamic> json) => Habit(
@@ -170,6 +201,7 @@ class Habit {
         createdAt: DateTime.tryParse(json['createdAt'] as String? ?? '') ??
             DateTime.now(),
         archivedAt: DateTime.tryParse(json['archivedAt'] as String? ?? ''),
+        pauseHistory: ((json['pauseHistory'] as List?) ?? const []).map(HabitPause.fromJson).whereType<HabitPause>().toList(),
       );
 
   @override

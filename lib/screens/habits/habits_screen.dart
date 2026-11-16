@@ -1,6 +1,7 @@
 import 'package:daily_spark/l10n/strings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:daily_spark/data/models/habit.dart';
 import 'package:daily_spark/design_system/theme/spark_palette.dart';
@@ -9,7 +10,7 @@ import 'package:daily_spark/design_system/widgets/app_bottom_nav.dart';
 import 'package:daily_spark/design_system/widgets/app_top_bar.dart';
 import 'package:daily_spark/design_system/widgets/design_canvas.dart' show figmaText;
 import 'package:daily_spark/screens/habits/widgets/habit_tile.dart';
-import 'package:daily_spark/screens/home/widgets/habit_card_style.dart' show habitIcon, habitAccentColours, habitTimeLabel, habitMetaLine;
+import 'package:daily_spark/screens/home/widgets/habit_card_style.dart' show habitIcon, habitAccentColours, habitMetaLine;
 import 'package:daily_spark/state/habit_providers.dart';
 import 'package:daily_spark/state/progress_providers.dart';
 
@@ -19,14 +20,12 @@ class HabitsScreen extends ConsumerStatefulWidget {
   const HabitsScreen({
     super.key,
     this.onProfile,
-    this.onSort,
     this.onHabitTap,
     this.onCreateHabit,
     this.onNavTap,
   });
 
   final VoidCallback? onProfile;
-  final VoidCallback? onSort;
   final ValueChanged<String>? onHabitTap;
   final VoidCallback? onCreateHabit;
   final ValueChanged<int>? onNavTap;
@@ -35,8 +34,68 @@ class HabitsScreen extends ConsumerStatefulWidget {
   ConsumerState<HabitsScreen> createState() => _HabitsScreenState();
 }
 
+enum HabitSort { original, newest, oldest, name }
+
 class _HabitsScreenState extends ConsumerState<HabitsScreen> {
   int _filter = 0;
+  HabitSort _sort = HabitSort.original;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadSort();
+  }
+
+  Future<void> _loadSort() async {
+    final prefs = await SharedPreferences.getInstance();
+    final name = prefs.getString('ds_habit_sort');
+    final choice = HabitSort.values.where((v) => v.name == name).firstOrNull;
+    if (mounted && choice != null) setState(() => _sort = choice);
+  }
+
+  Future<void> _showSort() async {
+    final choice = await showModalBottomSheet<HabitSort>(
+      context: context,
+      backgroundColor: p.surface,
+      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+      builder: (context) => SafeArea(child: Padding(
+        padding: const EdgeInsets.fromLTRB(16, 20, 16, 16),
+        child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Padding(padding: const EdgeInsets.symmetric(horizontal: 16), child: figmaText('Sort habits', size: 18, weight: FontWeight.w700, color: p.ink)),
+          for (final entry in <(HabitSort, String)>[
+            (HabitSort.original, 'Original order'),
+            (HabitSort.newest, 'Newest first'),
+            (HabitSort.oldest, 'Oldest first'),
+            (HabitSort.name, 'Name A–Z'),
+          ])
+            ListTile(
+              key: ValueKey('sort_${entry.$1.name}'),
+              title: figmaText(entry.$2, size: 15, weight: FontWeight.w500, color: p.ink),
+              trailing: _sort == entry.$1 ? Icon(Icons.check_rounded, color: p.ember) : null,
+              onTap: () => Navigator.pop(context, entry.$1),
+            ),
+        ]),
+      )),
+    );
+    if (choice == null || !mounted) return;
+    setState(() => _sort = choice);
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('ds_habit_sort', choice.name);
+  }
+
+  List<Habit> _sorted(List<Habit> items) {
+    final result = [...items];
+    result.sort((a, b) {
+      final n = switch (_sort) {
+        HabitSort.original => a.sortOrder.compareTo(b.sortOrder),
+        HabitSort.newest => b.createdAt.compareTo(a.createdAt),
+        HabitSort.oldest => a.createdAt.compareTo(b.createdAt),
+        HabitSort.name => a.title.toLowerCase().compareTo(b.title.toLowerCase()),
+      };
+      return n != 0 ? n : a.id.compareTo(b.id);
+    });
+    return result;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -58,11 +117,11 @@ class _HabitsScreenState extends ConsumerState<HabitsScreen> {
       'Paused (${paused.length})',
     ];
     final active = _filter.clamp(0, labels.length - 1);
-    final visible = switch (active) {
+    final visible = _sorted(switch (active) {
       1 => todayHabits,
       2 => paused,
       _ => allHabits,
-    };
+    });
     final nextUpId = todayHabits
         .where((h) => !(snapshot?.isCompleted(h.id, DateTime.now()) ?? false))
         .map((h) => h.id)
@@ -82,7 +141,7 @@ class _HabitsScreenState extends ConsumerState<HabitsScreen> {
                   SizedBox(height: 16 * s),
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 16 * s),
-                    child: _HeaderSection(scale: s, onSort: widget.onSort),
+                    child: _HeaderSection(scale: s, onSort: _showSort),
                   ),
                   if (isEmpty) ...[
                     SizedBox(height: 24 * s),
@@ -134,10 +193,12 @@ class _HabitsScreenState extends ConsumerState<HabitsScreen> {
                                   visible[i].id, DateTime.now()) ??
                               false,
                           nextUp: visible[i].id == nextUpId,
-                          onToggle: () => ref
-                              .read(habitsProvider.notifier)
-                              .toggle(visible[i].id),
-                          onTap: () => widget.onHabitTap?.call(visible[i].id),
+                          onToggle: () => visible[i].isArchived
+                              ? ref.read(habitsProvider.notifier).restoreHabit(visible[i].id)
+                              : ref.read(habitsProvider.notifier).toggle(visible[i].id),
+                          onTap: visible[i].isArchived
+                              ? () => ref.read(habitsProvider.notifier).restoreHabit(visible[i].id)
+                              : () => widget.onHabitTap?.call(visible[i].id),
                         ),
                       ),
                     SizedBox(height: 28 * s),
@@ -218,14 +279,15 @@ class _HabitTileRow extends ConsumerWidget {
     return HabitTile(
       scale: scale,
       title: habit.title,
-      meta: habitMetaLine(habit),
+      meta: habit.isArchived ? tr('Paused · tap to restore') : habitMetaLine(habit),
       streak: streak == 0 ? '' : tr('{n}d', {'n': '$streak'}),
       icon: habitIcon(habit.iconKey),
       iconColor: fg,
       iconBackground: bg,
       completed: completed,
+      archived: habit.isArchived,
       nextUp: nextUp,
-      showStreakPill: !nextUp,
+      showStreakPill: !nextUp && !habit.isArchived,
       streakHighlighted: nextUp,
       onToggle: onToggle,
       onTap: onTap,

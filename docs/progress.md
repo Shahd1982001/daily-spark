@@ -370,3 +370,9 @@ name, email, password — plus the session (`none / guest / account`).
 - The user chose an Arabic/English MVP, guest choice with eventual account option, and stepwise review. Detailed roadmap: `docs/mvp_plan.md`.
 - Fixed the delete-habit bug: unrelated partial progress is preserved in memory and after reload; test first reproduced the bug (7 became 0) then passed with the fix.
 - Full suite 53 tests passed; Flutter analyze has no fatal warnings/errors (pre-existing lint warnings remain). Backend, real accounts, profile photo upload and actual notifications are not implemented yet.
+
+## MVP point 2 — habits, sorting and restoration (checkpoint)
+- Habits sort sheet offers original, newest, oldest and alphabetical order; choice persists locally. Sorting changes only the list order, not stored habit data.
+- Archived habits can be restored from the Paused tab; archived habits cannot be checked off. The archived period is saved so paused dates are not treated as missed after restoration. Same-day archive/restore keeps that day active. Old stored records with no pauseHistory still load.
+- Fixed calendar scheduling prior to creation and corrected monthly completion counting. Added tests for archive/restore, storage reload, paused streak days and pre-creation percentages. Full suite: 58 passing.
+- Existing schedules and targets are not versioned when edited: historical statistics can be recalculated using the newest settings. That issue and comprehensive time-zone/day-rollover verification still need review; point 2 should not yet be described as completely audited.

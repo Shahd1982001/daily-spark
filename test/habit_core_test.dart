@@ -133,6 +133,29 @@ void main() {
       expect(streakFor(habit, days, today: today), 4);
     });
 
+    test('a pause excludes paused days without breaking a consecutive streak', () {
+      final habit = _habit(createdAt: DateTime(2026, 11, 1)).copyWith(
+        pauseHistory: [HabitPause(DateTime(2026, 11, 5), DateTime(2026, 11, 10))],
+      );
+      final done = {DateTime(2026, 11, 4), DateTime(2026, 11, 10), DateTime(2026, 11, 11)};
+      expect(streakFor(habit, done, today: DateTime(2026, 11, 12)), 3);
+      expect(habit.isScheduledOn(DateTime(2026, 11, 7)), isFalse);
+      expect(habit.isScheduledOn(DateTime(2026, 11, 10)), isTrue);
+    });
+
+    test('percentage excludes days before the habit was created', () {
+      final habit = _habit(createdAt: DateTime(2026, 11, 11));
+      final done = {DateTime(2026, 11, 11)};
+      expect(completionPercent(habit, done, today: DateTime(2026, 11, 12), days: 14), 50);
+    });
+
+    test('archive preserves past schedules but hides current and future days', () {
+      final habit = _habit(createdAt: DateTime(2026, 11, 1)).copyWith(archivedAt: DateTime(2026, 11, 10));
+      expect(habit.isScheduledOn(DateTime(2026, 11, 9)), isTrue);
+      expect(habit.isScheduledOn(DateTime(2026, 11, 10)), isFalse);
+      expect(habit.isScheduledOn(DateTime(2026, 11, 12)), isFalse);
+    });
+
     test('completion percent only counts scheduled days', () {
       final habit = _habit(rhythm: HabitRhythm.weekends);
       final days = {DateTime(2026, 11, 8), DateTime(2026, 11, 7)};
@@ -350,6 +373,42 @@ void main() {
         container.read(habitsProvider).value!.amountFor(habitId, DateTime.now()),
         30,
       );
+    });
+
+    test('restore preserves history, excludes paused days and persists after reload', () async {
+      final store = MemoryHabitStore();
+      final container = containerWith(store);
+      await container.read(habitsProvider.future);
+      final controller = container.read(habitsProvider.notifier);
+      final now = dayOnly(DateTime.now());
+      final paused = now.subtract(const Duration(days: 3));
+      final before = now.subtract(const Duration(days: 4));
+      final habit = container.read(habitsProvider).value!.habitById('h_read')!;
+      await controller.updateHabit(habit.copyWith(archivedAt: paused));
+      await controller.restoreHabit('h_read', now: now);
+      final restored = container.read(habitsProvider).value!.habitById('h_read')!;
+      expect(restored.isArchived, isFalse);
+      expect(restored.isScheduledOn(before), isTrue);
+      expect(restored.isScheduledOn(paused), isFalse);
+      expect(restored.isScheduledOn(now.subtract(const Duration(days: 1))), isFalse);
+      expect(restored.isScheduledOn(now), isTrue);
+      final loaded = (await HabitRepository(store).load()).habitById('h_read')!;
+      expect(loaded.pauseHistory.length, 1);
+      expect(loaded.isScheduledOn(paused), isFalse);
+      expect(loaded.isScheduledOn(now), isTrue);
+    });
+
+    test('archived habits cannot be checked in until restored', () async {
+      final container = containerWith(MemoryHabitStore());
+      await container.read(habitsProvider.future);
+      final controller = container.read(habitsProvider.notifier);
+      await controller.archiveHabit('h_read');
+      final before = container.read(habitsProvider).value!.amountFor('h_read', DateTime.now());
+      await controller.setAmount('h_read', 5);
+      expect(container.read(habitsProvider).value!.amountFor('h_read', DateTime.now()), before);
+      await controller.restoreHabit('h_read');
+      await controller.setAmount('h_read', 5);
+      expect(container.read(habitsProvider).value!.amountFor('h_read', DateTime.now()), 5);
     });
 
     test('deleting one habit preserves other habits partial progress after reload', () async {

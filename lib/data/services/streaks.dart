@@ -50,6 +50,7 @@ int completionPercent(
   var completed = 0;
   var day = dayOnly(today);
   for (var i = 0; i < days; i++) {
+    if (day.isBefore(dayOnly(habit.createdAt))) break;
     if (habit.isScheduledOn(day)) {
       scheduled++;
       if (done.contains(day)) completed++;

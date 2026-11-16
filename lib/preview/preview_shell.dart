@@ -708,7 +708,6 @@ class _PreviewShellState extends ConsumerState<PreviewShell> {
           ),
         _Stage.habits => HabitsScreen(
             onProfile: () => _go(_Stage.profile),
-            onSort: () => _toast('Sort & filter — coming in a later piece ✦'),
             onHabitTap: _openDetails,
             onCreateHabit: _newHabit,
             onNavTap: (i) => switch (i) {

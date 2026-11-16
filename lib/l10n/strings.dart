@@ -191,6 +191,15 @@ class Strings {
         'الفرز والتصفية — في قطعة لاحقة ✦',
 
     // Arabic coverage: screen copy, dynamic templates, dates and units.
+    'Sort habits': 'ترتيب العادات',
+    'Original order': 'الترتيب الأصلي',
+    'Newest first': 'الأحدث أولاً',
+    'Oldest first': 'الأقدم أولاً',
+    'Name A–Z': 'الاسم أبجدياً',
+    'Restore habit': 'استعادة العادة',
+    'Paused · tap to restore': 'متوقفة · اضغط للاستعادة',
+    'Mark incomplete': 'إلغاء الإنجاز',
+    'Mark complete': 'تحديد كمكتملة',
     'Missed': 'فائت',
     'Lifetime success rate': 'نسبة النجاح الإجمالية',
     'Reminder time': 'وقت التذكير',

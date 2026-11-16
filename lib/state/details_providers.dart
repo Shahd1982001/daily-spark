@@ -278,7 +278,7 @@ final habitDetailProvider = Provider<HabitDetail?>((ref) {
     final scheduled = !beforeStart && habit.isScheduledOn(date);
     final completed = done.contains(date);
     if (scheduled && !isFuture) monthScheduled++;
-    if (completed) monthCompleted++;
+    if (completed && scheduled && !isFuture) monthCompleted++;
     monthDays.add(DetailDay(
       day: d,
       completed: completed,
