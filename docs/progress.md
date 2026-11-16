@@ -365,3 +365,8 @@ name, email, password — plus the session (`none / guest / account`).
 - User approved sending task titles over the internet for automatic translation. Habit titles are translated for display across Home, Habits, Progress, Details and related confirmations; original locally stored titles stay unchanged for editing.
 - Uses Google's translation endpoint directly from the client, with in-memory deduplication/cache and original-text fallback when offline or when the provider fails. It is an external service, subject to availability, rate limits and machine-translation errors; no new account backend.
 - Arabic and English currently selectable; the target-language mechanism also supports FR/ES/RU/ZH as their catalogs become available. Other written personal fields are not sent.
+
+## MVP readiness — data-protection checkpoint
+- The user chose an Arabic/English MVP, guest choice with eventual account option, and stepwise review. Detailed roadmap: `docs/mvp_plan.md`.
+- Fixed the delete-habit bug: unrelated partial progress is preserved in memory and after reload; test first reproduced the bug (7 became 0) then passed with the fix.
+- Full suite 53 tests passed; Flutter analyze has no fatal warnings/errors (pre-existing lint warnings remain). Backend, real accounts, profile photo upload and actual notifications are not implemented yet.

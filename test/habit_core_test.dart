@@ -352,6 +352,28 @@ void main() {
       );
     });
 
+    test('deleting one habit preserves other habits partial progress after reload', () async {
+      final store = MemoryHabitStore();
+      final container = containerWith(store);
+      await container.read(habitsProvider.future);
+      final controller = container.read(habitsProvider.notifier);
+      final today = DateTime.now();
+      final yesterday = today.subtract(const Duration(days: 1));
+      await controller.setAmount('h_read', 7, day: today);
+      await controller.setAmount('h_read', 9, day: yesterday);
+      await controller.setAmount('h_workout', 5, day: today);
+      await controller.deleteHabit('h_workout');
+      final snapshot = container.read(habitsProvider).value!;
+      expect(snapshot.habitById('h_workout'), isNull);
+      expect(snapshot.amounts.containsKey('h_workout'), isFalse);
+      expect(snapshot.amountFor('h_read', today), 7);
+      expect(snapshot.amountFor('h_read', yesterday), 9);
+      final reloaded = await HabitRepository(store).load();
+      expect(reloaded.amountFor('h_read', today), 7);
+      expect(reloaded.amountFor('h_read', yesterday), 9);
+      expect(reloaded.amounts.containsKey('h_workout'), isFalse);
+    });
+
     test('amounts survive a round-trip through the store', () async {
       final store = MemoryHabitStore();
       final container = containerWith(store);

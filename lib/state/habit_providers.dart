@@ -139,6 +139,10 @@ class HabitsController extends AsyncNotifier<HabitsSnapshot> {
     final next = HabitsSnapshot(
       habits: current.habits.where((h) => h.id != habitId).toList(),
       log: log,
+      amounts: {
+        for (final entry in current.amounts.entries)
+          if (entry.key != habitId) entry.key: Map<String, int>.from(entry.value),
+      },
     );
     state = AsyncData(next);
     await _repo.save(next);
