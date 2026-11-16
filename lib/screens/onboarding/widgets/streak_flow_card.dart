@@ -1,3 +1,4 @@
+import 'package:daily_spark/l10n/strings.dart';
 import 'package:flutter/material.dart';
 
 import 'package:daily_spark/design_system/theme/spark_palette.dart';
@@ -309,7 +310,7 @@ class _WeekRow extends StatelessWidget {
                   children: [
                     if (i == 6)
                       Text(
-                        'Today',
+                        tr('Today'),
                         style: TextStyle(
                           fontFamily: 'PlusJakartaSans',
                           fontSize: 10,

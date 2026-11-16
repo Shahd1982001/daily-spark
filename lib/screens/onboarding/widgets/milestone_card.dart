@@ -1,3 +1,4 @@
+import 'package:daily_spark/l10n/strings.dart';
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
@@ -138,7 +139,7 @@ class MilestoneCard extends StatelessWidget {
             child: SizedBox(
               width: 78,
               child: Text(
-                'CONSISTENCY',
+                tr('CONSISTENCY'),
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontFamily: 'PlusJakartaSans',

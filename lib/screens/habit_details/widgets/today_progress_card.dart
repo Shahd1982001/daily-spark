@@ -1,3 +1,4 @@
+import 'package:daily_spark/l10n/strings.dart';
 import 'package:flutter/material.dart';
 
 import 'package:daily_spark/design_system/theme/spark_palette.dart';
@@ -177,7 +178,8 @@ class TodayProgressCard extends StatelessWidget {
                 ),
                 SizedBox(width: 4 * s),
                 figmaText(
-                  '/ $targetAmount $unitLabel',
+                  tr('/ {target} {unit}',
+                          {'target': '$targetAmount', 'unit': tr(unitLabel)}),
                   size: 14 * s,
                   weight: FontWeight.w400,
                   lineHeight: 20 * s,

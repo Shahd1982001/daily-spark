@@ -1,3 +1,4 @@
+import 'package:daily_spark/l10n/strings.dart';
 import 'package:flutter/material.dart';
 
 import 'package:daily_spark/design_system/theme/spark_palette.dart';
@@ -67,7 +68,7 @@ class StreakCard extends StatelessWidget {
               child: Row(
                 children: [
                   figmaText(
-                    '$days-Day Streak',
+                    tr('{n}-Day Streak', {'n': '$days'}),
                     size: 22 * s,
                     weight: FontWeight.w600,
                     letterSpacing: -0.33 * s,
@@ -85,9 +86,8 @@ class StreakCard extends StatelessWidget {
               top: 52 * s,
               child: figmaText(
                 days >= personalBest && personalBest > 0
-                    ? 'Personal best: $personalBest days · keep it going!'
-                    : 'Personal best: $personalBest days · '
-                        '${(personalBest - days).clamp(0, 999)} days to record!',
+                    ? tr('Personal best: {best} days · keep it going!', {'best': '$personalBest'})
+                    : tr('Personal best: {best} days · {remaining} days to record!', {'best': '$personalBest', 'remaining': '${(personalBest - days).clamp(0, 999)}'}),
                 size: 12 * s,
                 weight: FontWeight.w500,
                 letterSpacing: 0.24 * s,

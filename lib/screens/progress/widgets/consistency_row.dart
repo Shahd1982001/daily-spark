@@ -64,6 +64,7 @@ class ConsistencyRow extends StatelessWidget {
             top: 15 * s,
             child: figmaText(
               title,
+              translate: false,
               size: 16 * s,
               weight: FontWeight.w600,
               letterSpacing: -0.08 * s,

@@ -1,3 +1,4 @@
+import 'package:daily_spark/l10n/strings.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../data/models/day.dart';
@@ -213,13 +214,15 @@ class ProfileLevel {
     required this.level,
     required this.title,
     required this.score,
-    required this.nextLabel,
+    required this.toNext,
   });
 
   final int level;
   final String title;
   final int score;
-  final String nextLabel;
+  final int toNext;
+
+  String get nextLabel => tr('Next: {count} more check-ins', {'count': '$toNext'});
 
   static const _titles = [
     'Sprout',
@@ -231,7 +234,8 @@ class ProfileLevel {
     'Luminary',
   ];
 
-  String get label => 'Level $level $title';
+  String get label =>
+      tr('Level {level} {title}', {'level': '$level', 'title': tr(title)});
 }
 
 final profileLevelProvider = Provider<ProfileLevel>((ref) {
@@ -243,7 +247,7 @@ final profileLevelProvider = Provider<ProfileLevel>((ref) {
     level: level,
     title: ProfileLevel._titles[level - 1],
     score: score,
-    nextLabel: 'Next: $toNext more check-ins',
+    toNext: toNext,
   );
 });
 

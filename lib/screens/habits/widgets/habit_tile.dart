@@ -84,6 +84,7 @@ class HabitTile extends StatelessWidget {
                     constraints: BoxConstraints(maxWidth: (nextUp ? 183 : 200) * s),
                     child: figmaText(
                       title,
+                      translate: false,
                       size: 16 * s,
                       weight: FontWeight.w600,
                       letterSpacing: -0.08 * s,

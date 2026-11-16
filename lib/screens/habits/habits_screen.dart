@@ -1,3 +1,4 @@
+import 'package:daily_spark/l10n/strings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -218,7 +219,7 @@ class _HabitTileRow extends ConsumerWidget {
       scale: scale,
       title: habit.title,
       meta: habitMetaLine(habit),
-      streak: streak == 0 ? '' : '${streak}d',
+      streak: streak == 0 ? '' : tr('{n}d', {'n': '$streak'}),
       icon: habitIcon(habit.iconKey),
       iconColor: fg,
       iconBackground: bg,
@@ -500,7 +501,8 @@ class _SnapshotCard extends StatelessWidget {
               left: 56 * s,
               top: 16 * s,
               child: figmaText(
-                '$completed of $total Completed',
+                tr('{completed} of {total} Completed',
+                    {'completed': '$completed', 'total': '$total'}),
                 size: 16 * s,
                 weight: FontWeight.w600,
                 letterSpacing: -0.08 * s,
@@ -514,7 +516,7 @@ class _SnapshotCard extends StatelessWidget {
               child: Row(
                 children: [
                   figmaText(
-                    '$percent% daily spark ignited',
+                    tr('{percent}% daily spark ignited', {'percent': '$percent'}),
                     size: 12 * s,
                     weight: FontWeight.w400,
                     letterSpacing: 0.12 * s,
@@ -591,8 +593,8 @@ class _SnapshotCard extends StatelessWidget {
                   for (final day in week)
                     figmaText(
                       day.isToday
-                          ? '${_weekdayLong[day.day.weekday - 1]} (Today)'
-                          : _weekdayLong[day.day.weekday - 1],
+                          ? tr('{day} (Today)', {'day': tr(_weekdayLong[day.day.weekday - 1])})
+                          : tr(_weekdayLong[day.day.weekday - 1]),
                       size: 10 * s,
                       weight: FontWeight.w600,
                       letterSpacing: 0.4 * s,

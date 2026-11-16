@@ -1,3 +1,4 @@
+import 'package:daily_spark/l10n/strings.dart';
 import 'package:flutter/material.dart';
 
 import 'package:daily_spark/design_system/theme/spark_palette.dart';
@@ -52,7 +53,7 @@ class ConsistencyCard extends StatelessWidget {
             left: 24 * s,
             top: 24 * s,
             child: figmaText(
-              '${detail.monthLabel} Consistency',
+              tr('{month} Consistency', {'month': tr(detail.monthLabel)}),
               size: 16 * s,
               weight: FontWeight.w600,
               letterSpacing: -0.08 * s,
@@ -66,9 +67,7 @@ class ConsistencyCard extends StatelessWidget {
             child: figmaText(
               detail.monthScheduled == 0
                   ? 'No scheduled days yet this month'
-                  : '${detail.monthCompleted} completed '
-                      '${detail.monthCompleted == 1 ? 'day' : 'days'} '
-                      '(${detail.monthPercent}% consistency)',
+                  : tr('{count} completed days ({percent}% consistency)', {'count': '${detail.monthCompleted}', 'percent': '${detail.monthPercent}'}),
               size: 12 * s,
               weight: FontWeight.w400,
               letterSpacing: 0.12 * s,
@@ -101,7 +100,7 @@ class ConsistencyCard extends StatelessWidget {
                     SizedBox(
                       width: 41 * s,
                       child: figmaText(
-                        const ['M', 'T', 'W', 'T', 'F', 'S', 'S'][i],
+                        tr(const ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'][i]),
                         size: 10 * s,
                         weight: FontWeight.w600,
                         letterSpacing: 0.5 * s,

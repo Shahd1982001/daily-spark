@@ -1,3 +1,4 @@
+import 'package:daily_spark/l10n/strings.dart';
 import 'package:flutter/material.dart';
 
 import 'package:daily_spark/data/models/habit.dart';
@@ -26,7 +27,7 @@ String habitTimeLabel(String? hhmm) {
   if (parts.length != 2) return '';
   final hour = int.tryParse(parts[0]);
   if (hour == null) return '';
-  final suffix = hour >= 12 ? 'PM' : 'AM';
+  final suffix = tr(hour >= 12 ? 'PM' : 'AM');
   final display = hour % 12 == 0 ? 12 : hour % 12;
   return '$display:${parts[1]} $suffix';
 }
@@ -41,8 +42,8 @@ String habitTimeLabel(String? hhmm) {
 
 /// Meta chips for the Home card (`10 mins`, `8:00 AM`, …).
 List<String> habitMetaParts(Habit habit) => [
-      if (habit.targetAmount > 1) '${habit.targetAmount} ${habit.targetUnit}',
-      if (habit.detailTag.isNotEmpty) habit.detailTag,
+      if (habit.targetAmount > 1) '${habit.targetAmount} ${tr(habit.targetUnit)}',
+      if (habit.detailTag.isNotEmpty) habit.detailTag, // user data
       if (habitTimeLabel(habit.reminderTime).isNotEmpty)
         habitTimeLabel(habit.reminderTime),
       if (habit.targetAmount <= 1 &&
@@ -54,12 +55,12 @@ List<String> habitMetaParts(Habit habit) => [
 /// Single meta line for the Habits tile (`10 mins · Everyday · 8:00 AM`).
 String habitMetaLine(Habit habit) {
   final parts = <String>[
-    if (habit.targetAmount > 1) '${habit.targetAmount} ${habit.targetUnit}',
-    habit.rhythm.label,
-    if (habit.detailTag.isNotEmpty) habit.detailTag,
+    if (habit.targetAmount > 1) '${habit.targetAmount} ${tr(habit.targetUnit)}',
+    tr(habit.rhythm.label),
+    if (habit.detailTag.isNotEmpty) habit.detailTag, // user data
     if (habitTimeLabel(habit.reminderTime).isNotEmpty)
       habitTimeLabel(habit.reminderTime),
   ];
-  if (parts.isEmpty) return habit.category;
+  if (parts.isEmpty) return tr(habit.category);
   return parts.join(' · ');
 }

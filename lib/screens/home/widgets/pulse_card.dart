@@ -1,3 +1,4 @@
+import 'package:daily_spark/l10n/strings.dart';
 import 'package:flutter/material.dart';
 
 import 'package:daily_spark/design_system/theme/spark_palette.dart';
@@ -101,7 +102,7 @@ class PulseCard extends StatelessWidget {
             left: 80 * s,
             top: 34 * s,
             child: figmaText(
-              '$completed of $total',
+              tr('{completed} of {total}', {'completed': '$completed', 'total': '$total'}),
               size: 16 * s,
               weight: FontWeight.w600,
               letterSpacing: -0.4 * s,
@@ -196,7 +197,7 @@ class PulseCard extends StatelessWidget {
                     left: 56 * s,
                     top: 25 * s,
                     child: figmaText(
-                      'Record: ${recordDays}d',
+                      tr('Record: {days}d', {'days': '$recordDays'}),
                       size: 10 * s,
                       weight: FontWeight.w600,
                       letterSpacing: 0.4 * s,

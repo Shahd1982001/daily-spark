@@ -1,3 +1,4 @@
+import 'package:daily_spark/l10n/strings.dart';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
@@ -66,7 +67,7 @@ class _AddHabitScreenState extends ConsumerState<AddHabitScreen> {
     final picked = await showTimePicker(
       context: context,
       initialTime: initial,
-      helpText: 'Reminder time',
+      helpText: tr('Reminder time'),
       builder: (dialogContext, child) => Theme(
         data: Theme.of(dialogContext).copyWith(
           colorScheme: ColorScheme.fromSeed(
@@ -553,7 +554,7 @@ class _IdentitySection extends StatelessWidget {
                 isDense: true,
                 border: InputBorder.none,
                 contentPadding: EdgeInsets.zero,
-                hintText: 'Name your ritual',
+                hintText: tr('Name your ritual'),
                 hintStyle: TextStyle(
                   fontFamily: 'PlusJakartaSans',
                   fontSize: 22 * s,
@@ -586,7 +587,7 @@ class _IdentitySection extends StatelessWidget {
                 isDense: true,
                 border: InputBorder.none,
                 contentPadding: EdgeInsets.zero,
-                hintText: 'What is this ritual for?',
+                hintText: tr('What is this ritual for?'),
                 hintStyle: TextStyle(
                   fontFamily: 'PlusJakartaSans',
                   fontSize: 12 * s,
@@ -862,7 +863,7 @@ class _RhythmSection extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           figmaText(
-                            _days[i],
+                            Strings.locale.languageCode == 'en' ? _days[i] : tr(const ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'][i]),
                             size: 10 * s,
                             weight: FontWeight.w600,
                             letterSpacing: 0.4 * s,
@@ -1021,7 +1022,7 @@ class _TargetSection extends StatelessWidget {
                         ),
                         SizedBox(width: 6 * s),
                         figmaText(
-                          '${draft.unit} / day',
+                          tr('{unit} / day', {'unit': tr(draft.unit)}),
                           size: 16 * s,
                           weight: FontWeight.w500,
                           letterSpacing: -0.08 * s,
@@ -1102,7 +1103,7 @@ class _TargetSection extends StatelessWidget {
                       borderRadius: BorderRadius.all(Radius.circular(999)),
                     ),
                     child: figmaText(
-                      '${presets[i]} ${draft.unit}',
+                      '${presets[i]} ${tr(draft.unit)}',
                       size: 12 * s,
                       weight: presets[i] == draft.targetAmount
                           ? FontWeight.w600
@@ -1124,7 +1125,7 @@ class _TargetSection extends StatelessWidget {
   }
 
   static String _unitTitle(String unit) =>
-      unit.isEmpty ? unit : unit[0].toUpperCase() + unit.substring(1);
+      unit.isEmpty ? unit : (Strings.locale.languageCode == 'en' ? unit[0].toUpperCase() + unit.substring(1) : tr(unit));
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -1342,15 +1343,19 @@ class _SparkTip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final s = scale;
-    final verb = switch (draft.unit) {
+    final verb = tr(switch (draft.unit) {
       'pages' => 'read',
       'ml' => 'drink',
       'mins' => 'sit for',
       'entry' => 'write',
       _ => 'complete',
-    };
-    final cue = '\u201cRight after my ${draft.category.toLowerCase()} routine, '
-        'I will $verb ${draft.targetAmount} ${draft.unit}.\u201d';
+    });
+    final cue = tr('Right after my {category} routine, I will {verb} {amount} {unit}.', {
+      'category': tr(draft.category).toLowerCase(),
+      'verb': verb,
+      'amount': '${draft.targetAmount}',
+      'unit': tr(draft.unit),
+    });
     return Container(
       width: 358 * s,
       height: 111 * s,
@@ -1390,7 +1395,8 @@ class _SparkTip extends StatelessWidget {
                 ),
                 SizedBox(height: 2 * s),
                 figmaText(
-                  'Tie this ritual directly after an established loop: $cue',
+                  tr('Tie this ritual directly after an established loop: {cue}',
+                    {'cue': cue}),
                   size: 12 * s,
                   weight: FontWeight.w400,
                   letterSpacing: 0.12 * s,

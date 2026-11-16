@@ -82,6 +82,7 @@ class HabitCard extends StatelessWidget {
                 children: [
                   figmaText(
                     title,
+                    translate: false,
                     size: 16 * s,
                     weight: FontWeight.w600,
                     letterSpacing: -0.08 * s,

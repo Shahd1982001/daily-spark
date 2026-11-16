@@ -1,3 +1,4 @@
+import 'package:daily_spark/l10n/strings.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -28,21 +29,21 @@ final _emailRe = RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$');
 
 String? validateName(String value) {
   final v = value.trim();
-  if (v.isEmpty) return 'Please enter your name';
-  if (v.length < 2) return 'Name is too short';
+  if (v.isEmpty) return tr('Please enter your name');
+  if (v.length < 2) return tr('Name is too short');
   return null;
 }
 
 String? validateEmail(String value) {
   final v = value.trim();
-  if (v.isEmpty) return 'Please enter your email';
-  if (!_emailRe.hasMatch(v)) return 'That email does not look right';
+  if (v.isEmpty) return tr('Please enter your email');
+  if (!_emailRe.hasMatch(v)) return tr('That email does not look right');
   return null;
 }
 
 String? validatePassword(String value) {
-  if (value.isEmpty) return 'Please enter your password';
-  if (value.length < 6) return 'Use at least 6 characters';
+  if (value.isEmpty) return tr('Please enter your password');
+  if (value.length < 6) return tr('Use at least 6 characters');
   return null;
 }
 
@@ -86,7 +87,7 @@ class AuthController extends Notifier<AuthState> {
     if (emailError != null) return emailError;
     final passError = validatePassword(password);
     if (passError != null) return passError;
-    if (password != confirmPassword) return 'The passwords do not match';
+    if (password != confirmPassword) return tr('The passwords do not match');
 
     final prefs = await SharedPreferences.getInstance();
     final cleanEmail = email.trim().toLowerCase();
@@ -110,9 +111,9 @@ class AuthController extends Notifier<AuthState> {
     final prefs = await SharedPreferences.getInstance();
     final cleanEmail = email.trim().toLowerCase();
     final storedEmail = prefs.getString(_kEmail);
-    if (storedEmail == null) return 'No account on this device yet — create one first';
-    if (storedEmail != cleanEmail) return 'That account is not on this device';
-    if (prefs.getString(_kPass) != password) return 'Incorrect password';
+    if (storedEmail == null) return tr('No account on this device yet — create one first');
+    if (storedEmail != cleanEmail) return tr('That account is not on this device');
+    if (prefs.getString(_kPass) != password) return tr('Incorrect password');
 
     final name = prefs.getString(_kName);
     await prefs.setString(_kMode, 'account');

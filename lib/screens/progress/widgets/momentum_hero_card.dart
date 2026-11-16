@@ -1,3 +1,4 @@
+import 'package:daily_spark/l10n/strings.dart';
 import 'dart:math' as math;
 import 'dart:ui' show ImageFilter;
 
@@ -158,7 +159,7 @@ class MomentumHeroCard extends StatelessWidget {
                     figmaText(
                       scheduled == 0
                           ? 'No habits scheduled yet'
-                          : '$hits of $scheduled habits hit',
+                          : tr('{hits} of {scheduled} habits hit', {'hits': '$hits', 'scheduled': '$scheduled'}),
                       size: 12 * s,
                       weight: FontWeight.w600,
                       lineHeight: 16 * s,

@@ -354,3 +354,9 @@ name, email, password — plus the session (`none / guest / account`).
   session persistence) → **46/46 green**. Verified in-browser end-to-end:
   sign up → greeting with name → log out → wrong password error → log in →
   name back → reload keeps the session → guest enters nameless, 0 page errors.
+
+## Localization — Arabic coverage checkpoint (in progress)
+- Expanded Arabic catalog and converted dynamic UI phrases (including dates, units, streaks and profile progress); retained user-written names, titles and notes verbatim.
+- Added localization tests for catalog key parity, template placeholders, live language changes and preserving user text. Current suite: 49 tests passing.
+- Arabic review is ongoing: visual and interaction checks are not yet exhaustive, and FR/ES/RU/ZH catalogs have not yet been implemented. No full-coverage claim yet.
+- Gallery is copied into every Pages build. Backend remains deferred.

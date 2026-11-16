@@ -120,13 +120,14 @@ class ProfileScreen extends ConsumerWidget {
                                   : 'Add your first ritual and this page starts telling your story.'),
                           status: level.label,
                           hasAvatar: name != null,
+                          translateBio: motto == null,
                         ),
                         SizedBox(height: 24 * s),
                         Row(
                           children: [
                             StatTile(
                               scale: s,
-                              value: streak == 0 ? '0d' : '${streak}d',
+                              value: tr('{n}d', {'n': '$streak'}),
                               label: 'Streak',
                               icon: Icons.local_fire_department_rounded,
                               iconColor: p.emberDeep,
@@ -327,7 +328,8 @@ class ProfileScreen extends ConsumerWidget {
             left: 0,
             top: 20 * s,
             child: figmaText(
-              name == null ? 'Your Journey' : "$name's Journey",
+              name == null ? tr('Your Journey') : tr("{name}'s Journey", {'name': name}),
+              translate: false,
               size: 18 * s,
               weight: FontWeight.w600,
               letterSpacing: -0.45 * s,

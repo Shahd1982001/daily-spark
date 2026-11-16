@@ -1,3 +1,4 @@
+import 'package:daily_spark/l10n/strings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -347,7 +348,7 @@ class _ProgressScreenState extends ConsumerState<ProgressScreen> {
       'Saturday',
       'Sunday',
     ];
-    return 'Top Day: ${names[best.day.weekday - 1]}';
+    return tr('Top Day: {day}', {'day': tr(names[best.day.weekday - 1])});
   }
 
   // ── Section 4 · Habit Consistency (real data) ─────────────────────────────
@@ -392,7 +393,7 @@ class _ProgressScreenState extends ConsumerState<ProgressScreen> {
                       borderRadius: BorderRadius.circular(999 * s),
                     ),
                     child: figmaText(
-                      '${rows.length} Active',
+                      tr('{n} Active', {'n': '${rows.length}'}),
                       size: 10 * s,
                       weight: FontWeight.w500,
                       letterSpacing: 0.4 * s,
@@ -428,8 +429,10 @@ class _ProgressScreenState extends ConsumerState<ProgressScreen> {
             ConsistencyRow(
               scale: s,
               title: rows[i].habit.title,
-              subtitle:
-                  '${rows[i].completed} of ${rows[i].scheduled} days completed',
+              subtitle: tr('{completed} of {scheduled} days completed', {
+                    'completed': '${rows[i].completed}',
+                    'scheduled': '${rows[i].scheduled}',
+                  }),
               percent: '${rows[i].percent}%',
               accent: habitAccentColours(rows[i].habit.accent).$1,
               fill: habitAccentColours(rows[i].habit.accent).$1,

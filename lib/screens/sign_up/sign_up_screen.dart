@@ -1,3 +1,4 @@
+import 'package:daily_spark/l10n/strings.dart';
 import 'package:flutter/material.dart';
 
 import 'package:daily_spark/design_system/theme/spark_palette.dart';
@@ -302,25 +303,25 @@ class SignUpScreen extends StatelessWidget {
                             decoration: TextDecoration.none,
                           ),
                           children: [
-                            const TextSpan(text: 'By signing up, you agree to our '),
+                            TextSpan(text: tr('By signing up, you agree to our ')),
                             TextSpan(
-                              text: 'Terms of Service',
+                              text: tr('Terms of Service'),
                               style: TextStyle(
                                 color: _brown,
                                 decoration: TextDecoration.underline,
                                 decorationColor: _brown.withValues(alpha: 0.4),
                               ),
                             ),
-                            const TextSpan(text: ' & '),
+                            TextSpan(text: tr(' & ')),
                             TextSpan(
-                              text: 'Privacy Policy',
+                              text: tr('Privacy Policy'),
                               style: TextStyle(
                                 color: _brown,
                                 decoration: TextDecoration.underline,
                                 decorationColor: _brown.withValues(alpha: 0.4),
                               ),
                             ),
-                            const TextSpan(text: '.'),
+                            TextSpan(text: tr('.')),
                           ],
                         ),
                       ),
@@ -606,7 +607,7 @@ class _Field extends StatelessWidget {
                 isCollapsed: true,
                 border: InputBorder.none,
                 contentPadding: EdgeInsets.zero,
-                hintText: controller != null ? hint : (isEmpty ? hint : null),
+                hintText: (controller != null || isEmpty) && hint != null ? tr(hint!) : null,
                 hintStyle: TextStyle(
                   fontFamily: 'PlusJakartaSans',
                   fontSize: 14 * s,
@@ -629,7 +630,7 @@ class _Field extends StatelessWidget {
         Padding(
           padding: EdgeInsets.only(left: 14 * s, top: 6 * s),
           child: Text(
-            errorText!,
+            tr(errorText!),
             style: TextStyle(
               fontFamily: 'PlusJakartaSans',
               fontSize: 11 * s,

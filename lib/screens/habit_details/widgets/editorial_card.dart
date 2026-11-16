@@ -102,7 +102,7 @@ class EditorialCard extends StatelessWidget {
               children: [
                 _GlassChip(scale: s, label: tag),
                 SizedBox(width: 68 * s),
-                _GlassChip(scale: s, label: title),
+                _GlassChip(scale: s, label: title, translate: false),
               ],
             ),
           ),
@@ -123,6 +123,7 @@ class EditorialCard extends StatelessWidget {
                   SizedBox(width: 8 * s),
                   figmaText(
                     quote,
+                    translate: false,
                     width: 240 * s,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
@@ -149,10 +150,11 @@ class EditorialCard extends StatelessWidget {
 }
 
 class _GlassChip extends StatelessWidget {
-  const _GlassChip({required this.scale, required this.label});
+  const _GlassChip({required this.scale, required this.label, this.translate = true});
 
   final double scale;
   final String label;
+  final bool translate;
 
   @override
   Widget build(BuildContext context) {
@@ -167,6 +169,7 @@ class _GlassChip extends StatelessWidget {
       child: Center(
         child: figmaText(
           label,
+          translate: translate,
           size: 10 * s,
           weight: FontWeight.w500,
           letterSpacing: 0.4 * s,

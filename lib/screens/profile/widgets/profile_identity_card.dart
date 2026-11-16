@@ -13,11 +13,13 @@ class ProfileIdentityCard extends StatelessWidget {
     this.bio = 'Building better habits, one deliberate day at a time.',
     this.status = 'Mindful Builder · Since Oct 2023',
     this.hasAvatar = true,
+    this.translateBio = true,
   });
 
   final double scale;
   final String name;
   final bool hasAvatar;
+  final bool translateBio;
   final String bio;
   final String status;
 
@@ -126,6 +128,7 @@ class ProfileIdentityCard extends StatelessWidget {
               child: Center(
                 child: figmaText(
                   name,
+                  translate: !hasAvatar,
                   size: 22 * s,
                   weight: FontWeight.w600,
                   letterSpacing: -0.55 * s,
@@ -140,6 +143,7 @@ class ProfileIdentityCard extends StatelessWidget {
               width: 302 * s,
               child: figmaText(
                 bio,
+                translate: translateBio,
                 size: 14 * s,
                 weight: FontWeight.w500,
                 lineHeight: 23 * s,

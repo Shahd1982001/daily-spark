@@ -1,3 +1,4 @@
+import 'package:daily_spark/l10n/strings.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../data/models/day.dart';
@@ -203,13 +204,17 @@ class HabitDetail {
   String get subline => switch (streak) {
         0 => 'Log today to open your streak',
         1 => '1 day of showing up',
-        <= 20 => '$streak days compound momentum',
-        _ => '$streak days of showing up',
+        <= 20 => tr('{n} days compound momentum', {'n': '$streak'}),
+        _ => tr('{n} days of showing up', {'n': '$streak'}),
       };
 
   String get trendLabel {
-    if (trendDelta > 0) return '+$trendDelta days vs previous 30';
-    if (trendDelta < 0) return '${trendDelta.abs()} fewer than last 30';
+    if (trendDelta > 0) {
+      return tr('+{n} days vs previous 30', {'n': '$trendDelta'});
+    }
+    if (trendDelta < 0) {
+      return tr('{n} fewer than last 30', {'n': '${trendDelta.abs()}'});
+    }
     return 'Level with the last 30 days';
   }
 }
@@ -335,4 +340,4 @@ int _windowPercent(
 String bestRecordCaption(HabitDetail detail) =>
     detail.bestStreak == 0
         ? 'No record yet'
-        : 'Set in ${_monthOf(detail.bestStreakEndedOn)}';
+        : tr('Set in {month}', {'month': tr(_monthOf(detail.bestStreakEndedOn))});

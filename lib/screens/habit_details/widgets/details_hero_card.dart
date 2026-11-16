@@ -1,3 +1,4 @@
+import 'package:daily_spark/l10n/strings.dart';
 import 'dart:math' as math;
 import 'dart:ui';
 
@@ -128,7 +129,7 @@ class DetailsHeroCard extends StatelessWidget {
                     ),
                     SizedBox(width: 6 * s),
                     figmaText(
-                      '$streak Day Streak',
+                      tr('{n} Day Streak', {'n': '$streak'}),
                       size: 12 * s,
                       weight: FontWeight.w600,
                       letterSpacing: 0.24 * s,

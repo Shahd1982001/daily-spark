@@ -1,3 +1,4 @@
+import 'package:daily_spark/l10n/strings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -230,7 +231,7 @@ class _HabitRow extends ConsumerWidget {
       scale: scale,
       title: habit.title,
       meta: meta,
-      streak: streak == 0 ? '' : '${streak}d',
+      streak: streak == 0 ? '' : tr('{n}d', {'n': '$streak'}),
       icon: habitIcon(habit.iconKey),
       iconColor: iconColor,
       iconBackground: background,
@@ -403,7 +404,11 @@ class _Greeting extends StatelessWidget {
 
   String get _dateLabel {
     final now = DateTime.now();
-    return '${_weekdays[now.weekday - 1]}, ${_months[now.month - 1]} ${now.day}';
+    return tr('{weekday}, {month} {day}', {
+      'weekday': tr(_weekdays[now.weekday - 1]),
+      'month': tr(_months[now.month - 1]),
+      'day': '${now.day}',
+    });
   }
 
   String get _season {
@@ -423,8 +428,11 @@ class _Greeting extends StatelessWidget {
 
   String get _statusLine {
     if (total == 0) return 'No rituals yet — add your first one to start your spark.';
-    if (completed >= total) return 'All $total habits done today. The spark is alive.';
-    return '$completed of $total habits completed for today. Keep the spark alive.';
+    if (completed >= total) {
+      return tr('All {total} habits done today. The spark is alive.', {'total': '$total'});
+    }
+    return tr('{completed} of {total} habits completed for today. Keep the spark alive.',
+        {'completed': '$completed', 'total': '$total'});
   }
 
   @override
@@ -464,7 +472,8 @@ class _Greeting extends StatelessWidget {
         ),
         SizedBox(height: 4 * s),
         figmaText(
-          (name == null || name!.isEmpty) ? _greetingWord : '$_greetingWord, $name',
+          (name == null || name!.isEmpty) ? tr(_greetingWord) : tr('{greeting}, {name}', {'greeting': tr(_greetingWord), 'name': name!}),
+          translate: false,
           size: 22 * s,
           weight: FontWeight.w600,
           letterSpacing: -0.55 * s,
@@ -523,7 +532,7 @@ class _RoutineHeader extends StatelessWidget {
             ),
             child: Center(
               child: figmaText(
-                '$total total',
+                tr('{count} total', {'count': '$total'}),
                 size: 10 * s,
                 weight: FontWeight.w600,
                 letterSpacing: 0.4 * s,
@@ -613,7 +622,8 @@ class _FilterPills extends StatelessWidget {
                 borderRadius: BorderRadius.circular(999),
               ),
               child: figmaText(
-                '${labels[i]} (${_countFor(i)})',
+                tr('{label} ({count})',
+                    {'label': tr(labels[i]), 'count': '${_countFor(i)}'}),
                 size: 12 * s,
                 weight: FontWeight.w500,
                 letterSpacing: 0.24 * s,

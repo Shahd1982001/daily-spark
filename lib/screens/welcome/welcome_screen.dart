@@ -1,3 +1,4 @@
+import 'package:daily_spark/l10n/strings.dart';
 import 'package:flutter/material.dart';
 
 import 'package:daily_spark/design_system/theme/spark_palette.dart';
@@ -118,18 +119,18 @@ class WelcomeScreen extends StatelessWidget {
                     decoration: TextDecoration.none,
                   ),
                   children: [
-                    const TextSpan(text: 'By continuing, you agree to our '),
+                    TextSpan(text: tr('By continuing, you agree to our ')),
                     TextSpan(
-                      text: 'Terms of Service',
+                      text: tr('Terms of Service'),
                       style: TextStyle(
                         color: _ink,
                         decoration: TextDecoration.underline,
                         decorationColor: _ink.withValues(alpha: 0.5),
                       ),
                     ),
-                    const TextSpan(text: ' & '),
+                    TextSpan(text: tr(' & ')),
                     TextSpan(
-                      text: 'Privacy Policy',
+                      text: tr('Privacy Policy'),
                       style: TextStyle(
                         color: _ink,
                         decoration: TextDecoration.underline,
@@ -204,8 +205,8 @@ class _Emblem extends StatelessWidget {
                         filterQuality: FilterQuality.high,
                       ),
                       const SizedBox(height: 1),
-                      const Text(
-                        'Daily Spark',
+                      Text(
+                        tr('Daily Spark'),
                         style: TextStyle(
                           fontFamily: 'PlusJakartaSans',
                           fontSize: 6.4,

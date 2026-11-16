@@ -1,3 +1,4 @@
+import 'package:daily_spark/l10n/strings.dart';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
@@ -114,7 +115,8 @@ class HabitDetailsScreen extends ConsumerWidget {
             subline: detail.subline,
             trendLabel: detail.trendLabel,
             anchorLabel: _anchorLabel(habit),
-            primeTag: habit.reminderTime == null ? 'FLEXIBLE' : 'PRIME TIME',
+            primeTag:
+                habit.reminderTime == null ? tr('FLEXIBLE') : tr('PRIME TIME'),
             isEvening: _isEvening(habit),
           ),
         ),
@@ -123,8 +125,10 @@ class HabitDetailsScreen extends ConsumerWidget {
           padding: EdgeInsets.symmetric(horizontal: 16 * s),
           child: TodayProgressCard(
             scale: s,
-            targetLabel: 'Target: ${detail.targetAmount} '
-                '${_unitTitle(habit.targetUnit)}',
+            targetLabel: tr('Target: {amount} {unit}', {
+                'amount': '${detail.targetAmount}',
+                'unit': _unitTitle(habit.targetUnit),
+              }),
             amount: detail.amountToday,
             targetAmount: detail.targetAmount,
             unitLabel: habit.targetUnit,
@@ -149,18 +153,18 @@ class HabitDetailsScreen extends ConsumerWidget {
           child: StatsMosaic(
             scale: s,
             currentRun: detail.streak == 1
-                ? '1 Day'
-                : '${detail.streak} Days',
+                ? tr('1 Day')
+                : tr('{n} Days', {'n': '${detail.streak}'}),
             bestRecord: detail.bestStreak == 1
-                ? '1 Day'
-                : '${detail.bestStreak} Days',
+                ? tr('1 Day')
+                : tr('{n} Days', {'n': '${detail.bestStreak}'}),
             bestCaption: bestRecordCaption(detail),
-            totalLabel: 'TOTAL ${habit.targetUnit.toUpperCase()}',
+            totalLabel: tr('TOTAL {unit}', {'unit': tr(habit.targetUnit).toUpperCase()}),
             totalValue: '${groupDigits(detail.totalAmount)} '
-                '${_shortUnit(habit.targetUnit)}',
+                '${_shortUnit(habit.targetUnit)}', // unit tr'd inside
             totalCaption: detail.totalCompletions == 1
                 ? '1 check-in'
-                : '${groupDigits(detail.totalCompletions)} check-ins',
+                : tr('{count} check-ins', {'count': groupDigits(detail.totalCompletions)}),
             consistency: '${detail.consistency}%',
             sinceLabel: 'Lifetime success rate',
           ),
@@ -172,7 +176,7 @@ class HabitDetailsScreen extends ConsumerWidget {
             scale: s,
             cadence: _cadence(habit),
             anchor: _anchorLabel(habit),
-            dosage: '${habit.targetAmount} ${habit.targetUnit} / day',
+            dosage: tr('{amount} {unit} / day', {'amount': '${habit.targetAmount}', 'unit': tr(habit.targetUnit)}),
             cue: _cue(habit),
           ),
         ),
@@ -185,7 +189,7 @@ class HabitDetailsScreen extends ConsumerWidget {
               tag: 'Current Read',
               title: habit.detailTag,
               quote: habit.note.isEmpty
-                  ? '\u201cEvery page is a quiet conversation.\u201d'
+                  ? tr('“Every page is a quiet conversation.”')
                   : '\u201c${habit.note}\u201d',
             ),
           ),
@@ -215,7 +219,7 @@ class HabitDetailsScreen extends ConsumerWidget {
     if (!context.mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('${detail.habit.title} moved to your vault'),
+        content: Text(tr('{title} moved to your vault', {'title': detail.habit.title})),
         behavior: SnackBarBehavior.floating,
       ),
     );
@@ -235,7 +239,7 @@ class HabitDetailsScreen extends ConsumerWidget {
           borderRadius: BorderRadius.circular(20),
         ),
         title: Text(
-          'Delete this ritual?',
+          tr('Delete this ritual?'),
           style: TextStyle(
             fontFamily: 'PlusJakartaSans',
             fontSize: 17,
@@ -244,7 +248,8 @@ class HabitDetailsScreen extends ConsumerWidget {
           ),
         ),
         content: Text(
-          '${detail.habit.title} and its history will be removed permanently.',
+          tr('{title} and its history will be removed permanently.',
+              {'title': detail.habit.title}),
           style: TextStyle(
             fontFamily: 'PlusJakartaSans',
             fontSize: 13,
@@ -256,7 +261,7 @@ class HabitDetailsScreen extends ConsumerWidget {
           TextButton(
             onPressed: () => Navigator.of(dialogContext).pop(false),
             child: Text(
-              'Keep it',
+              tr('Keep it'),
               style: TextStyle(
                 color: p.body,
                 fontWeight: FontWeight.w600,
@@ -266,7 +271,7 @@ class HabitDetailsScreen extends ConsumerWidget {
           TextButton(
             onPressed: () => Navigator.of(dialogContext).pop(true),
             child: Text(
-              'Delete',
+              tr('Delete'),
               style: TextStyle(
                 color: p.error,
                 fontWeight: FontWeight.w600,
@@ -285,16 +290,15 @@ class HabitDetailsScreen extends ConsumerWidget {
 
   // ── Copy helpers (all derived from the habit, never hardcoded) ─────────────
 
-  static String _unitTitle(String unit) =>
-      unit.isEmpty ? unit : unit[0].toUpperCase() + unit.substring(1);
+  static String _unitTitle(String unit) => unit.isEmpty ? unit : tr(unit);
 
-  static String _shortUnit(String unit) => switch (unit) {
+  static String _shortUnit(String unit) => tr(switch (unit) {
         'pages' => 'pgs',
         'mins' => 'mins',
         'ml' => 'ml',
         'entry' => 'entries',
         _ => unit,
-      };
+      });
 
   static bool _isEvening(Habit habit) {
     final hour = int.tryParse((habit.reminderTime ?? '').split(':').first);
@@ -303,51 +307,61 @@ class HabitDetailsScreen extends ConsumerWidget {
 
   static String _anchorLabel(Habit habit) {
     final time = habitTimeLabel(habit.reminderTime);
-    if (time.isEmpty) return 'Anytime during the day';
-    return '$time \u00b7 ${habit.category} anchor';
+    if (time.isEmpty) return tr('Anytime during the day');
+    return tr('{time} \u00b7 {category} anchor',
+        {'time': time, 'category': tr(habit.category)});
   }
 
   static String _cadence(Habit habit) {
-    final label = habit.rhythm.label;
+    final label = tr(habit.rhythm.label);
     if (habit.rhythm == HabitRhythm.custom) {
       const names = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
       final days = (habit.days.toList()..sort())
           .where((d) => d >= 1 && d <= 7)
-          .map((d) => names[d - 1])
+          .map((d) => tr(names[d - 1]))
           .join(' \u00b7 ');
-      return days.isEmpty ? label : '$label ($days)';
+      return days.isEmpty ? label : tr('{label} ({days})', {'label': label, 'days': days});
     }
-    return '$label (${habit.category})';
+    return tr('{label} ({category})',
+        {'label': label, 'category': tr(habit.category)});
   }
 
   static String _cue(Habit habit) {
-    final verb = switch (habit.targetUnit) {
+    final verb = tr(switch (habit.targetUnit) {
       'pages' => 'read',
       'mins' => 'sit for',
       'ml' => 'drink',
       'entry' => 'write',
       _ => 'complete',
-    };
-    final trigger = habit.category.toLowerCase();
-    return '\u201cRight after my $trigger routine, I will $verb '
-        '${habit.targetAmount} ${habit.targetUnit}.\u201d';
+    });
+    final trigger = tr(habit.category).toLowerCase();
+    return tr('Right after my {category} routine, I will {verb} {amount} {unit}.', {
+      'category': trigger,
+      'verb': verb,
+      'amount': '${habit.targetAmount}',
+      'unit': tr(habit.targetUnit),
+    });
   }
 
   static String _insight(HabitDetail detail) {
     final unit = detail.habit.targetUnit;
     if (detail.doneToday) {
-      return 'Goal achieved today! ${detail.targetAmount} $unit '
-          'absorbed with pure presence.';
+      return tr('Goal achieved today! {amount} {unit} absorbed with pure presence.',
+          {'amount': '${detail.targetAmount}', 'unit': tr(unit)});
     }
     if (detail.amountToday > 0) {
-      return '${detail.remaining} $unit to go \u2014 you are '
-          '${detail.todayPercent}% there, keep the spark alive.';
+      return tr('{remaining} {unit} to go \u2014 you are {percent}% there, keep the spark alive.', {
+          'remaining': '${detail.remaining}',
+          'unit': tr(unit),
+          'percent': '${detail.todayPercent}',
+        });
     }
     if (detail.streak > 0) {
-      return 'One small step today keeps your ${detail.streak}-day '
-          'rhythm alive.';
+      return tr('One small step today keeps your {n}-day rhythm alive.',
+          {'n': '${detail.streak}'});
     }
-    return 'Start with a single $unit \u2014 momentum follows the first move.';
+    return tr('Start with a single {unit} \u2014 momentum follows the first move.',
+          {'unit': tr(unit)});
   }
 
   // ── Empty state ───────────────────────────────────────────────────────────
@@ -583,7 +597,7 @@ class _ChipRow extends StatelessWidget {
               ),
               SizedBox(width: 4 * s),
               figmaText(
-                habit.category.toUpperCase(),
+                tr(habit.category).toUpperCase(),
                 size: 10 * s,
                 weight: FontWeight.w600,
                 letterSpacing: 0.5 * s,
@@ -664,6 +678,7 @@ class _TitleBlock extends StatelessWidget {
             children: [
               figmaText(
                 habit.title,
+                translate: false,
                 size: 22 * s,
                 weight: FontWeight.w600,
                 letterSpacing: -0.55 * s,
@@ -674,7 +689,8 @@ class _TitleBlock extends StatelessWidget {
               ),
               SizedBox(height: 2 * s),
               figmaText(
-                habit.note.isEmpty ? habit.category : habit.note,
+                habit.note.isEmpty ? tr(habit.category) : habit.note,
+                translate: false,
                 size: 14 * s,
                 weight: FontWeight.w400,
                 lineHeight: 20 * s,

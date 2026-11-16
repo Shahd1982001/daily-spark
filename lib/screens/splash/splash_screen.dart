@@ -1,3 +1,4 @@
+import 'package:daily_spark/l10n/strings.dart';
 import 'package:flutter/material.dart';
 
 import 'package:daily_spark/design_system/theme/spark_palette.dart';
@@ -32,7 +33,7 @@ class SplashScreen extends StatelessWidget {
                     Row(
                       children: [
                         Text(
-                          'EST. 2024',
+                          tr('EST. 2024'),
                           style: TextStyle(
                             fontFamily: 'PlusJakartaSans',
                             fontSize: 10,
@@ -53,7 +54,7 @@ class SplashScreen extends StatelessWidget {
                         ),
                         const SizedBox(width: 6),
                         Text(
-                          'Sync Ready',
+                          tr('Sync Ready'),
                           style: TextStyle(
                             fontFamily: 'PlusJakartaSans',
                             fontSize: 10,
@@ -77,7 +78,7 @@ class SplashScreen extends StatelessWidget {
                               const SparkAppIcon(size: 144),
                               const SizedBox(height: 16),
                               Text(
-                                'Daily Spark',
+                                tr('Daily Spark'),
                                 style: TextStyle(
                                   fontFamily: 'PlusJakartaSans',
                                   fontSize: 26,
@@ -89,7 +90,7 @@ class SplashScreen extends StatelessWidget {
                               ),
                               SizedBox(height: 8),
                               Text(
-                                'Small steps compound daily.',
+                                tr('Small steps compound daily.'),
                                 style: TextStyle(
                                   fontFamily: 'PlusJakartaSans',
                                   fontSize: 14,
@@ -110,7 +111,7 @@ class SplashScreen extends StatelessWidget {
                     const _BootProgress(),
                     const SizedBox(height: 16),
                     Text(
-                      'ARCHITECTURE OF DAILY RITUALS',
+                      tr('ARCHITECTURE OF DAILY RITUALS'),
                       style: TextStyle(
                         fontFamily: 'PlusJakartaSans',
                         fontSize: 10,
@@ -122,7 +123,7 @@ class SplashScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      'v2.4.0',
+                      tr('v2.4.0'),
                       style: TextStyle(
                         fontFamily: 'PlusJakartaSans',
                         fontSize: 10,
@@ -207,7 +208,7 @@ class _StreakPill extends StatelessWidget {
           ),
           const SizedBox(width: 5),
           Text(
-            'Igniting Day 14',
+            tr('Igniting Day 14'),
             style: TextStyle(
               fontFamily: 'PlusJakartaSans',
               fontSize: 10,

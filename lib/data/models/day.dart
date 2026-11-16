@@ -4,6 +4,8 @@
 /// so streaks and "today" math stay timezone-explicit and DST-proof.
 library;
 
+import 'package:daily_spark/l10n/strings.dart';
+
 /// Truncates [value] to local midnight.
 DateTime dayOnly(DateTime value) => DateTime(value.year, value.month, value.day);
 
@@ -28,7 +30,7 @@ DateTime? parseDayKey(String key) {
 
 /// Short label used by the UI: `3d`, `12d`, `1w`.
 String shortRelativeDays(int days) {
-  if (days < 14) return '${days}d';
-  if (days < 60) return '${(days / 7).floor()}w';
-  return '${(days / 30).floor()}mo';
+  if (days < 14) return tr('{n}d', {'n': '$days'});
+  if (days < 60) return tr('{n}w', {'n': '${(days / 7).floor()}'});
+  return tr('{n}mo', {'n': '${(days / 30).floor()}'});
 }

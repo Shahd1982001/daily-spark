@@ -1,3 +1,4 @@
+import 'package:daily_spark/l10n/strings.dart';
 import 'package:flutter/material.dart';
 
 import 'package:daily_spark/design_system/theme/spark_palette.dart';
@@ -41,7 +42,7 @@ class WeeklyRhythmCard extends StatelessWidget {
                     : day.percent >= 40
                         ? _barEmber
                         : _well,
-            _letters[day.day.weekday - 1],
+            Strings.locale.languageCode == 'en' ? _letters[day.day.weekday - 1] : tr(const ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'][day.day.weekday - 1]),
             day.isToday ? FontWeight.w700 : FontWeight.w500,
             day.isToday
                 ? p.emberDeep
@@ -128,7 +129,7 @@ class WeeklyRhythmCard extends StatelessWidget {
                   figmaText(
                     days.isEmpty
                         ? 'Today'
-                        : '${_weekdayName(days.last.day)} (Today)',
+                        : tr('{day} (Today)', {'day': tr(_weekdayName(days.last.day))}),
                     size: 12 * s,
                     weight: FontWeight.w500,
                     letterSpacing: 0.12 * s,
@@ -139,7 +140,7 @@ class WeeklyRhythmCard extends StatelessWidget {
                   figmaText(
                     days.isEmpty || days.last.percent == 0
                         ? 'Nothing completed yet today'
-                        : '${days.last.percent}% of today fulfilled',
+                        : tr('{percent}% of today fulfilled', {'percent': '${days.last.percent}'}),
                     size: 12 * s,
                     weight: FontWeight.w600,
                     letterSpacing: 0.12 * s,

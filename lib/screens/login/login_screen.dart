@@ -1,3 +1,4 @@
+import 'package:daily_spark/l10n/strings.dart';
 import 'package:flutter/material.dart';
 
 import 'package:daily_spark/design_system/theme/spark_palette.dart';
@@ -498,7 +499,7 @@ class _InputField extends StatelessWidget {
                 isCollapsed: true,
                 border: InputBorder.none,
                 contentPadding: EdgeInsets.zero,
-                hintText: controller != null ? hint : (isEmpty ? hint : null),
+                hintText: (controller != null || isEmpty) && hint != null ? tr(hint!) : null,
                 hintStyle: TextStyle(
                   fontFamily: 'PlusJakartaSans',
                   fontSize: 14 * s,
@@ -518,7 +519,7 @@ class _InputField extends StatelessWidget {
         Padding(
           padding: EdgeInsets.only(left: 18 * s, top: 6 * s),
           child: Text(
-            errorText!,
+            tr(errorText!),
             style: TextStyle(
               fontFamily: 'PlusJakartaSans',
               fontSize: 11 * s,
@@ -726,11 +727,11 @@ class _LegalLinks extends StatelessWidget {
       text: TextSpan(
         style: style,
         children: [
-          const TextSpan(text: 'Privacy Policy'),
-          TextSpan(text: '  \u2022   ', style: style),
-          const TextSpan(text: 'Terms of Service'),
-          TextSpan(text: '  \u2022   ', style: style),
-          const TextSpan(text: 'Support'),
+          TextSpan(text: tr('Privacy Policy')),
+          TextSpan(text: tr('  \u2022   '), style: style),
+          TextSpan(text: tr('Terms of Service')),
+          TextSpan(text: tr('  \u2022   '), style: style),
+          TextSpan(text: tr('Support')),
         ],
       ),
     );

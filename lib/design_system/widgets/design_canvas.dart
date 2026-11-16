@@ -62,8 +62,9 @@ Widget figmaText(
   double? width,
   int? maxLines,
   TextOverflow overflow = TextOverflow.clip,
+  bool translate = true,
 }) {
-  final text = tr(rawText);
+  final text = translate ? tr(rawText) : rawText;
   final style = TextStyle(
     fontFamily: 'PlusJakartaSans',
     fontSize: size,

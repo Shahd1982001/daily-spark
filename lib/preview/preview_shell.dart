@@ -279,7 +279,7 @@ class _PreviewShellState extends ConsumerState<PreviewShell> {
       _suNameError = _suEmailError = _suPassError = _suConfirmError = null;
       _history.clear();
     });
-    _toast('Welcome, ${name.trim()} ✦');
+    _toast(tr('Welcome, {name} ✦', {'name': name.trim()}));
     _go(_Stage.home);
   }
 
@@ -303,7 +303,7 @@ class _PreviewShellState extends ConsumerState<PreviewShell> {
   void _toast(String message) {
     _messengerKey.currentState
       ?..clearSnackBars()
-      ..showSnackBar(SnackBar(content: Text(message)));
+      ..showSnackBar(SnackBar(content: Text(tr(message))));
   }
 
   /// Toggles the app theme and persists the choice.
@@ -362,7 +362,7 @@ class _PreviewShellState extends ConsumerState<PreviewShell> {
                   maxLength: 24,
                   style: const TextStyle(fontFamily: 'PlusJakartaSans'),
                   decoration: InputDecoration(
-                    labelText: 'Display name',
+                    labelText: tr('Display name'),
                     counterText: '',
                     filled: true,
                     fillColor: p.canvas,
@@ -377,7 +377,7 @@ class _PreviewShellState extends ConsumerState<PreviewShell> {
                   maxLength: 80,
                   style: const TextStyle(fontFamily: 'PlusJakartaSans'),
                   decoration: InputDecoration(
-                    labelText: 'Ritual motto',
+                    labelText: tr('Ritual motto'),
                     counterText: '',
                     filled: true,
                     fillColor: p.canvas,
@@ -477,7 +477,7 @@ class _PreviewShellState extends ConsumerState<PreviewShell> {
             Center(
               child: TextButton(
                 onPressed: () => Navigator.of(ctx).pop(),
-                child: const Text('Close'),
+                child: Text(tr('Close')),
               ),
             ),
           ],
@@ -514,7 +514,7 @@ class _PreviewShellState extends ConsumerState<PreviewShell> {
             Center(
               child: TextButton(
                 onPressed: () => Navigator.of(ctx).pop(),
-                child: const Text('Close'),
+                child: Text(tr('Close')),
               ),
             ),
           ],
@@ -544,7 +544,7 @@ class _PreviewShellState extends ConsumerState<PreviewShell> {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(),
-            child: const Text('Close'),
+            child: Text(tr('Close')),
           ),
         ],
       ),
@@ -609,7 +609,7 @@ class _PreviewShellState extends ConsumerState<PreviewShell> {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(),
-            child: const Text('Close'),
+            child: Text(tr('Close')),
           ),
         ],
       ),
@@ -731,8 +731,8 @@ class _PreviewShellState extends ConsumerState<PreviewShell> {
             onSaved: (habit) {
               final editing = ref.read(editingHabitIdProvider) != null;
               _toast(editing
-                  ? '${habit.title} updated ✦'
-                  : '${habit.title} ignited ✦');
+                  ? tr('{title} updated ✦', {'title': habit.title})
+                  : tr('{title} ignited ✦', {'title': habit.title}));
               // Edits return to where they were opened from (details/list);
               // a new habit lands on the Habits list so it is visible at once.
               if (editing) {
