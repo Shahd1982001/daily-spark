@@ -1,3 +1,4 @@
+import 'package:daily_spark/l10n/habit_sentence.dart';
 import 'package:daily_spark/l10n/strings.dart';
 import 'dart:ui';
 
@@ -219,7 +220,7 @@ class HabitDetailsScreen extends ConsumerWidget {
     if (!context.mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(tr('{title} moved to your vault', {'title': detail.habit.title})),
+        content: HabitSentence(template: '{title} moved to your vault', title: detail.habit.title),
         behavior: SnackBarBehavior.floating,
       ),
     );
@@ -247,9 +248,9 @@ class HabitDetailsScreen extends ConsumerWidget {
             color: p.ink,
           ),
         ),
-        content: Text(
-          tr('{title} and its history will be removed permanently.',
-              {'title': detail.habit.title}),
+        content: HabitSentence(
+          template: '{title} and its history will be removed permanently.',
+          title: detail.habit.title,
           style: TextStyle(
             fontFamily: 'PlusJakartaSans',
             fontSize: 13,
@@ -678,7 +679,7 @@ class _TitleBlock extends StatelessWidget {
             children: [
               figmaText(
                 habit.title,
-                translate: false,
+                translateHabit: true,
                 size: 22 * s,
                 weight: FontWeight.w600,
                 letterSpacing: -0.55 * s,

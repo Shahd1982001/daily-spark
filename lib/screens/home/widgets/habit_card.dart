@@ -82,7 +82,9 @@ class HabitCard extends StatelessWidget {
                 children: [
                   figmaText(
                     title,
-                    translate: false,
+                    translateHabit: true,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                     size: 16 * s,
                     weight: FontWeight.w600,
                     letterSpacing: -0.08 * s,

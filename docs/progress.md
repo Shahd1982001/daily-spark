@@ -360,3 +360,8 @@ name, email, password — plus the session (`none / guest / account`).
 - Added localization tests for catalog key parity, template placeholders, live language changes and preserving user text. Current suite: 49 tests passing.
 - Arabic review is ongoing: visual and interaction checks are not yet exhaustive, and FR/ES/RU/ZH catalogs have not yet been implemented. No full-coverage claim yet.
 - Gallery is copied into every Pages build. Backend remains deferred.
+
+## Habit title translation checkpoint
+- User approved sending task titles over the internet for automatic translation. Habit titles are translated for display across Home, Habits, Progress, Details and related confirmations; original locally stored titles stay unchanged for editing.
+- Uses Google's translation endpoint directly from the client, with in-memory deduplication/cache and original-text fallback when offline or when the provider fails. It is an external service, subject to availability, rate limits and machine-translation errors; no new account backend.
+- Arabic and English currently selectable; the target-language mechanism also supports FR/ES/RU/ZH as their catalogs become available. Other written personal fields are not sent.

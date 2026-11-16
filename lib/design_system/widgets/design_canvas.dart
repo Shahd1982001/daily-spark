@@ -3,6 +3,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 
 import 'package:daily_spark/l10n/strings.dart';
+import 'package:daily_spark/l10n/habit_translation.dart';
 
 /// Every screen is drawn on a fixed 390 × 884 canvas (the exact Figma frame)
 /// and then uniformly scaled to the device viewport. This guarantees the
@@ -63,7 +64,22 @@ Widget figmaText(
   int? maxLines,
   TextOverflow overflow = TextOverflow.clip,
   bool translate = true,
+  bool translateHabit = false,
 }) {
+  if (translateHabit) {
+    return Builder(builder: (context) {
+      final language = Localizations.maybeLocaleOf(context)?.languageCode ?? Strings.locale.languageCode;
+      return FutureBuilder<String>(
+        key: ValueKey((rawText, language)),
+        future: HabitTranslation.translate(rawText, language),
+        builder: (context, snapshot) => figmaText(
+          snapshot.data ?? rawText, size: size, weight: weight, color: color,
+          letterSpacing: letterSpacing, lineHeight: lineHeight, align: align,
+          width: width, maxLines: maxLines, overflow: overflow, translate: false,
+        ),
+      );
+    });
+  }
   final text = translate ? tr(rawText) : rawText;
   final style = TextStyle(
     fontFamily: 'PlusJakartaSans',

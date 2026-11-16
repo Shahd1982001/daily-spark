@@ -1,3 +1,4 @@
+import 'package:daily_spark/l10n/habit_sentence.dart';
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -730,9 +731,12 @@ class _PreviewShellState extends ConsumerState<PreviewShell> {
             onAvatar: () => _go(_Stage.profile),
             onSaved: (habit) {
               final editing = ref.read(editingHabitIdProvider) != null;
-              _toast(editing
-                  ? tr('{title} updated ✦', {'title': habit.title})
-                  : tr('{title} ignited ✦', {'title': habit.title}));
+              _messengerKey.currentState
+                ?..clearSnackBars()
+                ..showSnackBar(SnackBar(content: HabitSentence(
+                  template: editing ? '{title} updated ✦' : '{title} ignited ✦',
+                  title: habit.title,
+                )));
               // Edits return to where they were opened from (details/list);
               // a new habit lands on the Habits list so it is visible at once.
               if (editing) {

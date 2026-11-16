@@ -652,7 +652,10 @@ class _FilterChips extends StatelessWidget {
                 borderRadius: BorderRadius.circular(999),
               ),
               child: figmaText(
-                labels[i],
+                tr('{label} ({count})', {
+                  'label': tr(labels[i].split(' (').first),
+                  'count': labels[i].split(' (').last.replaceAll(')', ''),
+                }),
                 size: 12 * s,
                 weight: FontWeight.w500,
                 letterSpacing: 0.24 * s,
