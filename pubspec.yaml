@@ -36,6 +36,7 @@ flutter:
     - assets/audio/
     - assets/mascot/
     - assets/mascot/blink/
+    - assets/mascot/look/
 
   fonts:
     - family: PlusJakartaSans

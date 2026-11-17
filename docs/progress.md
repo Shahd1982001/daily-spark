@@ -458,3 +458,7 @@ name, email, password — plus the session (`none / guest / account`).
 ### New mascot sequence: standing blink
 - Started over using the chosen original artwork. Blink uses the original open frame and three painted eye-only frames, then plays them in reverse; all frames share the same 546×600 canvas and alpha, and the body, face outside the eye area, and app display size remain unchanged. It blinks roughly every three seconds; no walking or drag animation was restored.
 - Reduced motion shows the original still. Frame-order/size widget tests pass; browser checks confirm frame assets load and actual pixels change. Awaiting user approval before starting the next movement.
+
+### Resting group, movement 2: looking left and right
+- Added six eye-only look frames drawn from the original artwork, displayed in a sequence that looks left, returns to center, looks right and returns. This is an eye glance, not a head turn; ask the user to approve it. Body/size/canvas/alpha remain unchanged, and the approved blink alternates with the look sequence.
+- Tests cover both directions, stable size/position and reduced motion; browser loaded all six files without page errors. User review required before adding sitting or subsequent motions.

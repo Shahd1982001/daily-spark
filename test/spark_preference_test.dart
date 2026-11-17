@@ -49,6 +49,27 @@ void main() {
     expect(asset(), 'assets/mascot/spark.png');
     await tester.pumpWidget(const SizedBox.shrink());
   });
+  testWidgets('look sequence visits left and right without changing size or placement', (tester) async {
+    await tester.pumpWidget(const MaterialApp(home: SparkMascot(size: 76, blink: true)));
+    await tester.pump();
+    final originalSize = tester.getSize(find.byType(Image));
+    final originalPosition = tester.getTopLeft(find.byType(Image));
+    final frames = <String>{};
+    for (var i = 0; i < 150; i++) {
+      await tester.pump(const Duration(milliseconds: 80));
+      final image = tester.widget<Image>(find.byType(Image));
+      frames.add((image.image as AssetImage).assetName);
+      expect(tester.getSize(find.byType(Image)), originalSize);
+      expect(tester.getTopLeft(find.byType(Image)), originalPosition);
+    }
+    for (final direction in ['left', 'right']) {
+      for (var i = 1; i <= 3; i++) {
+        expect(frames, contains('assets/mascot/look/${direction}_$i.png'));
+      }
+    }
+    expect(frames, contains('assets/mascot/blink/blink_3.png'));
+    await tester.pumpWidget(const SizedBox.shrink());
+  });
   testWidgets('reduced motion keeps original still', (tester) async {
     await tester.pumpWidget(const MaterialApp(home: MediaQuery(
       data: MediaQueryData(disableAnimations: true), child: SparkMascot(blink: true),
