@@ -1,4 +1,7 @@
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
+import 'package:daily_spark/design_system/widgets/user_avatar.dart';
+import 'package:daily_spark/l10n/strings.dart';
 
 import 'package:daily_spark/design_system/theme/spark_palette.dart';
 
@@ -12,13 +15,17 @@ class ProfileIdentityCard extends StatelessWidget {
     this.name = 'Shahd',
     this.bio = 'Building better habits, one deliberate day at a time.',
     this.status = 'Mindful Builder · Since Oct 2023',
-    this.hasAvatar = true,
+    this.avatar,
+    this.onAvatarTap,
+    this.translateName = false,
     this.translateBio = true,
   });
 
   final double scale;
   final String name;
-  final bool hasAvatar;
+  final Uint8List? avatar;
+  final VoidCallback? onAvatarTap;
+  final bool translateName;
   final bool translateBio;
   final String bio;
   final String status;
@@ -79,23 +86,13 @@ class ProfileIdentityCard extends StatelessWidget {
                     ),
                   ],
                 ),
-                child: Center(
-                  child: hasAvatar
-                      ? ClipOval(
-                          child: Image.asset(
-                            'assets/brand/avatar_shahd_lg.png',
-                            width: 72 * s,
-                            height: 72 * s,
-                            fit: BoxFit.cover,
-                            filterQuality: FilterQuality.high,
-                          ),
-                        )
-                      : Image.asset(
-                          'assets/brand/spark_logo.png',
-                          width: 44 * s,
-                          height: 44 * s,
-                          filterQuality: FilterQuality.high,
-                        ),
+                child: Tooltip(
+                  message: tr('Change profile photo'),
+                  child: InkWell(
+                    onTap: onAvatarTap,
+                    customBorder: const CircleBorder(),
+                    child: Center(child: UserAvatar(bytes: avatar, size: 72 * s)),
+                  ),
                 ),
               ),
             ),
@@ -103,7 +100,7 @@ class ProfileIdentityCard extends StatelessWidget {
             Positioned(
               left: 195 * s,
               top: 84 * s,
-              child: Container(
+              child: IgnorePointer(child: Container(
                 width: 24 * s,
                 height: 24 * s,
                 decoration: BoxDecoration(
@@ -117,9 +114,9 @@ class ProfileIdentityCard extends StatelessWidget {
                     ),
                   ],
                 ),
-                child: Icon(Icons.local_fire_department_rounded,
+                child: Icon(Icons.photo_camera_outlined,
                     size: 12 * s, color: Colors.white),
-              ),
+              )),
             ),
             Positioned(
               left: 0,
@@ -128,7 +125,7 @@ class ProfileIdentityCard extends StatelessWidget {
               child: Center(
                 child: figmaText(
                   name,
-                  translate: !hasAvatar,
+                  translate: translateName,
                   size: 22 * s,
                   weight: FontWeight.w600,
                   letterSpacing: -0.55 * s,

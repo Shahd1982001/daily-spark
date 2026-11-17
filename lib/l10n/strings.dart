@@ -191,6 +191,17 @@ class Strings {
         'الفرز والتصفية — في قطعة لاحقة ✦',
 
     // Arabic coverage: screen copy, dynamic templates, dates and units.
+    'Change profile photo': 'تغيير الصورة الشخصية',
+    'Profile photo': 'الصورة الشخصية',
+    'Your photo is stored on this device.': 'صورتك محفوظة على هذا الجهاز.',
+    'Choose photo': 'اختيار صورة',
+    'Remove photo': 'إزالة الصورة',
+    'Profile photo updated ✦': 'تم تحديث الصورة الشخصية ✦',
+    'Profile photo removed': 'تمت إزالة الصورة الشخصية',
+    'Photo is too large. Please choose a smaller image.': 'الصورة كبيرة جداً. اختاري صورة أصغر.',
+    'Could not save this photo. Please try another image.': 'تعذّر حفظ الصورة. جرّبي صورة أخرى.',
+    'Could not open photos. Please check permission and try again.': 'تعذّر فتح الصور. تحققي من الإذن وحاولي مجدداً.',
+    'Could not remove the photo. Please try again.': 'تعذّرت إزالة الصورة. حاولي مجدداً.',
     'Cancel': 'إلغاء',
     'Continue': 'متابعة',
     'Change goal unit?': 'تغيير وحدة الهدف؟',

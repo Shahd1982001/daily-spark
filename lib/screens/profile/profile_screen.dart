@@ -11,6 +11,7 @@ import 'package:daily_spark/screens/profile/widgets/settings_group.dart';
 import 'package:daily_spark/screens/profile/widgets/stat_tile.dart';
 import 'package:daily_spark/l10n/strings.dart';
 import 'package:daily_spark/state/habit_providers.dart';
+import 'package:daily_spark/state/avatar_provider.dart';
 import 'package:daily_spark/state/progress_providers.dart';
 
 /// Anchor for the gear button: scrolls the page to the settings section.
@@ -37,6 +38,7 @@ class ProfileScreen extends ConsumerWidget {
     this.onSettings,
     this.onShare,
     this.onEdit,
+    this.onAvatarTap,
     this.onStatTap,
     this.onPersonalDetails,
     this.onCloudSync,
@@ -58,6 +60,7 @@ class ProfileScreen extends ConsumerWidget {
   final VoidCallback? onSettings;
   final VoidCallback? onShare;
   final VoidCallback? onEdit;
+  final VoidCallback? onAvatarTap;
   final ValueChanged<int>? onStatTap;
   final VoidCallback? onPersonalDetails;
   final VoidCallback? onCloudSync;
@@ -119,7 +122,10 @@ class ProfileScreen extends ConsumerWidget {
                                   ? 'Building better habits, one deliberate day at a time.'
                                   : 'Add your first ritual and this page starts telling your story.'),
                           status: level.label,
-                          hasAvatar: name != null,
+                          avatar: ref.watch(avatarProvider),
+                          onAvatarTap: onAvatarTap,
+                          translateName: name == null,
+
                           translateBio: motto == null,
                         ),
                         SizedBox(height: 24 * s),
@@ -279,7 +285,7 @@ class ProfileScreen extends ConsumerWidget {
             child: AppTopBar(
               scale: s,
               title: 'Profile',
-              hasAvatar: name != null,
+
               showSettings: true,
               onSettings: onSettings ?? _scrollToSettings,
             ),

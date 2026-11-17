@@ -12,7 +12,6 @@ import 'package:daily_spark/design_system/widgets/design_canvas.dart' show figma
 import 'package:daily_spark/screens/habits/widgets/habit_tile.dart';
 import 'package:daily_spark/screens/home/widgets/habit_card_style.dart' show habitIcon, habitAccentColours, habitMetaLine;
 import 'package:daily_spark/state/habit_providers.dart';
-import 'package:daily_spark/state/progress_providers.dart';
 
 /// Habits — driven by the habit store.
 /// Figma: node 126:15648 (data-filled state) · empty state designed in-system.
@@ -230,7 +229,7 @@ class _HabitsScreenState extends ConsumerState<HabitsScreen> {
             child: AppTopBar(
               scale: s,
               title: 'HABITS',
-              hasAvatar: ref.watch(userNameProvider) != null,
+
               onProfile: widget.onProfile,
             ),
           ),

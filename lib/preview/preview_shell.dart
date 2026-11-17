@@ -1,3 +1,6 @@
+import 'package:daily_spark/state/avatar_provider.dart';
+import 'package:flutter/foundation.dart' show kIsWeb, defaultTargetPlatform, TargetPlatform;
+import 'package:image_picker/image_picker.dart';
 import 'package:daily_spark/state/calendar_day_provider.dart';
 import 'package:daily_spark/l10n/habit_sentence.dart';
 import 'dart:async';
@@ -113,6 +116,9 @@ class _PreviewShellState extends ConsumerState<PreviewShell> {
   @override
   void initState() {
     super.initState();
+    if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android) {
+      WidgetsBinding.instance.addPostFrameCallback((_) => _recoverPhoto());
+    }
     // `?id=<habitId>` opens the details screen on a specific habit.
     final habitId = Uri.base.queryParameters['id'];
     if (habitId != null && habitId.isNotEmpty) {
@@ -324,6 +330,75 @@ class _PreviewShellState extends ConsumerState<PreviewShell> {
     await Clipboard.setData(
         const ClipboardData(text: 'https://shahd1982001.github.io/daily-spark/'));
     if (mounted) _toast('Link copied ✦');
+  }
+
+  /// The system photo picker returns only the chosen image. It stays on this
+  /// device for now; an account-aware cloud store will be designed later.
+  Future<void> _savePickedPhoto(XFile file) async {
+    try {
+      if (await file.length() > AvatarController.maxBytes) {
+        if (mounted) _toast('Photo is too large. Please choose a smaller image.');
+        return;
+      }
+      final bytes = await file.readAsBytes();
+      if (!mounted) return;
+      final ok = await ref.read(avatarProvider.notifier).save(bytes);
+      if (mounted) _toast(ok ? 'Profile photo updated ✦' : 'Could not save this photo. Please try another image.');
+    } catch (_) {
+      if (mounted) _toast('Could not open photos. Please check permission and try again.');
+    }
+  }
+
+  Future<void> _recoverPhoto() async {
+    try {
+      final recovered = await ImagePicker().retrieveLostData();
+      if (!mounted || recovered.isEmpty) return;
+      final files = recovered.files;
+      if (files != null && files.isNotEmpty) {
+        await _savePickedPhoto(files.first);
+      } else if (recovered.exception != null) {
+        _toast('Could not open photos. Please check permission and try again.');
+      }
+    } catch (_) {
+      // Nothing to recover; normal use remains available.
+    }
+  }
+
+  Future<void> _showAvatarSheet() async {
+    final hasPhoto = ref.read(avatarProvider) != null;
+    final choice = await showModalBottomSheet<String>(
+      context: _navKey.currentContext!,
+      backgroundColor: p.surface,
+      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+      builder: (ctx) => SafeArea(child: Padding(
+        padding: const EdgeInsets.fromLTRB(20, 20, 20, 16),
+        child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
+          figmaText('Profile photo', size: 18, weight: FontWeight.w700, color: p.ink),
+          const SizedBox(height: 4),
+          figmaText('Your photo is stored on this device.', size: 13, weight: FontWeight.w400, color: p.body),
+          const SizedBox(height: 12),
+          ListTile(leading: Icon(Icons.photo_library_outlined, color: p.ember),
+            title: figmaText('Choose photo', size: 15, weight: FontWeight.w600, color: p.ink),
+            onTap: () => Navigator.pop(ctx, 'choose')),
+          if (hasPhoto) ListTile(leading: Icon(Icons.delete_outline_rounded, color: p.error),
+            title: figmaText('Remove photo', size: 15, weight: FontWeight.w600, color: p.error),
+            onTap: () => Navigator.pop(ctx, 'remove')),
+        ]),
+      )),
+    );
+    if (!mounted || choice == null) return;
+    if (choice == 'remove') {
+      final ok = await ref.read(avatarProvider.notifier).remove();
+      if (mounted) _toast(ok ? 'Profile photo removed' : 'Could not remove the photo. Please try again.');
+      return;
+    }
+    try {
+      final file = await ImagePicker().pickImage(source: ImageSource.gallery,
+          maxWidth: 512, maxHeight: 512, imageQuality: 75);
+      if (file != null) await _savePickedPhoto(file);
+    } catch (_) {
+      if (mounted) _toast('Could not open photos. Please check permission and try again.');
+    }
   }
 
   /// Bottom sheet: edit display name + ritual motto (real, persisted, and
@@ -756,6 +831,7 @@ class _PreviewShellState extends ConsumerState<PreviewShell> {
             syncSubtitle: 'Stored on this device · private & safe',
             onShare: _shareApp,
             onEdit: _showProfileSheet,
+            onAvatarTap: _showAvatarSheet,
             onStatTap: (_) => _go(_Stage.progress),
             onPersonalDetails: _showProfileSheet,
             onCloudSync: () => _toast(

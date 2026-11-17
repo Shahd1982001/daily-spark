@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:daily_spark/state/avatar_provider.dart';
+import 'package:daily_spark/design_system/widgets/user_avatar.dart';
 
 import 'package:daily_spark/design_system/theme/spark_palette.dart';
 import 'dart:ui';
@@ -7,7 +10,7 @@ import 'package:daily_spark/design_system/widgets/design_canvas.dart' show figma
 
 /// Frosted floating top bar shared by the app shell screens.
 /// Figma: 390 × 64, brand lockup on the left, avatar on the right.
-class AppTopBar extends StatelessWidget {
+class AppTopBar extends ConsumerWidget {
   const AppTopBar({
     super.key,
     required this.scale,
@@ -18,7 +21,6 @@ class AppTopBar extends StatelessWidget {
     this.showSettings = false,
     this.onSettings,
     this.onProfile,
-    this.hasAvatar = true,
   });
 
   final double scale;
@@ -30,13 +32,10 @@ class AppTopBar extends StatelessWidget {
   final VoidCallback? onSettings;
   final VoidCallback? onProfile;
 
-  /// Whether the user has a profile picture — same source as the Profile
-  /// screen; without one the designed spark mark shows instead.
-  final bool hasAvatar;
-
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final s = scale;
+    final avatar = ref.watch(avatarProvider);
     return ClipRect(
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 12 * s, sigmaY: 12 * s),
@@ -130,16 +129,7 @@ class AppTopBar extends StatelessWidget {
                         Positioned(
                           left: 6 * s,
                           top: 6 * s,
-                          child: ClipOval(
-                            child: Image.asset(
-                              hasAvatar
-                                  ? 'assets/brand/avatar_shahd.png'
-                                  : 'assets/brand/spark_logo.png',
-                              width: hasAvatar ? 32 * s : 22 * s,
-                              height: hasAvatar ? 32 * s : 22 * s,
-                              filterQuality: FilterQuality.high,
-                            ),
-                          ),
+                          child: UserAvatar(bytes: avatar, size: 32 * s),
                         ),
                         Positioned(
                           left: 28 * s,

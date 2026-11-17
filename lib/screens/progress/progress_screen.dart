@@ -94,7 +94,7 @@ class _ProgressScreenState extends ConsumerState<ProgressScreen> {
             child: AppTopBar(
               scale: s,
               title: 'Progress',
-              hasAvatar: ref.watch(userNameProvider) != null,
+
               brandColor: p.emberDeep,
               showBell: true,
               onBell: widget.onBell,
