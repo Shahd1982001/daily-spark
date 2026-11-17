@@ -454,3 +454,7 @@ name, email, password — plus the session (`none / guest / account`).
 - Removed the earlier generated pose/frame assets and rigs from the current app; retained the chosen original `spark.png` as the sole mascot artwork. The nav-bar pet is temporarily still and fixed at 76 logical pixels. Old assets remain in previous Git history, not in the current app.
 - Paused movement, dragging, falling, animated expressions and celebration while the new image sequences are planned. Habit data, missed-day mood state, and locally earned treats remain; tapping can comfort/feed with text feedback. These are placeholders, not final interactions.
 - The next implementation should use carefully registered, consistently sized illustrated frames for each action, starting with walking, and be reviewed by the user before subsequent actions.
+
+### New mascot sequence: standing blink
+- Started over using the chosen original artwork. Blink uses the original open frame and three painted eye-only frames, then plays them in reverse; all frames share the same 546×600 canvas and alpha, and the body, face outside the eye area, and app display size remain unchanged. It blinks roughly every three seconds; no walking or drag animation was restored.
+- Reduced motion shows the original still. Frame-order/size widget tests pass; browser checks confirm frame assets load and actual pixels change. Awaiting user approval before starting the next movement.

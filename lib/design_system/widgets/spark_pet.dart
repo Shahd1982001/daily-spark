@@ -11,7 +11,7 @@ import 'package:daily_spark/state/spark_pet_provider.dart';
 import 'package:daily_spark/state/spark_treats_provider.dart';
 import 'spark_mascot.dart';
 
-/// A still placeholder on the navigation bar while the new character
+/// The pet stays on the navigation bar while the new character
 /// animation is developed. Rewards and missed-day state remain intact.
 class SparkPet extends ConsumerStatefulWidget {
   const SparkPet({super.key, this.progressBar = false});
@@ -84,7 +84,7 @@ class _SparkPetState extends ConsumerState<SparkPet> {
               hint: tr('Tap to comfort or feed.'),
               child: GestureDetector(behavior: HitTestBehavior.opaque,
                 onTap: () => _interact(missed, sad),
-                child: const SparkMascot(size: size),
+                child: const SparkMascot(size: size, blink: true),
               )),
             if (treats.items.isNotEmpty)
               Positioned(right: 0, top: 1, child: IgnorePointer(child: Container(
