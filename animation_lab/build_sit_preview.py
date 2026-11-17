@@ -11,11 +11,18 @@ curve=np.interp(np.arange(w),[0,70,100,130,160,190,230,273,316,356,386,416,446,4
 legs=((x>130)&(x<260))|((x>286)&(x<416))
 body_a=a.copy();body_a[:,:,3]=np.where(legs & (y>curve),0,body_a[:,:,3]);body=Image.fromarray(body_a)
 feet_a=a.copy();feet_a[:,:,3]=np.where(legs & (y>curve-14),feet_a[:,:,3],0);standing_feet=Image.fromarray(feet_a)
-src=cv2.imread(str(root/'animation_lab/sitting_source.png'));m=(cv2.cvtColor(src,cv2.COLOR_BGR2GRAY)<150).astype('uint8')*255
-c=max(cv2.findContours(m,cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_SIMPLE)[0],key=cv2.contourArea);m[:]=0;cv2.drawContours(m,[c],-1,255,cv2.FILLED);m=cv2.dilate(m,np.ones((3,3),np.uint8));rgb=cv2.cvtColor(src,cv2.COLOR_BGR2RGBA);rgb[:,:,3]=m;pose=Image.fromarray(rgb)
-seated=Image.new('RGBA',pose.size);seated.paste(pose.crop((300,655,480,790)),(300,655));seated.paste(pose.crop((545,655,725,790)),(545,655))
+def legs_from_art(filename):
+ src=cv2.imread(str(root/'animation_lab'/filename));m=(cv2.cvtColor(src,cv2.COLOR_BGR2GRAY)<150).astype('uint8')*255
+ c=max(cv2.findContours(m,cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_SIMPLE)[0],key=cv2.contourArea)
+ m[:]=0;cv2.drawContours(m,[c],-1,255,cv2.FILLED);m=cv2.dilate(m,np.ones((3,3),np.uint8))
+ rgb=cv2.cvtColor(src,cv2.COLOR_BGR2RGBA);rgb[:,:,3]=m;pose=Image.fromarray(rgb)
+ legs=Image.new('RGBA',pose.size)
+ legs.paste(pose.crop((300,655,480,790)),(300,655));legs.paste(pose.crop((545,655,725,790)),(545,655))
+ layer=Image.new('RGBA',(546,640));layer.alpha_composite(legs,(-238,-171))
+ return layer
 stand_layer=Image.new('RGBA',(546,640));stand_layer.alpha_composite(standing_feet,(0,30))
-sit_layer=Image.new('RGBA',(546,640));sit_layer.alpha_composite(seated,(-238,-171))
+bend_layer=legs_from_art('sitting_bend_source.png')
+sit_layer=legs_from_art('sitting_source.png')
 def sample_contour(image, side):
     from scipy.spatial import Delaunay
     arr=np.asarray(image).copy()
@@ -33,8 +40,7 @@ def sample_contour(image, side):
     pts=np.vstack([pts,np.mean(pts,axis=0)])
     return arr,pts
 
-stand_legs={side:sample_contour(stand_layer,side) for side in ['left','right']}
-sit_legs={side:sample_contour(sit_layer,side) for side in ['left','right']}
+stages=[{side:sample_contour(layer,side) for side in ['left','right']} for layer in (stand_layer,bend_layer,sit_layer)]
 def warp_triangles(image,source,dest):
     from scipy.spatial import Delaunay
     shape=image.shape;result=np.zeros(shape,np.uint8)
@@ -47,12 +53,12 @@ def warp_triangles(image,source,dest):
         result[mask>0]=warped[mask>0]
     return result
 
-def blend(a,b,t):
+def blend(stage_a,stage_b,t):
     # Morph the two leg silhouettes to the same intermediate shape before
     # blending, rather than showing both pairs of feet at once.
     composite=Image.new('RGBA',(546,640))
     for side in ['left','right']:
-        ai,ap=stand_legs[side];bi,bp=sit_legs[side];dp=ap*(1-t)+bp*t
+        ai,ap=stages[stage_a][side];bi,bp=stages[stage_b][side];dp=ap*(1-t)+bp*t
         wa=warp_triangles(ai,ap,dp).astype(np.float32)/255
         wb=warp_triangles(bi,bp,dp).astype(np.float32)/255
         aa=wa[:,:,3:];ab=wb[:,:,3:];alpha=aa*(1-t)+ab*t
@@ -62,20 +68,25 @@ def blend(a,b,t):
     return composite
 
 paths=[]
-for i in range(12):
- t=i/11;s=t*t*(3-2*t)
+for i in range(20):
+ t=i/19
+ # A distinct bend stage before easing down into the seated pose.
+ if t <= .58:
+  q=t/.58; s=q*q*(3-2*q); stage_a,stage_b=0,1; body_y=30+round(17*s)
+ else:
+  q=(t-.58)/.42; s=q*q*(3-2*q); stage_a,stage_b=1,2; body_y=47+round(13*s)
  frame=Image.new('RGBA',(546,640))
  if i==0: frame.alpha_composite(base,(0,30))
  else:
-  frame.alpha_composite(blend(stand_layer,sit_layer,s))
-  frame.alpha_composite(body,(0,30+round(30*s)))
+  frame.alpha_composite(blend(stage_a,stage_b,s))
+  frame.alpha_composite(body,(0,body_y))
  frame.thumbnail((355,416),Image.Resampling.LANCZOS)
- p=out/f'sit_{i:02}.png';frame.save(p,optimize=True);paths.append(p)
+ p=out/f'v2_sit_{i:02}.png';frame.save(p,optimize=True);paths.append(p)
 data=['data:image/png;base64,'+base64.b64encode(p.read_bytes()).decode() for p in paths]
 html='''<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>معاينة حركة القعدة</title><style>
 :root{font-family:system-ui,-apple-system,sans-serif;color:#382b26;background:#fbf6ef}*{box-sizing:border-box}body{margin:0;display:grid;place-items:center;min-height:100svh;padding:18px}.card{width:min(100%,460px);background:#fff;border:1px solid #f0e3d6;border-radius:28px;padding:24px;text-align:center;box-shadow:0 12px 35px #8a563315} .badge{color:#b3582d;background:#fff0e3;border-radius:99px;padding:7px 14px;display:inline-block;font-weight:700;font-size:13px}h1{font-size:24px;margin:16px 0 8px}p{font-size:15px;line-height:1.8;color:#756158;margin:0}.stage{height:310px;display:flex;align-items:flex-end;justify-content:center;position:relative;margin:8px auto 0}.stage:after{content:"";position:absolute;bottom:15px;width:88%;height:8px;border-radius:50%;background:#e7d5c6;z-index:0}img{position:relative;z-index:1;width:235px;height:276px;object-fit:contain;margin-bottom:7px}button{background:#bd603a;color:white;border:0;border-radius:99px;font:700 16px system-ui;padding:13px 25px;cursor:pointer;margin-top:18px}button:focus-visible{outline:3px solid #916541;outline-offset:3px}.note{font-size:13px;margin-top:16px} .count{margin-top:10px;color:#a57054;font-size:12px}
-</style></head><body><main class="card"><span class="badge">معاينة منفصلة • مش داخل التطبيق</span><h1>حركة القعدة</h1><p>مخلوقك يوقف شوية، وبعدها يقعد.</p><div class="stage"><img id="pet" alt="مخلوقك من الوقفة إلى القعدة"></div><button id="replay">شغّلي الحركة من جديد ↻</button><p class="note">تجربة أولى للقعدة فقط؛ الوقوف من القعدة نخدموه بعد موافقتك.</p><div class="count">سلسلة من ١٢ صورة • الحجم ثابت</div></main><script>
-const frames=FRAMES;const img=document.getElementById('pet');let timers=[];function run(){timers.forEach(clearTimeout);timers=[];img.src=frames[0];for(let i=1;i<frames.length;i++)timers.push(setTimeout(()=>{img.src=frames[i]},650+i*105));}document.getElementById('replay').onclick=run;if(matchMedia('(prefers-reduced-motion: reduce)').matches){img.src=frames[0]}else{run();}
+</style></head><body><main class="card"><span class="badge">معاينة منفصلة • مش داخل التطبيق</span><h1>حركة القعدة</h1><p>مخلوقك يوقف شوية، وبعدها يقعد.</p><div class="stage"><img id="pet" alt="مخلوقك من الوقفة إلى القعدة"></div><button id="replay">شغّلي الحركة من جديد ↻</button><p class="note">تجربة معدّلة للقعدة فقط؛ الوقوف من القعدة نخدموه بعد موافقتك.</p><div class="count">سلسلة من ٢٠ صورة • الحجم ثابت</div></main><script>
+const frames=FRAMES;const img=document.getElementById('pet');let timers=[];function run(){timers.forEach(clearTimeout);timers=[];img.src=frames[0];for(let i=1;i<frames.length;i++)timers.push(setTimeout(()=>{img.src=frames[i]},650+i*85));}document.getElementById('replay').onclick=run;if(matchMedia('(prefers-reduced-motion: reduce)').matches){img.src=frames[0]}else{run();}
 </script></body></html>'''.replace('FRAMES',json.dumps(data))
-(root/'web_extra'/'spark-sit-preview.html').write_text(html,encoding='utf-8')
+(root/'web_extra'/'spark-sit-preview-v2.html').write_text(html,encoding='utf-8')
 print('preview bytes',len(html))

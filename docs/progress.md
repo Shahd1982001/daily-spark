@@ -466,3 +466,7 @@ name, email, password — plus the session (`none / guest / account`).
 ### Separate sit preview (not integrated)
 - At the user's request, new motion work goes into a separate preview, and is not added to the app until the whole set has been approved. The sit prototype is a self-contained `web_extra/spark-sit-preview.html`, with twelve offline-generated in-between PNGs and the original face/body kept at the same scale. The endpoint is an experimental seated pose; interpolation is a draft and needs the user's review.
 - The existing in-app blink/look remains unchanged. Sit-to-stand and the rest of the group are not done; treat the preview as unapproved. The replay button and frame loading were checked in a browser. The separate HTML is published alongside the app without changing app behavior.
+
+### Sit preview revision (separate, unapproved)
+- User requested a more realistic sit. Added a separate v2 preview: twenty registered frames include a distinct knee-bend stage, followed by lowering into the sit, while retaining the original face/body proportions. Leg contours are computationally interpolated between posed references and can still distort; this is a draft for review, not a claim of professional hand-drawn animation.
+- The v2 preview is standalone, not integrated into the app. Browser smoke test verifies animation advances and replay works. User approval remains pending.
