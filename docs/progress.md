@@ -470,3 +470,7 @@ name, email, password — plus the session (`none / guest / account`).
 ### Sit preview revision (separate, unapproved)
 - User requested a more realistic sit. Added a separate v2 preview: twenty registered frames include a distinct knee-bend stage, followed by lowering into the sit, while retaining the original face/body proportions. Leg contours are computationally interpolated between posed references and can still distort; this is a draft for review, not a claim of professional hand-drawn animation.
 - The v2 preview is standalone, not integrated into the app. Browser smoke test verifies animation advances and replay works. User approval remains pending.
+
+### Sit preview v3 — feet forward, still a draft
+- User rejected v2 as unnatural and selected a seated pose with the feet forward. Made a separate v3 experiment with 24 exported frames, original face/body art retained at fixed scale, feet emerging forward as the body lowers. The transition is computationally generated between pose elements, not 24 independently hand-drawn poses, so its naturalness must be judged by the user; no claim of final quality.
+- No app behavior changed. The stand-up movement and other idle actions remain pending. Browser smoke test confirms frames change and replay works.
