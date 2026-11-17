@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:daily_spark/data/models/day.dart';
@@ -12,134 +11,37 @@ import 'package:daily_spark/state/spark_pet_provider.dart';
 import 'package:daily_spark/state/spark_treats_provider.dart';
 import 'spark_mascot.dart';
 
-enum _PetAction { idle, walking, held, falling, waving, turnAndHeart }
-
-/// A small pet that walks above the bottom navigation. The pet's own hitbox is
-/// draggable; empty overlay space does not intercept the app's other controls.
+/// A still placeholder on the navigation bar while the new character
+/// animation is developed. Rewards and missed-day state remain intact.
 class SparkPet extends ConsumerStatefulWidget {
   const SparkPet({super.key, this.progressBar = false});
   final bool progressBar;
-  @override ConsumerState<SparkPet> createState() => _SparkPetState();
+  @override
+  ConsumerState<SparkPet> createState() => _SparkPetState();
 }
 
-class _SparkPetState extends ConsumerState<SparkPet> with TickerProviderStateMixin {
-  late final AnimationController _walk = AnimationController(vsync: this, duration: const Duration(seconds: 5));
-  late final AnimationController _walkCycle = AnimationController(vsync: this, duration: const Duration(milliseconds: 1280));
-  late final AnimationController _fall = AnimationController(vsync: this, duration: const Duration(milliseconds: 700));
-  late final AnimationController _life = AnimationController(vsync: this, duration: const Duration(milliseconds: 700));
-  late final AnimationController _idleMotion = AnimationController(vsync: this, duration: const Duration(milliseconds: 4800));
-  static const _stops = [.15, .82, .35, .72, .08, .62];
-  double _fromX = .72, _toX = .72, _y = 1, _fallFrom = 1;
-  int _stop = 0, _idleCount = 0;
-  bool _reducedMotion = false, _delighted = false, _hurt = false, _framesCached = false;
-  _PetAction _action = _PetAction.idle;
-  SparkTreat? _eating;
+class _SparkPetState extends ConsumerState<SparkPet> {
   String? _message;
-  Timer? _messageTimer, _idleTimer;
-
-  double get _x => _action == _PetAction.walking
-      ? _fromX + (_toX - _fromX) * Curves.easeInOut.transform(_walk.value) : _fromX;
-  double get _currentY => _action == _PetAction.falling
-      ? _fallFrom + (1 - _fallFrom) * Curves.easeIn.transform(_fall.value) : _y;
-
+  Timer? _messageTimer;
   @override
-  void initState() {
-    super.initState();
-    _walk.addStatusListener((status) {
-      if (status != AnimationStatus.completed || _action != _PetAction.walking || !mounted) return;
-      _fromX = _toX;
-      _walkCycle.stop();
-      _scheduleIdle();
-    });
-    _fall.addStatusListener((status) {
-      if (status != AnimationStatus.completed || _action != _PetAction.falling || !mounted) return;
-      _landAfterFall();
-    });
-  }
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    if (!_framesCached) {
-      _framesCached = true;
-      for (final name in [...List.generate(16, (i) => 'walk_cycle_${i.toString().padLeft(2, '0')}'), ...const ['wave_mid', 'wave_alt', 'jump', 'back_quarter', 'back', 'heart', 'cookie_open', 'cookie_bite']]) {
-        precacheImage(AssetImage('assets/mascot/frames/$name.png'), context);
-      }
-    }
-    final reduced = MediaQuery.maybeOf(context)?.disableAnimations ?? false;
-    if (reduced != _reducedMotion || (!_walk.isAnimating && _idleTimer == null && _action == _PetAction.idle)) {
-      _reducedMotion = reduced;
-      if (reduced) {
-        _fromX = _x;
-        _y = _currentY;
-        _walk.stop(); _walkCycle.stop(); _fall.stop(); _life.stop(); _idleMotion.stop();
-        _idleTimer?.cancel(); _idleTimer = null;
-        if (_action == _PetAction.falling) { _y = 1; _hurt = true; }
-        _action = _PetAction.idle;
-      } else {
-        _life.repeat();
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          if (mounted && !_reducedMotion && _action == _PetAction.idle) _beginWalking();
-        });
-      }
-    }
-  }
-  @override
-  void dispose() { _messageTimer?.cancel(); _idleTimer?.cancel(); _walk.dispose(); _walkCycle.dispose(); _fall.dispose(); _life.dispose(); _idleMotion.dispose(); super.dispose(); }
+  void dispose() { _messageTimer?.cancel(); super.dispose(); }
 
-  void _scheduleIdle() {
-    _idleTimer?.cancel();
-    if (!mounted) return;
-    if (_reducedMotion) { setState(() => _action = _PetAction.idle); return; }
-    _idleCount++;
-    setState(() => _action = switch (_idleCount % 3) {
-      0 => _PetAction.turnAndHeart, 1 => _PetAction.waving, _ => _PetAction.idle,
-    });
-    _idleMotion.forward(from: 0);
-    final pause = switch (_action) {
-      _PetAction.idle => const Duration(milliseconds: 1600),
-      _PetAction.waving => const Duration(milliseconds: 3200),
-      _ => const Duration(milliseconds: 4800),
-    };
-    _idleTimer = Timer(pause, _beginWalking);
-  }
-
-  void _beginWalking() {
-    _idleTimer = null;
-    if (!mounted || _reducedMotion || _eating != null || _action == _PetAction.held || _action == _PetAction.falling) {
-      if (mounted && !_reducedMotion && _eating != null) _scheduleIdle();
-      return;
-    }
-    _toX = _stops[_stop++ % _stops.length];
-    setState(() => _action = _PetAction.walking);
-    _walkCycle.repeat();
-    _walk.forward(from: 0);
-  }
-
-  void _speak(String text, {bool delight = false, SparkTreat? eating}) {
+  void _speak(String text) {
     _messageTimer?.cancel();
-    setState(() { _message = text; _delighted = delight; _eating = eating; });
+    setState(() => _message = text);
     _messageTimer = Timer(const Duration(seconds: 4), () {
-      if (mounted) setState(() { _message = null; _delighted = false; _eating = null; });
+      if (mounted) setState(() => _message = null);
     });
-  }
-
-  void _landAfterFall() {
-    _y = 1;
-    _hurt = true;
-    _speak(tr('Oh! A gentle pat, please 🥺'));
-    _scheduleIdle();
   }
 
   Future<void> _interact(DateTime? missed, bool sad) async {
-    final inventory = ref.read(sparkTreatsProvider);
-    if (inventory.items.isNotEmpty) {
+    if (ref.read(sparkTreatsProvider).items.isNotEmpty) {
       try {
         final treat = await ref.read(sparkTreatsProvider.notifier).feed();
         if (!mounted) return;
         if (treat != null) {
           if (sad && missed != null) ref.read(sparkPetMoodProvider.notifier).comfort(missed);
-          _hurt = false;
-          _speak(tr('Yummy! Thank you 💛'), delight: true, eating: treat);
+          _speak(tr('Yummy! Thank you 💛'));
           return;
         }
       } catch (_) {
@@ -148,12 +50,11 @@ class _SparkPetState extends ConsumerState<SparkPet> with TickerProviderStateMix
       }
     }
     if (!mounted) return;
-    if (sad && missed != null) ref.read(sparkPetMoodProvider.notifier).comfort(missed);
-    if (_hurt || sad) {
-      _hurt = false;
-      _speak(tr('Thank you! Let us try again together 💛'), delight: true);
+    if (sad && missed != null) {
+      ref.read(sparkPetMoodProvider.notifier).comfort(missed);
+      _speak(tr('Thank you! Let us try again together 💛'));
     } else {
-      _speak(tr('Hehe! I am happy you are here ✨'), delight: true);
+      _speak(tr('Hehe! I am happy you are here ✨'));
     }
   }
 
@@ -162,134 +63,50 @@ class _SparkPetState extends ConsumerState<SparkPet> with TickerProviderStateMix
     ref.listen(completionCelebrationProvider, (previous, next) {
       if (next == null || identical(previous, next)) return;
       final reward = next.rewardName;
-      final msg = reward == 'cookie' ? tr('A cookie for Spark! Tap to feed 🍪')
-          : reward == 'cake' ? tr('Cake for Spark! Tap to feed 🍰') : tr('Yay! You did it! ✨');
-      _speak(msg, delight: true);
+      _speak(reward == 'cookie' ? tr('A cookie for Spark! Tap to feed 🍪')
+          : reward == 'cake' ? tr('Cake for Spark! Tap to feed 🍰') : tr('Yay! You did it! ✨'));
     });
     final snapshot = ref.watch(habitsProvider).valueOrNull;
     final today = ref.watch(calendarDayProvider);
     final mood = ref.watch(sparkPetMoodProvider);
     final treats = ref.watch(sparkTreatsProvider);
     final missed = snapshot == null ? null : latestMissedDay(snapshot, today);
-    final sad = (_hurt || (mood.loaded && missed != null && mood.calmedDay != dayKey(missed))) && !_delighted;
-    final media = MediaQuery.of(context);
+    final sad = mood.loaded && missed != null && mood.calmedDay != dayKey(missed);
     const size = 76.0;
     return LayoutBuilder(builder: (context, constraints) {
       final scale = (constraints.maxWidth / 390).clamp(.86, 1.25);
-      final maxX = (constraints.maxWidth - size).clamp(0.0, double.infinity);
-      // The Progress bar is taller and sits slightly higher than the other bars.
-      final ground = (constraints.maxHeight - (widget.progressBar ? 86 : 76) * scale - size).clamp(0.0, constraints.maxHeight);
-      final ceiling = math.min(media.padding.top + 64, ground);
-      final travelY = (ground - ceiling).clamp(0.0, double.infinity);
-      return AnimatedBuilder(animation: Listenable.merge([_walk, _walkCycle, _fall, _life, _idleMotion]), builder: (context, _) {
-        final x = _x;
-        final y = _currentY;
-        Widget art;
-        if (_eating != null) {
-          if (_eating == SparkTreat.cookie && !_reducedMotion) {
-            art = _sprite(_life.value < .5 ? 'cookie_open' : 'cookie_bite', size);
-          } else {
-            final asset = _eating == SparkTreat.cookie ? 'spark_eat.png' : 'spark_cake.png';
-            art = Image.asset('assets/mascot/$asset', width: size, height: size, fit: BoxFit.contain);
-          }
-        } else if (_delighted) {
-          art = const SparkMascot(size: size, animate: true, celebrating: true);
-        } else if (sad || _action == _PetAction.held || _action == _PetAction.falling) {
-          art = SparkMascot(size: size, animate: true, concerned: sad);
-        } else if (_action == _PetAction.walking) {
-          final index = (_walkCycle.value * 16).floor().clamp(0, 15);
-          final frame = 'walk_cycle_${index.toString().padLeft(2, '0')}';
-          art = Transform.flip(flipX: _toX > _fromX, child: _sprite(frame, size));
-        } else if (_action == _PetAction.waving) {
-          final t = _idleMotion.value;
-          if (t < .12 || t > .88) {
-            art = const SparkMascot(size: size, animate: true);
-          } else {
-            final frame = ((t * 8).floor().isEven) ? 'wave_mid' : 'wave_alt';
-            art = _sprite(frame, size);
-          }
-        } else if (_action == _PetAction.turnAndHeart) {
-          final t = _idleMotion.value;
-          if (t < .09) {
-            art = const SparkMascot(size: size, animate: true);
-          } else if (t < .24) {
-            art = Transform.translate(offset: Offset(0, -13 * math.sin(math.pi * (t - .09) / .15)),
-              child: _sprite('jump', size));
-          } else if (t < .32) {
-            art = _sprite('back_quarter', size);
-          } else if (t < .50) {
-            art = _sprite('back', size);
-          } else if (t < .58) {
-            art = _sprite('back_quarter', size);
-          } else if (t < .73) {
-            art = Transform.translate(offset: Offset(0, -13 * math.sin(math.pi * (t - .58) / .15)),
-              child: _sprite('jump', size));
-          } else {
-            art = _sprite('heart', size);
-          }
-        } else {
-          art = const SparkMascot(size: size, animate: true);
-        }
-        return Stack(clipBehavior: Clip.none, children: [
-          Positioned(left: x * maxX, top: ceiling + y * travelY, width: size, height: size,
-            child: Stack(clipBehavior: Clip.none, children: [
-              Semantics(button: true, label: tr('Spark, your little companion'),
-                hint: tr('Tap to comfort or feed. Drag to move.'),
-                child: GestureDetector(behavior: HitTestBehavior.opaque,
-                  onTap: () => _interact(missed, sad),
-                  onPanStart: (_) {
-                    _fromX = _x; _y = _currentY;
-                    _walk.stop(); _walkCycle.stop(); _fall.stop(); _idleMotion.stop(); _idleTimer?.cancel(); _idleTimer = null;
-                    setState(() => _action = _PetAction.held);
-                  },
-                  onPanUpdate: (details) => setState(() {
-                    _fromX = (_fromX + (maxX == 0 ? 0 : details.delta.dx / maxX)).clamp(0.0, 1.0);
-                    _y = (_y + (travelY == 0 ? 0 : details.delta.dy / travelY)).clamp(0.0, 1.0);
-                  }),
-                  onPanEnd: (_) => _release(), onPanCancel: _release,
-                  child: art,
-                ),
-              ),
-              if (treats.items.isNotEmpty)
-                Positioned(right: 0, top: 1, child: IgnorePointer(child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
-                  decoration: BoxDecoration(color: p.surface, borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: p.ember.withValues(alpha: .5))),
-                  child: Text('🍪 ${treats.items.length}', style: TextStyle(fontSize: 10, color: p.ink,
-                    decoration: TextDecoration.none)),
-                ))),
-              if (_message != null)
-                Positioned(bottom: size - 4, left: x > .5 ? -118 : 30,
-                  child: IgnorePointer(child: Container(width: 160,
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
-                    decoration: BoxDecoration(color: p.surface,
-                      border: Border.all(color: p.ember.withValues(alpha: .3)),
-                      borderRadius: BorderRadius.circular(14),
-                      boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: .12), blurRadius: 6)]),
-                    child: Text(_message!, textAlign: TextAlign.center,
-                      style: TextStyle(fontFamily: 'PlusJakartaSans', fontSize: 11, height: 1.35,
-                        fontWeight: FontWeight.w600, decoration: TextDecoration.none, color: p.ink)),
-                  ))),
-            ])),
-        ]);
-      });
+      final x = (constraints.maxWidth - size).clamp(0.0, double.infinity) * .72;
+      final bottom = (widget.progressBar ? 86 : 76) * scale;
+      return Stack(clipBehavior: Clip.none, children: [
+        Positioned(left: x, bottom: bottom, width: size, height: size,
+          child: Stack(clipBehavior: Clip.none, children: [
+            Semantics(button: true, label: tr('Spark, your little companion'),
+              hint: tr('Tap to comfort or feed.'),
+              child: GestureDetector(behavior: HitTestBehavior.opaque,
+                onTap: () => _interact(missed, sad),
+                child: const SparkMascot(size: size),
+              )),
+            if (treats.items.isNotEmpty)
+              Positioned(right: 0, top: 1, child: IgnorePointer(child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
+                decoration: BoxDecoration(color: p.surface, borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: p.ember.withValues(alpha: .5))),
+                child: Text('🍪 ${treats.items.length}', style: TextStyle(fontSize: 10, color: p.ink,
+                  decoration: TextDecoration.none)),
+              ))),
+            if (_message != null)
+              Positioned(bottom: size - 4, left: -118, child: IgnorePointer(child: Container(
+                width: 160, padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
+                decoration: BoxDecoration(color: p.surface,
+                  border: Border.all(color: p.ember.withValues(alpha: .3)),
+                  borderRadius: BorderRadius.circular(14),
+                  boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: .12), blurRadius: 6)]),
+                child: Text(_message!, textAlign: TextAlign.center,
+                  style: TextStyle(fontFamily: 'PlusJakartaSans', fontSize: 11, height: 1.35,
+                    fontWeight: FontWeight.w600, decoration: TextDecoration.none, color: p.ink)),
+              ))),
+          ])),
+      ]);
     });
   }
-
-  void _release() {
-    if (_y < .98) {
-      if (_reducedMotion) { _landAfterFall(); return; }
-      _fallFrom = _y;
-      setState(() => _action = _PetAction.falling);
-      _fall.forward(from: 0);
-    } else {
-      _y = 1;
-      _scheduleIdle();
-    }
-  }
 }
-
-Widget _sprite(String name, double size) => Image.asset(
-  'assets/mascot/frames/$name.png', width: size, height: size,
-  fit: BoxFit.contain, excludeFromSemantics: true,
-);

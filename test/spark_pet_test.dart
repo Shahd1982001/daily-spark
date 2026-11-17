@@ -6,6 +6,7 @@ import 'package:daily_spark/design_system/widgets/spark_mascot.dart';
 import 'package:daily_spark/design_system/widgets/spark_pet.dart';
 import 'package:daily_spark/state/habit_providers.dart';
 import 'package:daily_spark/state/spark_pet_provider.dart';
+import 'package:daily_spark/state/spark_treats_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -13,38 +14,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
-  testWidgets('pet can be dragged and comforted without marking habit complete', (tester) async {
-    SharedPreferences.setMockInitialValues({});
-    tester.view.physicalSize = const Size(390, 844);
-    tester.view.devicePixelRatio = 1;
-    addTearDown(tester.view.reset);
-    final c=ProviderContainer(overrides: [habitStoreProvider.overrideWithValue(MemoryHabitStore())]);
-    addTearDown(c.dispose);
-    await c.read(habitsProvider.future);
-    final today=dayOnly(DateTime.now());
-    await c.read(habitsProvider.notifier).addHabit(Habit(id:'a', title:'Read', createdAt:addCalendarDays(today,-2)));
-    await tester.pumpWidget(UncontrolledProviderScope(container:c,
-      child: SparkThemeScope(palette:SparkPalette.light,
-        child: const MaterialApp(home: MediaQuery(data: MediaQueryData(size: Size(390,844), disableAnimations:true),
-          child: Scaffold(body: SparkPet()))))));
-    await tester.pump(const Duration(milliseconds:100));
-    await tester.pump(const Duration(milliseconds:100));
-    expect(tester.widget<SparkMascot>(find.byType(SparkMascot)).concerned, isTrue);
-    final before=tester.getCenter(find.byType(SparkMascot));
-    await tester.drag(find.byType(SparkMascot), const Offset(-90, 30));
-    await tester.pump();
-    final after=tester.getCenter(find.byType(SparkMascot));
-    expect(after.dx, lessThan(before.dx - 60));
-    await tester.tap(find.byType(SparkMascot));
-    await tester.pump(const Duration(milliseconds:100));
-    expect(tester.widget<SparkMascot>(find.byType(SparkMascot)).celebrating, isTrue);
-    expect(c.read(habitsProvider).value!.isCompleted('a', addCalendarDays(today,-1)), isFalse);
-    expect(c.read(sparkPetMoodProvider).calmedDay, dayKey(addCalendarDays(today,-1)));
-    await tester.pump(const Duration(seconds:5));
-    expect(tester.widget<SparkMascot>(find.byType(SparkMascot)).concerned, isFalse);
-    expect(tester.takeException(), isNull);
-  });
-  testWidgets('lifting and releasing lands sadly; a tap comforts, even with reduced motion', (tester) async {
+  testWidgets('original mascot stays the same size and still; tapping comforts', (tester) async {
     SharedPreferences.setMockInitialValues({});
     tester.view.physicalSize = const Size(390, 844);
     tester.view.devicePixelRatio = 1;
@@ -52,54 +22,37 @@ void main() {
     final c = ProviderContainer(overrides: [habitStoreProvider.overrideWithValue(MemoryHabitStore())]);
     addTearDown(c.dispose);
     await c.read(habitsProvider.future);
+    final today = dayOnly(DateTime.now());
+    await c.read(habitsProvider.notifier).addHabit(Habit(id: 'a', title: 'Read', createdAt: addCalendarDays(today, -2)));
     await tester.pumpWidget(UncontrolledProviderScope(container: c,
-      child: SparkThemeScope(palette: SparkPalette.light,
-        child: const MaterialApp(home: MediaQuery(data: MediaQueryData(size: Size(390, 844), disableAnimations: true),
-          child: Scaffold(body: SparkPet()))))));
+      child: SparkThemeScope(palette: SparkPalette.light, child: const MaterialApp(home: Scaffold(body: SparkPet())))));
     await tester.pump(const Duration(milliseconds: 100));
-    final before = tester.getCenter(find.byType(SparkMascot));
-    await tester.drag(find.byType(SparkMascot), const Offset(0, -180));
-    await tester.pump();
-    expect(tester.getCenter(find.byType(SparkMascot)).dy, closeTo(before.dy, 1));
-    expect(tester.widget<SparkMascot>(find.byType(SparkMascot)).concerned, isTrue);
-    await tester.tap(find.byType(SparkMascot));
-    await tester.pump();
-    expect(tester.widget<SparkMascot>(find.byType(SparkMascot)).celebrating, isTrue);
+    final mascot = find.byType(SparkMascot);
+    final pos = tester.getTopLeft(mascot), size = tester.getSize(mascot);
+    final image = tester.widget<Image>(find.descendant(of: mascot, matching: find.byType(Image)));
+    expect((image.image as AssetImage).assetName, 'assets/mascot/spark.png');
+    await tester.pump(const Duration(seconds: 10));
+    expect(tester.getTopLeft(mascot), pos);
+    expect(tester.getSize(mascot), size);
+    await tester.tap(mascot);
+    await tester.pump(const Duration(milliseconds: 100));
+    expect(c.read(sparkPetMoodProvider).calmedDay, dayKey(addCalendarDays(today, -1)));
+    expect(c.read(habitsProvider).value!.isCompleted('a', addCalendarDays(today, -1)), isFalse);
     await tester.pump(const Duration(seconds: 5));
   });
-
-  testWidgets('frame sequences advance from wave to walking and idle turn', (tester) async {
+  testWidgets('treats stay available and can still be fed', (tester) async {
     SharedPreferences.setMockInitialValues({});
-    tester.view.physicalSize = const Size(390, 844);
-    tester.view.devicePixelRatio = 1;
-    addTearDown(tester.view.reset);
     final c = ProviderContainer(overrides: [habitStoreProvider.overrideWithValue(MemoryHabitStore())]);
     addTearDown(c.dispose);
     await c.read(habitsProvider.future);
+    await c.read(sparkTreatsProvider.notifier).award('a', '2026-01-01');
     await tester.pumpWidget(UncontrolledProviderScope(container: c,
-      child: SparkThemeScope(palette: SparkPalette.light,
-        child: const MaterialApp(home: Scaffold(body: SparkPet())))));
-    await tester.pump(const Duration(milliseconds: 200));
-    String? currentFrame() {
-      for (final image in tester.widgetList<Image>(find.byType(Image))) {
-        if (image.image is AssetImage) {
-          final name = (image.image as AssetImage).assetName;
-          if (name.contains('/frames/')) return name;
-        }
-      }
-      return null;
-    }
-    final seen = <String>{};
-    for (var i = 0; i < 360; i++) {
-      await tester.pump(const Duration(milliseconds: 80));
-      final frame = currentFrame();
-      if (frame != null) seen.add(frame);
-    }
-    expect(seen.where((s) => s.contains('/walk_cycle_')).length, 16);
-    expect(seen.any((s) => s.endsWith('/wave_mid.png') || s.endsWith('/wave_alt.png')), isTrue);
-    expect(seen.any((s) => s.endsWith('/jump.png')), isTrue);
-    expect(seen.any((s) => s.endsWith('/back.png')), isTrue);
-    expect(seen.any((s) => s.endsWith('/heart.png')), isTrue);
+      child: SparkThemeScope(palette: SparkPalette.light, child: const MaterialApp(home: Scaffold(body: SparkPet())))));
+    await tester.pump();
+    expect(c.read(sparkTreatsProvider).items.length, 1);
+    await tester.tap(find.byType(SparkMascot));
+    await tester.pump(const Duration(milliseconds: 100));
+    expect(c.read(sparkTreatsProvider).items, isEmpty);
+    await tester.pump(const Duration(seconds: 5));
   });
-
 }

@@ -192,7 +192,7 @@ class Strings {
         'الفرز والتصفية — في قطعة لاحقة ✦',
 
     // Arabic coverage: screen copy, dynamic templates, dates and units.
-    'Tap to comfort or feed. Drag to move.': 'المسها للمواساة أو الإطعام، واسحبها لتحريكها.',
+    'Tap to comfort or feed.': 'المسها للمواساة أو الإطعام.',
     'A cookie for Spark! Tap to feed 🍪': 'بسكوتة لسبارك! اضغط لإطعامها 🍪',
     'Cake for Spark! Tap to feed 🍰': 'قطعة كيك لسبارك! اضغط لإطعامها 🍰',
     'Yummy! Thank you 💛': 'لذيذ! شكراً لك 💛',

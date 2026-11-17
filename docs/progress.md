@@ -449,3 +449,8 @@ name, email, password — plus the session (`none / guest / account`).
 
 ### Walk visibility follow-up
 - User reported the first walk was not visibly moving. Shortened the initial wait by starting the walk immediately, shortened the ordinary pauses, and increased the stride. Browser screenshots confirm horizontal displacement and the walk assets load, but the gait is still generated from one rig rather than drawn as 16 distinct poses; it is not yet approved as a natural walk. Reduced-motion system settings intentionally disable automatic movement.
+
+### Mascot animation reset requested by user
+- Removed the earlier generated pose/frame assets and rigs from the current app; retained the chosen original `spark.png` as the sole mascot artwork. The nav-bar pet is temporarily still and fixed at 76 logical pixels. Old assets remain in previous Git history, not in the current app.
+- Paused movement, dragging, falling, animated expressions and celebration while the new image sequences are planned. Habit data, missed-day mood state, and locally earned treats remain; tapping can comfort/feed with text feedback. These are placeholders, not final interactions.
+- The next implementation should use carefully registered, consistently sized illustrated frames for each action, starting with walking, and be reviewed by the user before subsequent actions.
