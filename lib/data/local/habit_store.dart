@@ -30,19 +30,20 @@ class PrefsHabitStore implements HabitStore {
   Future<Map<String, dynamic>?> read() async {
     final prefs = await _instance;
     final raw = prefs.getString(storageKey);
-    if (raw == null || raw.isEmpty) return null;
-    try {
-      final decoded = jsonDecode(raw);
-      return decoded is Map ? decoded.cast<String, dynamic>() : null;
-    } on FormatException {
-      return null; // Corrupt payload: fall back to a fresh seed.
+    if (raw == null) return null;
+    final decoded = jsonDecode(raw);
+    if (decoded is! Map) {
+      throw const FormatException('Stored habit data is not a JSON object');
     }
+    return decoded.cast<String, dynamic>();
   }
 
   @override
   Future<void> write(Map<String, dynamic> data) async {
     final prefs = await _instance;
-    await prefs.setString(storageKey, jsonEncode(data));
+    if (!await prefs.setString(storageKey, jsonEncode(data))) {
+      throw StateError('Unable to save habit data');
+    }
   }
 
   @override

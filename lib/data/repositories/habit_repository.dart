@@ -131,6 +131,7 @@ class HabitRepository {
   HabitRepository(this._store, {this.seeder = defaultSeeder});
 
   final HabitStore _store;
+  Future<void> _pendingWrite = Future.value();
 
   /// Called once, when there is nothing stored yet.
   final HabitsSnapshot Function(DateTime now) seeder;
@@ -140,15 +141,25 @@ class HabitRepository {
 
   /// Loads the snapshot, seeding the store on first launch.
   Future<HabitsSnapshot> load({DateTime? now}) async {
+    await _pendingWrite;
     final raw = await _store.read();
-    if (raw == null || raw.isEmpty) {
+    if (raw == null) {
       final seeded = seeder(now ?? DateTime.now());
       await save(seeded);
       return seeded;
     }
+    if (raw['habits'] is! List) {
+      throw const FormatException('Stored habit data has no valid habit list');
+    }
     return HabitsSnapshot.fromJson(raw);
   }
 
-  Future<void> save(HabitsSnapshot snapshot) =>
-      _store.write(snapshot.toJson());
+  Future<void> save(HabitsSnapshot snapshot) {
+    // Capture now and write in invocation order. A failed write is reported to
+    // its caller but does not block a subsequent attempt.
+    final data = snapshot.toJson();
+    final write = _pendingWrite.then((_) => _store.write(data));
+    _pendingWrite = write.then<void>((_) {}, onError: (Object _, StackTrace __) {});
+    return write;
+  }
 }

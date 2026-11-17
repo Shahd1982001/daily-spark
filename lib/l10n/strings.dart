@@ -192,6 +192,8 @@ class Strings {
         'الفرز والتصفية — في قطعة لاحقة ✦',
 
     // Arabic coverage: screen copy, dynamic templates, dates and units.
+    'Your habits could not be loaded': 'تعذّر تحميل عاداتك',
+    'Your saved data has not been erased. Please try again.': 'لم يتم مسح بياناتك المحفوظة. حاولي مجدداً.',
     'You did it! Every little step counts ✨': 'أحسنت! كل خطوة صغيرة تصنع فرقاً ✨',
     'Amazing! Your streak is {n} days ✨': 'رائع! سلسلتك وصلت {n} أيام ✨',
     'A little nudge from Spark': 'تذكير لطيف من سبارك',

@@ -126,14 +126,16 @@ class HabitsController extends AsyncNotifier<HabitsSnapshot> {
       habit.planOn(day).targetAmount <= 0 ? 1 : habit.planOn(day).targetAmount;
 
   Future<void> addHabit(Habit habit) async {
-    final current = state.valueOrNull ?? HabitsSnapshot.empty;
+    final current = state.valueOrNull;
+    if (current == null) throw StateError('Habit data is not loaded');
     final next = current.copyWith(habits: [...current.habits, habit]);
     state = AsyncData(next);
     await _repo.save(next);
   }
 
   Future<void> updateHabit(Habit habit, {DateTime? effectiveAt}) async {
-    final current = state.valueOrNull ?? HabitsSnapshot.empty;
+    final current = state.valueOrNull;
+    if (current == null) throw StateError('Habit data is not loaded');
     final old = current.habitById(habit.id);
     if (old == null) return;
     final day = dayOnly(effectiveAt ?? DateTime.now());
@@ -196,7 +198,8 @@ class HabitsController extends AsyncNotifier<HabitsSnapshot> {
   }
 
   Future<void> deleteHabit(String habitId) async {
-    final current = state.valueOrNull ?? HabitsSnapshot.empty;
+    final current = state.valueOrNull;
+    if (current == null) throw StateError('Habit data is not loaded');
     final log = <String, Set<DateTime>>{
       for (final entry in current.log.entries)
         if (entry.key != habitId) entry.key: entry.value,
