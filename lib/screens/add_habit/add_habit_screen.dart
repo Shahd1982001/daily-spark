@@ -519,12 +519,12 @@ class _IdentitySection extends StatelessWidget {
               ),
             ),
           ),
-          // input well (dark frame keeps a raised field here)
+          // Keep the raised text field beside the icon, not painted over it.
           Positioned(
-            left: 16 * s,
-            top: 20 * s,
+            left: 80 * s,
+            top: 10 * s,
             child: Container(
-              width: 326 * s,
+              width: 262 * s,
               height: 76 * s,
               decoration: BoxDecoration(
                 color: p.dark ? p.raised : Colors.transparent,
@@ -539,8 +539,10 @@ class _IdentitySection extends StatelessWidget {
           Positioned(
             left: 88 * s,
             top: 16 * s,
+            width: 232 * s,
             child: figmaText(
               'HABIT TITLE',
+              width: 232 * s,
               size: 10 * s,
               weight: FontWeight.w600,
               letterSpacing: 0.5 * s,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:daily_spark/l10n/strings.dart';
 
 import 'package:daily_spark/design_system/theme/spark_palette.dart';
 
@@ -98,142 +99,93 @@ class SettingsRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final s = scale;
+    Widget trailing() {
+      if (switchValue != null) {
+        return Semantics(
+          label: tr(title),
+          toggled: switchValue,
+          button: true,
+          child: GestureDetector(
+            behavior: HitTestBehavior.opaque,
+            onTap: () => onToggle?.call(!switchValue!),
+            child: Container(
+              width: 48 * s,
+              height: 28 * s,
+              decoration: BoxDecoration(
+                color: switchValue! ? p.ember : p.bone,
+                borderRadius: BorderRadius.circular(999 * s),
+              ),
+              child: AnimatedAlign(
+                duration: const Duration(milliseconds: 160),
+                alignment: switchValue! ? Alignment.centerRight : Alignment.centerLeft,
+                child: Padding(
+                  padding: EdgeInsets.all(2 * s),
+                  child: Container(
+                    width: 24 * s, height: 24 * s,
+                    decoration: BoxDecoration(
+                      color: p.surface, shape: BoxShape.circle,
+                      boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.10),
+                          blurRadius: 2 * s, offset: Offset(0, 1 * s))],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        );
+      }
+      if (valuePill != null) {
+        return Container(
+          constraints: BoxConstraints(minWidth: 49 * s),
+          padding: EdgeInsets.symmetric(horizontal: 6 * s, vertical: 2 * s),
+          decoration: BoxDecoration(color: valuePillColor, borderRadius: BorderRadius.circular(999 * s)),
+          child: figmaText(valuePill!, size: 10 * s, weight: FontWeight.w600,
+              letterSpacing: 0.4 * s, lineHeight: 12 * s, color: valuePillTextColor ?? p.sage),
+        );
+      }
+      return Row(mainAxisSize: MainAxisSize.min, children: [
+        if (value != null) ...[
+          figmaText(value!, size: 12 * s, weight: FontWeight.w400,
+              letterSpacing: 0.12 * s, lineHeight: 16 * s, color: p.body),
+          SizedBox(width: 4 * s),
+        ],
+        Icon(Directionality.of(context) == TextDirection.rtl
+            ? Icons.chevron_left_rounded : Icons.chevron_right_rounded,
+            size: 14 * s, color: p.body.withValues(alpha: 0.60)),
+      ]);
+    }
+
     return GestureDetector(
       onTap: onTap,
       behavior: HitTestBehavior.opaque,
       child: Container(
-        width: 358 * s,
-        height: height * s,
+        constraints: BoxConstraints(minHeight: height * s),
         decoration: BoxDecoration(
-          border: showDivider
-              ? Border(top: BorderSide(color: p.container, width: 1 * s))
-              : null,
+          border: showDivider ? Border(top: BorderSide(color: p.container, width: 1 * s)) : null,
         ),
-        child: Stack(
+        padding: EdgeInsets.symmetric(horizontal: 16 * s, vertical: 12 * s),
+        child: Row(
           children: [
-            Positioned(
-              left: 16 * s,
-              top: (height - 36) / 2 * s,
-              child: Container(
-                width: 36 * s,
-                height: 36 * s,
-                decoration: BoxDecoration(
-                  color: tileColor ?? p.panel,
-                  borderRadius: BorderRadius.circular(12 * s),
-                ),
-                child: Icon(icon, size: 17 * s, color: iconColor ?? p.body),
-              ),
+            Container(
+              width: 36 * s, height: 36 * s,
+              decoration: BoxDecoration(color: tileColor ?? p.panel,
+                  borderRadius: BorderRadius.circular(12 * s)),
+              child: Icon(icon, size: 17 * s, color: iconColor ?? p.body),
             ),
-            Positioned(
-              left: 68 * s,
-              top: (subtitle == null ? height / 2 - 11 : 16) * s,
-              child: figmaText(
-                title,
-                size: 16 * s,
-                weight: FontWeight.w600,
-                letterSpacing: -0.08 * s,
-                lineHeight: 22 * s,
-                color: p.ink,
-              ),
-            ),
-            if (subtitle != null)
-              Positioned(
-                left: 68 * s,
-                top: 38 * s,
-                child: figmaText(
-                  subtitle!,
-                  size: 12 * s,
-                  weight: FontWeight.w400,
-                  letterSpacing: 0.12 * s,
-                  lineHeight: 16 * s,
-                  color: p.body,
-                ),
-              ),
-            if (switchValue != null)
-              Positioned(
-                right: 16 * s,
-                top: (height - 28) / 2 * s,
-                child: GestureDetector(
-                  onTap: () => onToggle?.call(!switchValue!),
-                  child: Container(
-                    width: 48 * s,
-                    height: 28 * s,
-                    decoration: BoxDecoration(
-                      color: switchValue!
-                          ? p.ember
-                          : p.bone,
-                      borderRadius: BorderRadius.circular(999 * s),
-                    ),
-                    child: AnimatedAlign(
-                      duration: const Duration(milliseconds: 160),
-                      alignment: switchValue!
-                          ? Alignment.centerRight
-                          : Alignment.centerLeft,
-                      child: Padding(
-                        padding: EdgeInsets.all(2 * s),
-                        child: Container(
-                          width: 24 * s,
-                          height: 24 * s,
-                          decoration: BoxDecoration(
-                            color: p.surface,
-                            shape: BoxShape.circle,
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withValues(alpha: 0.10),
-                                blurRadius: 2 * s,
-                                offset: Offset(0, 1 * s),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            if (valuePill != null)
-              Positioned(
-                right: 16 * s,
-                top: (height - 16) / 2 * s,
-                child: Container(
-                  width: 49 * s,
-                  height: 16 * s,
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                    color: valuePillColor,
-                    borderRadius: BorderRadius.circular(999 * s),
-                  ),
-                  child: figmaText(
-                    valuePill!,
-                    size: 10 * s,
-                    weight: FontWeight.w600,
-                    letterSpacing: 0.4 * s,
-                    lineHeight: 12 * s,
-                    color: valuePillTextColor ?? p.sage,
-                  ),
-                ),
-              ),
-            if (value != null && valuePill == null)
-              Positioned(
-                right: 30 * s,
-                top: (height - 16) / 2 * s,
-                child: figmaText(
-                  value!,
-                  size: 12 * s,
-                  weight: FontWeight.w400,
-                  letterSpacing: 0.12 * s,
-                  lineHeight: 16 * s,
-                  color: p.body,
-                ),
-              ),
-            if (switchValue == null && valuePill == null)
-              Positioned(
-                right: 14 * s,
-                top: (height - 10) / 2 * s,
-                child: Icon(Icons.chevron_right_rounded,
-                    size: 14 * s,
-                    color: p.body.withValues(alpha: 0.60)),
-              ),
+            SizedBox(width: 16 * s),
+            Expanded(child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                figmaText(title, size: 16 * s, weight: FontWeight.w600,
+                    letterSpacing: -0.08 * s, lineHeight: 22 * s, color: p.ink),
+                if (subtitle != null)
+                  figmaText(subtitle!, size: 12 * s, weight: FontWeight.w400,
+                      letterSpacing: 0.12 * s, lineHeight: 16 * s, color: p.body),
+              ],
+            )),
+            SizedBox(width: 12 * s),
+            trailing(),
           ],
         ),
       ),
