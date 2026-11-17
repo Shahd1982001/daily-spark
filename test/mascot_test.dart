@@ -29,20 +29,21 @@ void main() {
   test('celebration emitted only when today crosses the goal, even without sound', () async {
     final c=ProviderContainer(overrides: [habitStoreProvider.overrideWithValue(MemoryHabitStore())]);
     addTearDown(c.dispose);
-    final sub=c.listen(completionCelebrationProvider, (_, __) {});
+    var events = 0;
+    final sub=c.listen(completionCelebrationProvider, (_, next) { if (next != null) events++; });
     addTearDown(sub.close);
     await c.read(habitsProvider.future);
     final ctrl=c.read(habitsProvider.notifier);
     await ctrl.addHabit(h().copyWith(targetAmount: 3));
     await ctrl.setAmount('h', 2);
-    expect(c.read(completionCelebrationProvider), 0);
+    expect(events, 0);
     await ctrl.setAmount('h', 3);
-    expect(c.read(completionCelebrationProvider), 1);
+    expect(events, 1);
     await ctrl.setAmount('h', 3);
-    expect(c.read(completionCelebrationProvider), 1);
+    expect(events, 1);
     await ctrl.setAmount('h', 0);
-    expect(c.read(completionCelebrationProvider), 1);
+    expect(events, 1);
     await ctrl.setAmount('h', 3, day: DateTime.now().subtract(const Duration(days:1)));
-    expect(c.read(completionCelebrationProvider), 1);
+    expect(events, 1);
   });
 }

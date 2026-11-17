@@ -44,4 +44,28 @@ void main() {
     expect(tester.widget<SparkMascot>(find.byType(SparkMascot)).concerned, isFalse);
     expect(tester.takeException(), isNull);
   });
+  testWidgets('lifting and releasing lands sadly; a tap comforts, even with reduced motion', (tester) async {
+    SharedPreferences.setMockInitialValues({});
+    tester.view.physicalSize = const Size(390, 844);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    final c = ProviderContainer(overrides: [habitStoreProvider.overrideWithValue(MemoryHabitStore())]);
+    addTearDown(c.dispose);
+    await c.read(habitsProvider.future);
+    await tester.pumpWidget(UncontrolledProviderScope(container: c,
+      child: SparkThemeScope(palette: SparkPalette.light,
+        child: const MaterialApp(home: MediaQuery(data: MediaQueryData(size: Size(390, 844), disableAnimations: true),
+          child: Scaffold(body: SparkPet()))))));
+    await tester.pump(const Duration(milliseconds: 100));
+    final before = tester.getCenter(find.byType(SparkMascot));
+    await tester.drag(find.byType(SparkMascot), const Offset(0, -180));
+    await tester.pump();
+    expect(tester.getCenter(find.byType(SparkMascot)).dy, closeTo(before.dy, 1));
+    expect(tester.widget<SparkMascot>(find.byType(SparkMascot)).concerned, isTrue);
+    await tester.tap(find.byType(SparkMascot));
+    await tester.pump();
+    expect(tester.widget<SparkMascot>(find.byType(SparkMascot)).celebrating, isTrue);
+    await tester.pump(const Duration(seconds: 5));
+  });
+
 }

@@ -869,7 +869,7 @@ class _PreviewShellState extends ConsumerState<PreviewShell> with WidgetsBinding
           child ?? const SizedBox.shrink(),
           if (_mainStages.contains(_stage) && MediaQuery.viewInsetsOf(context).bottom == 0)
             ValueListenableBuilder<bool>(valueListenable: _popupOpen,
-              builder: (context, open, _) => open ? const SizedBox.shrink() : const SparkPet()),
+              builder: (context, open, _) => open || _stage == _Stage.habitDetails ? const SizedBox.shrink() : SparkPet(progressBar: _stage == _Stage.progress)),
         ]),
       ),
       home: switch (_stage) {

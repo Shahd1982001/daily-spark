@@ -3,6 +3,7 @@ import 'calendar_day_provider.dart';
 import 'completion_feedback_provider.dart';
 import 'settings_providers.dart';
 import 'mascot_providers.dart';
+import 'spark_treats_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../data/local/habit_store.dart';
@@ -97,8 +98,15 @@ class HabitsController extends AsyncNotifier<HabitsSnapshot> {
     // partial progress, undo, old dates or target changes. Preference covers
     // both audio and haptics; unavailable devices fail quietly.
     if (!wasDone && clamped >= targetAmount && targetDay == dayOnly(DateTime.now())) {
-      if (ref.exists(completionCelebrationProvider)) {
-        ref.read(completionCelebrationProvider.notifier).state++;
+      {
+        String? rewardName;
+        try {
+          rewardName = (await ref.read(sparkTreatsProvider.notifier).award(habitId, dayKey(targetDay)))?.name;
+        } catch (_) {
+          // Habit progress remains saved even if treat storage is unavailable.
+        }
+        ref.read(completionCelebrationProvider.notifier).state =
+            CompletionCelebration(habitId: habitId, rewardName: rewardName);
       }
       if (ref.exists(settingsProvider)) {
         final settings = ref.read(settingsProvider);

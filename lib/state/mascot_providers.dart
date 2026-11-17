@@ -1,4 +1,10 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-/// Event counter only; no persisted personal information and no event on load.
-final completionCelebrationProvider = StateProvider<int>((ref) => 0);
+/// A transient completion event. The snack inventory is stored separately.
+class CompletionCelebration {
+  const CompletionCelebration({required this.habitId, this.rewardName});
+  final String habitId;
+  /// The newly awarded treat type, or null if already earned / unavailable.
+  final String? rewardName;
+}
+final completionCelebrationProvider = StateProvider<CompletionCelebration?>((ref) => null);
