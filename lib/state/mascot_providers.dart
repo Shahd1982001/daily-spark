@@ -6,7 +6,7 @@ import '../data/repositories/habit_repository.dart';
 final completionCelebrationProvider = StateProvider<int>((ref) => 0);
 
 /// Returns whether an active, scheduled, incomplete habit is past its own
-/// reminder time today. A time equal to now is not yet considered late.
+/// reminder time today, with a one-hour grace period.
 bool hasOverdueHabit(HabitsSnapshot snapshot, DateTime now) {
   for (final habit in snapshot.scheduledOn(now)) {
     if (habit.isArchived || snapshot.isCompleted(habit.id, now)) continue;
@@ -16,7 +16,7 @@ bool hasOverdueHabit(HabitsSnapshot snapshot, DateTime now) {
     final hour = int.parse(match.group(1)!);
     final minute = int.parse(match.group(2)!);
     if (hour > 23 || minute > 59) continue;
-    if (now.hour * 60 + now.minute > hour * 60 + minute) return true;
+    if (now.hour * 60 + now.minute >= hour * 60 + minute + 60) return true;
   }
   return false;
 }

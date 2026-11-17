@@ -44,6 +44,7 @@ class ProfileScreen extends ConsumerWidget {
     this.onCloudSync,
     this.onToggleReminders,
     this.onToggleSound,
+    this.onToggleSparkAlerts,
     this.onAppearance,
     this.onLanguage,
     this.onGuide,
@@ -52,6 +53,7 @@ class ProfileScreen extends ConsumerWidget {
     this.onNavTap,
     this.remindersOn = true,
     this.soundOn = true,
+    this.sparkAlertsWanted = false,
     this.themeDark = false,
     this.syncLabel = 'Local',
     this.syncSubtitle = 'Stored on this device · private & safe',
@@ -66,6 +68,7 @@ class ProfileScreen extends ConsumerWidget {
   final VoidCallback? onCloudSync;
   final ValueChanged<bool>? onToggleReminders;
   final ValueChanged<bool>? onToggleSound;
+  final ValueChanged<bool>? onToggleSparkAlerts;
   final VoidCallback? onAppearance;
   final VoidCallback? onLanguage;
   final VoidCallback? onGuide;
@@ -74,6 +77,7 @@ class ProfileScreen extends ConsumerWidget {
   final ValueChanged<int>? onNavTap;
   final bool remindersOn;
   final bool soundOn;
+  final bool sparkAlertsWanted;
   final bool themeDark;
 
   /// Honest sync status until the backend lands ('Local' today, 'Active' then).
@@ -212,6 +216,15 @@ class ProfileScreen extends ConsumerWidget {
                               showDivider: false,
                               switchValue: remindersOn,
                               onToggle: onToggleReminders,
+                            ),
+                            SettingsRow(
+                              scale: s,
+                              icon: Icons.auto_awesome_rounded,
+                              title: 'Spark late alerts',
+                              subtitle: 'Coming soon · your choice is saved on this device',
+                              height: 71,
+                              switchValue: sparkAlertsWanted,
+                              onToggle: onToggleSparkAlerts,
                             ),
                             SettingsRow(
                               scale: s,

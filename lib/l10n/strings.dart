@@ -192,6 +192,16 @@ class Strings {
         'الفرز والتصفية — في قطعة لاحقة ✦',
 
     // Arabic coverage: screen copy, dynamic templates, dates and units.
+    'Start with one small step. I am here for you.': 'ابدأ بخطوة صغيرة، أنا هنا معك.',
+    'Every little step counts. You have got this!': 'كل خطوة صغيرة تفرق، أنت قدّها!',
+    'Spark late alerts': 'تنبيهات سبارك للتأخير',
+    'Coming soon · your choice is saved on this device': 'قريباً · اختيارك محفوظ على هذا الجهاز',
+    'Would you like Spark late alerts?': 'هل تود تفعيل تنبيهات سبارك للتأخير؟',
+    'Spark stays on Home either way. Late alerts are still being prepared and are not active yet.': 'ستبقى سبارك في الرئيسية في كل الأحوال. تنبيهات التأخير ما زالت قيد التجهيز وليست مفعّلة بعد.',
+    'Yes, when ready': 'نعم، عندما تصبح جاهزة',
+    'Not now': 'ليس الآن',
+    'You can change this later in Profile, under Preferences.': 'يمكنك تغيير اختيارك لاحقاً من الملف الشخصي، في التفضيلات.',
+    'Could not save your choice. Please try again.': 'تعذّر حفظ اختيارك. حاول مجدداً.',
     'Your habits could not be loaded': 'تعذّر تحميل عاداتك',
     'Your saved data has not been erased. Please try again.': 'لم يتم مسح بياناتك المحفوظة. حاولي مجدداً.',
     'You did it! Every little step counts ✨': 'أحسنت! كل خطوة صغيرة تصنع فرقاً ✨',

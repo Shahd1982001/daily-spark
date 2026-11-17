@@ -76,7 +76,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
     final isEmpty = habits.isEmpty;
     final late = snapshot != null && hasOverdueHabit(snapshot, DateTime.now());
-    final showSpark = late || (!isEmpty && streak >= 3);
 
     return Scaffold(
       backgroundColor: p.canvas,
@@ -98,6 +97,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       completed: summary.completed,
                       total: summary.total,
                     ),
+                  ),
+                  SizedBox(height: 16 * s),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 16 * s),
+                    child: _SparkEncouragement(scale: s, late: late, streak: streak, isEmpty: isEmpty),
                   ),
                   SizedBox(height: 16 * s),
                   if (isEmpty)
@@ -128,13 +132,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         ],
                       ),
                     ),
-                    if (showSpark) ...[
-                      SizedBox(height: 14 * s),
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 16 * s),
-                        child: _SparkEncouragement(scale: s, late: late, streak: streak),
-                      ),
-                    ],
                     SizedBox(height: 24 * s),
                     Padding(
                       padding: EdgeInsets.symmetric(horizontal: 16 * s),
@@ -233,10 +230,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 // One habit row, bound to the store
 // ─────────────────────────────────────────────────────────────────────────────
 class _SparkEncouragement extends StatelessWidget {
-  const _SparkEncouragement({required this.scale, required this.late, required this.streak});
+  const _SparkEncouragement({required this.scale, required this.late, required this.streak, required this.isEmpty});
   final double scale;
   final bool late;
   final int streak;
+  final bool isEmpty;
 
   @override
   Widget build(BuildContext context) => Container(
@@ -244,15 +242,17 @@ class _SparkEncouragement extends StatelessWidget {
     decoration: BoxDecoration(color: p.surface, borderRadius: BorderRadius.circular(18 * scale),
       border: Border.all(color: p.ember.withValues(alpha: .18))),
     child: Row(children: [
-      SparkMascot(size: 66 * scale),
+      SparkMascot(size: 66 * scale, animate: true, concerned: late),
       SizedBox(width: 12 * scale),
       Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         figmaText(late ? 'A little nudge from Spark' : 'Spark is cheering for you',
             size: 13 * scale, weight: FontWeight.w700, color: p.ink),
         SizedBox(height: 4 * scale),
-        figmaText(late ? 'There is still time. One small step is enough.'
-            : tr('Amazing! Your streak is {n} days ✨', {'n': '$streak'}),
-            translate: late, size: 12 * scale, weight: FontWeight.w400,
+        figmaText(late ? tr('There is still time. One small step is enough.')
+            : streak >= 3 ? tr('Amazing! Your streak is {n} days ✨', {'n': '$streak'})
+            : isEmpty ? tr('Start with one small step. I am here for you.')
+            : tr('Every little step counts. You have got this!'),
+            translate: false, size: 12 * scale, weight: FontWeight.w400,
             color: p.body, lineHeight: 17 * scale),
       ])),
     ]),

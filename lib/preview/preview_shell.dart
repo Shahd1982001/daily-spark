@@ -3,6 +3,7 @@ import 'package:daily_spark/data/services/reminder_notifications.dart';
 import 'package:daily_spark/data/services/reminder_plan.dart';
 import 'package:daily_spark/state/avatar_provider.dart';
 import 'package:daily_spark/state/mascot_providers.dart';
+import 'package:daily_spark/state/spark_alert_preference.dart';
 import 'package:daily_spark/design_system/widgets/spark_mascot.dart';
 import 'package:flutter/foundation.dart' show kIsWeb, defaultTargetPlatform, TargetPlatform;
 import 'package:image_picker/image_picker.dart';
@@ -300,6 +301,7 @@ class _PreviewShellState extends ConsumerState<PreviewShell> with WidgetsBinding
     });
     _toast(tr('Welcome, {name} ✦', {'name': name.trim()}));
     _go(_Stage.home);
+    await _offerSparkAlerts(force: true);
   }
 
   /// Enters the app without an account.
@@ -308,6 +310,7 @@ class _PreviewShellState extends ConsumerState<PreviewShell> with WidgetsBinding
     if (!mounted) return;
     setState(_history.clear);
     _go(_Stage.home);
+    await _offerSparkAlerts();
   }
 
   /// Ends the session and returns to the welcome screen.
@@ -338,12 +341,50 @@ class _PreviewShellState extends ConsumerState<PreviewShell> with WidgetsBinding
         backgroundColor: p.surface,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
         content: Row(children: [
-          const SparkMascot(size: 56),
+          const SparkMascot(size: 56, animate: true),
           const SizedBox(width: 12),
           Expanded(child: figmaText(message, translate: false, size: 14,
               weight: FontWeight.w600, color: p.ink)),
         ]),
       ));
+  }
+
+  /// A local preference only until actual late alerts are implemented. The
+  /// choice is asked for on first guest entry and each new local signup.
+  Future<void> _offerSparkAlerts({bool force = false}) async {
+    if (ref.read(demoModeProvider) != DemoMode.none) return;
+    try {
+      final preference = await ref.read(sparkAlertPreferenceProvider.notifier).load();
+      if (!mounted || (preference.chosen && !force)) return;
+      final ctx = _navKey.currentContext;
+      if (ctx == null) return;
+      final answer = await showDialog<bool>(context: ctx, barrierDismissible: false,
+        builder: (dialogContext) => AlertDialog(
+          title: Text(tr('Would you like Spark late alerts?')),
+          content: Column(mainAxisSize: MainAxisSize.min, children: [
+            const SparkMascot(size: 90),
+            const SizedBox(height: 12),
+            Text(tr('Spark stays on Home either way. Late alerts are still being prepared and are not active yet.')),
+          ]),
+          actions: [
+            TextButton(onPressed: () => Navigator.pop(dialogContext, false), child: Text(tr('Not now'))),
+            FilledButton(onPressed: () => Navigator.pop(dialogContext, true), child: Text(tr('Yes, when ready'))),
+          ],
+        ));
+      if (!mounted || answer == null) return;
+      await ref.read(sparkAlertPreferenceProvider.notifier).choose(answer);
+      if (mounted && !answer) _toast('You can change this later in Profile, under Preferences.');
+    } catch (_) {
+      if (mounted) _toast('Could not save your choice. Please try again.');
+    }
+  }
+
+  Future<void> _setSparkAlertsPreference(bool value) async {
+    try {
+      await ref.read(sparkAlertPreferenceProvider.notifier).choose(value);
+    } catch (_) {
+      if (mounted) _toast('Could not save your choice. Please try again.');
+    }
   }
 
   /// Toggles the app theme and persists the choice.
@@ -929,6 +970,7 @@ class _PreviewShellState extends ConsumerState<PreviewShell> with WidgetsBinding
             themeDark: _isDark,
             remindersOn: ref.watch(settingsProvider.select((s) => s.remindersOn)),
             soundOn: ref.watch(settingsProvider.select((s) => s.soundOn)),
+            sparkAlertsWanted: ref.watch(sparkAlertPreferenceProvider).wanted,
             syncLabel: 'Local',
             syncSubtitle: 'Stored on this device · private & safe',
             onShare: _shareApp,
@@ -940,6 +982,7 @@ class _PreviewShellState extends ConsumerState<PreviewShell> with WidgetsBinding
                 'Your data lives on this device for now — Spark Cloud arrives with accounts ☁️'),
             onToggleReminders: _setReminders,
             onToggleSound: (v) => ref.read(settingsProvider.notifier).setSound(v),
+            onToggleSparkAlerts: _setSparkAlertsPreference,
             onAppearance: _toggleTheme,
             onLanguage: _showLanguageSheet,
             onGuide: _showGuideSheet,

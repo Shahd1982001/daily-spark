@@ -14,11 +14,11 @@ Habit h({String id='h', String? time='10:00', HabitRhythm rhythm=HabitRhythm.eve
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
   test('late message only for scheduled incomplete active habits after their time', () {
-    final now = DateTime(2026, 11, 17, 10, 1);
+    final now = DateTime(2026, 11, 17, 11, 0);
     HabitsSnapshot snap(Habit habit, {bool done=false}) => HabitsSnapshot(
       habits: [habit], log: done ? {habit.id: {DateTime(2026,11,17)}} : {}, amounts: const {});
     expect(hasOverdueHabit(snap(h()), now), isTrue);
-    expect(hasOverdueHabit(snap(h()), DateTime(2026, 11, 17, 10)), isFalse);
+    expect(hasOverdueHabit(snap(h()), DateTime(2026, 11, 17, 10, 59)), isFalse);
     expect(hasOverdueHabit(snap(h(), done:true), now), isFalse);
     expect(hasOverdueHabit(snap(h(time:null)), now), isFalse);
     expect(hasOverdueHabit(snap(h(time:'99:99')), now), isFalse);
