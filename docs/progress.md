@@ -478,3 +478,8 @@ name, email, password — plus the session (`none / guest / account`).
 ### Separate jump-to-sit experiment
 - User proposed jumping and landing seated instead of the rejected direct sit transition. Built `web_extra/spark-jump-sit-preview.html` as a standalone draft: original-size registered frames, a small preparatory bend, a parabolic jump and landing with the feet forward. It uses the previously drafted seated-pose elements and offline compositing/interpolation, not independently drawn frames; awaiting the user's review.
 - The preview and its builder are separate from the app. No existing in-app behavior changed. Browser smoke test verifies replay/frame updates; a frame audit shows constant canvas size and the same start/end floor line.
+
+### Jump with hand movement: separate experiment
+- User asked for a small knee bend and hand movement, and asked how to achieve appealing motion. Made an isolated `spark-jump-arms-preview.html` with a slight lowering before takeoff and arms responding to the jump. It preserves the original face/body and never changes the app.
+- Important: this draft uses composited, pivoted arm artwork and interpolated pose elements. It is not a fully hand-illustrated action sequence; the knees are suggested by a small body lowering, not fully drawn knee-bend frames. The user has rejected mechanically moving limbs before, so be explicit and do not call this an approved or fully realistic result. More carefully drawn key poses and intermediate frames are needed for a genuinely organic result.
+- Browser smoke test confirms replay and frame updates. Await feedback before integrating anything.
