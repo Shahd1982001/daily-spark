@@ -492,3 +492,7 @@ name, email, password — plus the session (`none / guest / account`).
 - User annotated phone screenshots: arms move upward during the jump; legs move outward in the air; the seated leg pose must not appear while airborne; arms return down and sitting occurs only after touching the ground. Made a standalone draft `spark-jump-story-preview.html` following that sequence, with an airborne leg reference and separate seated stage. Corrected the preview's ground line and prevented the top of the mascot from being clipped; feet start/end at the same floor height.
 - The body/face keep their original scale. This remains a computationally interpolated draft, not a hand-drawn professional final: some intermediate arm joints/leg edges may need further redrawing, and user approval is pending. No app integration or app code changed.
 - Browser smoke test checks frame changes and replay; the prior preview page remains available unchanged.
+
+### Isolated arm-arc direction study
+- User clarified that the lower tip of the arm should travel upward around its attachment in an arc and return, not slide sideways. Made a separate arm-only study with the original arms pivoting in a continuous arc; the body, feet, scale and floor remain fixed. This is an offline composited rotation study, not a completed hand-drawn/straightened arm animation or a claim that her desired path has been approved.
+- No jump, sitting, or app behavior is changed. Browser replay/frame-change smoke test passed; review with user before combining with other movements.
