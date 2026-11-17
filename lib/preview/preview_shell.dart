@@ -341,7 +341,7 @@ class _PreviewShellState extends ConsumerState<PreviewShell> with WidgetsBinding
         backgroundColor: p.surface,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
         content: Row(children: [
-          const SparkMascot(size: 56, animate: true),
+          const SparkMascot(size: 68, animate: true, celebrating: true),
           const SizedBox(width: 12),
           Expanded(child: figmaText(message, translate: false, size: 14,
               weight: FontWeight.w600, color: p.ink)),

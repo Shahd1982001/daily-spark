@@ -242,7 +242,7 @@ class _SparkEncouragement extends StatelessWidget {
     decoration: BoxDecoration(color: p.surface, borderRadius: BorderRadius.circular(18 * scale),
       border: Border.all(color: p.ember.withValues(alpha: .18))),
     child: Row(children: [
-      SparkMascot(size: 66 * scale, animate: true, concerned: late),
+      SparkMascot(size: 78 * scale, animate: true, concerned: late),
       SizedBox(width: 12 * scale),
       Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         figmaText(late ? 'A little nudge from Spark' : 'Spark is cheering for you',

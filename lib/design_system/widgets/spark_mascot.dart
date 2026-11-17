@@ -1,24 +1,29 @@
+import 'dart:math' as math;
 import 'package:flutter/material.dart';
 
-/// The selected Spark character. Set [animate] for a subtle idle motion;
-/// reduced-motion settings always win. Surrounding text carries the message.
+/// Spark's face and limbs are separate illustrated layers. Idle and celebration
+/// animate the arms, feet and blinks, not just the overall picture. When the OS
+/// requests reduced motion, the original still artwork is used instead.
 class SparkMascot extends StatefulWidget {
-  const SparkMascot({super.key, this.size = 72, this.animate = false, this.concerned = false});
+  const SparkMascot({super.key, this.size = 72, this.animate = false,
+    this.concerned = false, this.celebrating = false});
   final double size;
   final bool animate;
   final bool concerned;
+  final bool celebrating;
   @override
   State<SparkMascot> createState() => _SparkMascotState();
 }
 
 class _SparkMascotState extends State<SparkMascot> with SingleTickerProviderStateMixin {
   late final AnimationController _controller = AnimationController(vsync: this,
-      duration: const Duration(milliseconds: 1800));
+      duration: const Duration(milliseconds: 3200));
+  bool _reduceMotion = false;
 
   void _updateAnimation() {
-    final reduced = MediaQuery.maybeOf(context)?.disableAnimations ?? false;
-    if (widget.animate && !reduced && TickerMode.of(context)) {
-      if (!_controller.isAnimating) _controller.repeat(reverse: true);
+    _reduceMotion = MediaQuery.maybeOf(context)?.disableAnimations ?? false;
+    if (widget.animate && !_reduceMotion && TickerMode.of(context)) {
+      if (!_controller.isAnimating) _controller.repeat();
     } else {
       _controller.stop();
       _controller.value = 0;
@@ -35,14 +40,42 @@ class _SparkMascotState extends State<SparkMascot> with SingleTickerProviderStat
   @override
   void dispose() { _controller.dispose(); super.dispose(); }
 
+  Widget _layer(String part) {
+    final mood = widget.concerned ? 'concerned' : 'happy';
+    return Image.asset('assets/mascot/${mood}_$part.png',
+      width: widget.size, height: widget.size, fit: BoxFit.contain,
+      filterQuality: FilterQuality.high, excludeFromSemantics: true);
+  }
+
+  double _blink(double t) {
+    // A quick blink roughly every 3.2 seconds.
+    if (t < .71 || t > .79) return 0;
+    return (1 - ((t - .75).abs() / .04)).clamp(0.0, 1.0);
+  }
+
   @override
-  Widget build(BuildContext context) => ExcludeSemantics(
-    child: AnimatedBuilder(animation: _controller,
-      child: Image.asset(widget.concerned ? 'assets/mascot/spark_concerned.png' : 'assets/mascot/spark.png',
-          width: widget.size, height: widget.size,
-          fit: BoxFit.contain, filterQuality: FilterQuality.high),
-      builder: (_, child) => Transform.translate(
-        offset: Offset(0, -3 * Curves.easeInOut.transform(_controller.value)), child: child),
-    ),
-  );
+  Widget build(BuildContext context) {
+    if (!widget.animate || _reduceMotion) {
+      return ExcludeSemantics(child: Image.asset(
+        widget.concerned ? 'assets/mascot/spark_concerned.png' : 'assets/mascot/spark.png',
+        width: widget.size, height: widget.size, fit: BoxFit.contain,
+        filterQuality: FilterQuality.high));
+    }
+    return ExcludeSemantics(child: SizedBox(width: widget.size, height: widget.size,
+      child: AnimatedBuilder(animation: _controller, builder: (context, _) {
+        final t = _controller.value;
+        final wave = math.sin(t * 2 * math.pi);
+        final energy = widget.celebrating ? 1.7 : 1.0;
+        final blink = _blink(t);
+        return Stack(alignment: Alignment.center, clipBehavior: Clip.none, children: [
+          Transform.rotate(angle: -.18 * wave * energy, alignment: const Alignment(-.77, .05), child: _layer('left_arm')),
+          Transform.rotate(angle: .18 * wave * energy, alignment: const Alignment(.77, .05), child: _layer('right_arm')),
+          Transform.rotate(angle: .045 * wave * energy, alignment: const Alignment(-.27, .65), child: _layer('left_foot')),
+          Transform.rotate(angle: -.045 * wave * energy, alignment: const Alignment(.27, .65), child: _layer('right_foot')),
+          _layer('body'),
+          if (blink > 0) Opacity(opacity: blink, child: _layer('body_closed')),
+        ]);
+      }),
+    ));
+  }
 }
