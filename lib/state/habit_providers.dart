@@ -2,6 +2,7 @@ import 'dart:async';
 import 'calendar_day_provider.dart';
 import 'completion_feedback_provider.dart';
 import 'settings_providers.dart';
+import 'mascot_providers.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../data/local/habit_store.dart';
@@ -95,11 +96,15 @@ class HabitsController extends AsyncNotifier<HabitsSnapshot> {
     // Celebrate a user action crossing today's goal, not initial data loads,
     // partial progress, undo, old dates or target changes. Preference covers
     // both audio and haptics; unavailable devices fail quietly.
-    if (!wasDone && clamped >= targetAmount && targetDay == dayOnly(DateTime.now()) &&
-        ref.exists(settingsProvider)) {
-      final settings = ref.read(settingsProvider);
-      if (settings.loaded && settings.soundOn) {
-        unawaited(ref.read(completionFeedbackProvider).play().catchError((Object _) {}));
+    if (!wasDone && clamped >= targetAmount && targetDay == dayOnly(DateTime.now())) {
+      if (ref.exists(completionCelebrationProvider)) {
+        ref.read(completionCelebrationProvider.notifier).state++;
+      }
+      if (ref.exists(settingsProvider)) {
+        final settings = ref.read(settingsProvider);
+        if (settings.loaded && settings.soundOn) {
+          unawaited(ref.read(completionFeedbackProvider).play().catchError((Object _) {}));
+        }
       }
     }
   }

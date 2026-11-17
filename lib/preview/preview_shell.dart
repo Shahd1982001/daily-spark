@@ -2,6 +2,8 @@ import 'dart:convert';
 import 'package:daily_spark/data/services/reminder_notifications.dart';
 import 'package:daily_spark/data/services/reminder_plan.dart';
 import 'package:daily_spark/state/avatar_provider.dart';
+import 'package:daily_spark/state/mascot_providers.dart';
+import 'package:daily_spark/design_system/widgets/spark_mascot.dart';
 import 'package:flutter/foundation.dart' show kIsWeb, defaultTargetPlatform, TargetPlatform;
 import 'package:image_picker/image_picker.dart';
 import 'package:daily_spark/state/calendar_day_provider.dart';
@@ -321,6 +323,27 @@ class _PreviewShellState extends ConsumerState<PreviewShell> with WidgetsBinding
     _messengerKey.currentState
       ?..clearSnackBars()
       ..showSnackBar(SnackBar(content: Text(tr(message))));
+  }
+
+  void _showCelebration() {
+    final streak = ref.read(routineStreakProvider);
+    final message = streak >= 3
+        ? tr('Amazing! Your streak is {n} days ✨', {'n': '$streak'})
+        : tr('You did it! Every little step counts ✨');
+    _messengerKey.currentState
+      ?..hideCurrentSnackBar()
+      ..showSnackBar(SnackBar(
+        behavior: SnackBarBehavior.floating,
+        duration: const Duration(seconds: 3),
+        backgroundColor: p.surface,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+        content: Row(children: [
+          const SparkMascot(size: 56),
+          const SizedBox(width: 12),
+          Expanded(child: figmaText(message, translate: false, size: 14,
+              weight: FontWeight.w600, color: p.ink)),
+        ]),
+      ));
   }
 
   /// Toggles the app theme and persists the choice.
@@ -767,6 +790,9 @@ class _PreviewShellState extends ConsumerState<PreviewShell> with WidgetsBinding
   Widget build(BuildContext context) {
     ref.watch(calendarDayProvider); // Refresh visible dates after midnight/resume.
     // Adopt the persisted theme once it loads (?theme=… still forces it).
+    ref.listen(completionCelebrationProvider, (previous, next) {
+      if (previous != null && next > previous) _showCelebration();
+    });
     ref.listen(habitsProvider, (_, __) => _queueReminderSync());
     ref.listen(localeProvider, (_, __) => _queueReminderSync());
     ref.listen(settingsProvider, (prev, next) {

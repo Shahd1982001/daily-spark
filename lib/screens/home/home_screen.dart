@@ -1,4 +1,7 @@
+import 'dart:async';
 import 'package:daily_spark/l10n/strings.dart';
+import 'package:daily_spark/state/mascot_providers.dart';
+import 'package:daily_spark/design_system/widgets/spark_mascot.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -37,6 +40,21 @@ class HomeScreen extends ConsumerStatefulWidget {
 
 class _HomeScreenState extends ConsumerState<HomeScreen> {
   int _filterIndex = 0;
+  Timer? _mascotTimer;
+
+  @override
+  void initState() {
+    super.initState();
+    _mascotTimer = Timer.periodic(const Duration(minutes: 1), (_) {
+      if (mounted) setState(() {});
+    });
+  }
+
+  @override
+  void dispose() {
+    _mascotTimer?.cancel();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -57,6 +75,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         : habits.where((h) => h.category == filters[activeFilter]).toList();
 
     final isEmpty = habits.isEmpty;
+    final late = snapshot != null && hasOverdueHabit(snapshot, DateTime.now());
+    final showSpark = late || (!isEmpty && streak >= 3);
 
     return Scaffold(
       backgroundColor: p.canvas,
@@ -108,6 +128,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         ],
                       ),
                     ),
+                    if (showSpark) ...[
+                      SizedBox(height: 14 * s),
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 16 * s),
+                        child: _SparkEncouragement(scale: s, late: late, streak: streak),
+                      ),
+                    ],
                     SizedBox(height: 24 * s),
                     Padding(
                       padding: EdgeInsets.symmetric(horizontal: 16 * s),
@@ -205,6 +232,33 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 // ─────────────────────────────────────────────────────────────────────────────
 // One habit row, bound to the store
 // ─────────────────────────────────────────────────────────────────────────────
+class _SparkEncouragement extends StatelessWidget {
+  const _SparkEncouragement({required this.scale, required this.late, required this.streak});
+  final double scale;
+  final bool late;
+  final int streak;
+
+  @override
+  Widget build(BuildContext context) => Container(
+    padding: EdgeInsets.symmetric(horizontal: 12 * scale, vertical: 10 * scale),
+    decoration: BoxDecoration(color: p.surface, borderRadius: BorderRadius.circular(18 * scale),
+      border: Border.all(color: p.ember.withValues(alpha: .18))),
+    child: Row(children: [
+      SparkMascot(size: 66 * scale),
+      SizedBox(width: 12 * scale),
+      Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        figmaText(late ? 'A little nudge from Spark' : 'Spark is cheering for you',
+            size: 13 * scale, weight: FontWeight.w700, color: p.ink),
+        SizedBox(height: 4 * scale),
+        figmaText(late ? 'There is still time. One small step is enough.'
+            : tr('Amazing! Your streak is {n} days ✨', {'n': '$streak'}),
+            translate: late, size: 12 * scale, weight: FontWeight.w400,
+            color: p.body, lineHeight: 17 * scale),
+      ])),
+    ]),
+  );
+}
+
 class _HabitRow extends ConsumerWidget {
   const _HabitRow({
     super.key,

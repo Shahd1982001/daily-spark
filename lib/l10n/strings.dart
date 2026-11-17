@@ -192,6 +192,11 @@ class Strings {
         'الفرز والتصفية — في قطعة لاحقة ✦',
 
     // Arabic coverage: screen copy, dynamic templates, dates and units.
+    'You did it! Every little step counts ✨': 'أحسنت! كل خطوة صغيرة تصنع فرقاً ✨',
+    'Amazing! Your streak is {n} days ✨': 'رائع! سلسلتك وصلت {n} أيام ✨',
+    'A little nudge from Spark': 'تذكير لطيف من سبارك',
+    'Spark is cheering for you': 'سبارك يشجعك',
+    'There is still time. One small step is enough.': 'ما زال عندك وقت، خطوة صغيرة تكفي.',
     'Reminders for your scheduled habits': 'تذكيرات لعاداتك في مواعيدها',
     'Reminders are available in the mobile app, not this preview.': 'التذكيرات متاحة في تطبيق الموبايل، وليس في هذه المعاينة.',
     'Notifications are off. Allow them in your device settings to receive reminders.': 'الإشعارات مقفلة. اسمحي بها من إعدادات جهازك لتصلك التذكيرات.',
