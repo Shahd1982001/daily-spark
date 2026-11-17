@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'package:daily_spark/data/services/reminder_notifications.dart';
+import 'package:daily_spark/data/services/reminder_plan.dart';
 import 'package:daily_spark/state/avatar_provider.dart';
 import 'package:flutter/foundation.dart' show kIsWeb, defaultTargetPlatform, TargetPlatform;
 import 'package:image_picker/image_picker.dart';
@@ -62,7 +65,10 @@ enum _Stage {
   profile,
 }
 
-class _PreviewShellState extends ConsumerState<PreviewShell> {
+class _PreviewShellState extends ConsumerState<PreviewShell> with WidgetsBindingObserver {
+  final _reminderNotifications = ReminderNotifications();
+  Timer? _reminderTimer;
+  String? _reminderFingerprint;
   final _messengerKey = GlobalKey<ScaffoldMessengerState>();
 
   /// Lets modal sheets/dialogs open from shell-level handlers: the State's own
@@ -116,6 +122,7 @@ class _PreviewShellState extends ConsumerState<PreviewShell> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android) {
       WidgetsBinding.instance.addPostFrameCallback((_) => _recoverPhoto());
     }
@@ -149,6 +156,8 @@ class _PreviewShellState extends ConsumerState<PreviewShell> {
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    _reminderTimer?.cancel();
     _timer?.cancel();
     for (final c in [_loginEmail, _loginPass, _suName, _suEmail, _suPass, _suConfirm]) {
       c.dispose();
@@ -398,6 +407,67 @@ class _PreviewShellState extends ConsumerState<PreviewShell> {
       if (file != null) await _savePickedPhoto(file);
     } catch (_) {
       if (mounted) _toast('Could not open photos. Please check permission and try again.');
+    }
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      // Timezone and permission may have changed while the app was away.
+      _reminderFingerprint = null;
+      _queueReminderSync();
+    }
+  }
+
+  void _queueReminderSync() {
+    if (!ReminderNotifications.supported || ref.read(demoModeProvider) != DemoMode.none) return;
+    _reminderTimer?.cancel();
+    _reminderTimer = Timer(const Duration(milliseconds: 300), () async {
+      if (!mounted) return;
+      final snapshot = ref.read(habitsProvider).valueOrNull;
+      final settings = ref.read(settingsProvider);
+      if (snapshot == null || !settings.loaded) return;
+      final habits = snapshot.habits;
+      final rules = buildReminderPlan(habits, enabled: settings.remindersOn);
+      final locale = ref.read(localeProvider).languageCode;
+      final fingerprint = jsonEncode([settings.remindersOn, locale,
+        for (final r in rules) [r.habitId, r.weekday, r.hour, r.minute,
+          habits.where((h) => h.id == r.habitId).first.title]]);
+      if (fingerprint == _reminderFingerprint) return;
+      _reminderFingerprint = fingerprint;
+      final result = await _reminderNotifications.sync(habits, enabled: settings.remindersOn, language: locale);
+      if (!mounted) return;
+      if (result == ReminderResult.failed || result == ReminderResult.limitExceeded) {
+        _reminderFingerprint = null; // allow a retry on the next change/resume
+        _toast(result == ReminderResult.limitExceeded
+            ? 'Too many reminders for this iPhone; none were scheduled. Reduce reminder days or habits.'
+            : 'Could not schedule reminders. Please try again.');
+      }
+    });
+  }
+
+  Future<void> _enableReminders() async {
+    if (!ReminderNotifications.supported || ref.read(demoModeProvider) != DemoMode.none) {
+      _toast('Reminders are available in the mobile app, not this preview.');
+      return;
+    }
+    final granted = await _reminderNotifications.requestPermission();
+    if (!mounted) return;
+    await ref.read(settingsProvider.notifier).setReminders(granted);
+    if (!mounted) return;
+    if (!granted) {
+      _toast('Notifications are off. Allow them in your device settings to receive reminders.');
+    }
+    _reminderFingerprint = null;
+    _queueReminderSync();
+  }
+
+  Future<void> _setReminders(bool value) async {
+    if (value) {
+      await _enableReminders();
+    } else {
+      await ref.read(settingsProvider.notifier).setReminders(false);
+      _queueReminderSync();
     }
   }
 
@@ -697,7 +767,10 @@ class _PreviewShellState extends ConsumerState<PreviewShell> {
   Widget build(BuildContext context) {
     ref.watch(calendarDayProvider); // Refresh visible dates after midnight/resume.
     // Adopt the persisted theme once it loads (?theme=… still forces it).
+    ref.listen(habitsProvider, (_, __) => _queueReminderSync());
+    ref.listen(localeProvider, (_, __) => _queueReminderSync());
     ref.listen(settingsProvider, (prev, next) {
+      _queueReminderSync();
       if (!_themeForced && !_themeTouched && next.loaded) {
         setState(() => _isDark = next.themeMode == ThemeMode.dark);
       }
@@ -806,6 +879,9 @@ class _PreviewShellState extends ConsumerState<PreviewShell> {
             onClose: _back,
             onAvatar: () => _go(_Stage.profile),
             onSaved: (habit) {
+              if (habit.reminderTime != null && ref.read(settingsProvider).remindersOn) {
+                _enableReminders();
+              }
               final editing = ref.read(editingHabitIdProvider) != null;
               _messengerKey.currentState
                 ?..clearSnackBars()
@@ -836,8 +912,7 @@ class _PreviewShellState extends ConsumerState<PreviewShell> {
             onPersonalDetails: _showProfileSheet,
             onCloudSync: () => _toast(
                 'Your data lives on this device for now — Spark Cloud arrives with accounts ☁️'),
-            onToggleReminders: (v) =>
-                ref.read(settingsProvider.notifier).setReminders(v),
+            onToggleReminders: _setReminders,
             onToggleSound: (v) => ref.read(settingsProvider.notifier).setSound(v),
             onAppearance: _toggleTheme,
             onLanguage: _showLanguageSheet,
@@ -854,7 +929,7 @@ class _PreviewShellState extends ConsumerState<PreviewShell> {
         _Stage.progress => ProgressScreen(
             onProfile: () => _go(_Stage.profile),
             onBell: () =>
-                _toast('Notifications arrive with the accounts update 🔔'),
+                _toast('Set a reminder time when you create or edit a habit. 🔔'),
             onShare: _shareApp,
             onNavTap: (i) => switch (i) {
               0 => _go(_Stage.home),

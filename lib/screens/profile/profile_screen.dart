@@ -207,7 +207,7 @@ class ProfileScreen extends ConsumerWidget {
                               scale: s,
                               icon: Icons.alarm_rounded,
                               title: 'Daily Reminders',
-                              subtitle: 'Morning & evening gentle cues',
+                              subtitle: 'Reminders for your scheduled habits',
                               height: 70,
                               showDivider: false,
                               switchValue: remindersOn,

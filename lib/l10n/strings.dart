@@ -191,6 +191,12 @@ class Strings {
         'الفرز والتصفية — في قطعة لاحقة ✦',
 
     // Arabic coverage: screen copy, dynamic templates, dates and units.
+    'Reminders for your scheduled habits': 'تذكيرات لعاداتك في مواعيدها',
+    'Reminders are available in the mobile app, not this preview.': 'التذكيرات متاحة في تطبيق الموبايل، وليس في هذه المعاينة.',
+    'Notifications are off. Allow them in your device settings to receive reminders.': 'الإشعارات مقفلة. اسمحي بها من إعدادات جهازك لتصلك التذكيرات.',
+    'Too many reminders for this iPhone; none were scheduled. Reduce reminder days or habits.': 'عدد التذكيرات كبير لهذا الآيفون، ولم تتم جدولة أي تذكير. قللي أيام التذكير أو عدد العادات.',
+    'Could not schedule reminders. Please try again.': 'تعذرت جدولة التذكيرات. حاولي مجدداً.',
+    'Set a reminder time when you create or edit a habit. 🔔': 'حددي وقت التذكير عند إضافة عادة أو تعديلها. 🔔',
     'Change profile photo': 'تغيير الصورة الشخصية',
     'Profile photo': 'الصورة الشخصية',
     'Your photo is stored on this device.': 'صورتك محفوظة على هذا الجهاز.',

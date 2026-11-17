@@ -42,3 +42,29 @@ List<ReminderRule> buildReminderPlan(Iterable<Habit> habits, {required bool enab
   }
   return rules;
 }
+
+/// A daily trigger uses one OS slot; otherwise rules repeat weekly.
+class ReminderTrigger {
+  const ReminderTrigger(this.rule, {required this.daily});
+  final ReminderRule rule;
+  final bool daily;
+}
+
+List<ReminderTrigger> compactReminderRules(List<ReminderRule> rules) {
+  final grouped = <String, List<ReminderRule>>{};
+  for (final rule in rules) {
+    grouped.putIfAbsent(rule.habitId, () => []).add(rule);
+  }
+  final triggers = <ReminderTrigger>[];
+  for (final group in grouped.values) {
+    final days = group.map((r) => r.weekday).toSet();
+    final first = group.first;
+    final sameTime = group.every((r) => r.hour == first.hour && r.minute == first.minute);
+    if (group.length == 7 && days.length == 7 && sameTime) {
+      triggers.add(ReminderTrigger(first, daily: true));
+    } else {
+      triggers.addAll(group.map((r) => ReminderTrigger(r, daily: false)));
+    }
+  }
+  return triggers;
+}

@@ -47,4 +47,16 @@ void main() {
     ], enabled: true);
     expect(rules.map((r) => '${r.habitId}:${r.weekday}'), ['a:2', 'a:7', 'b:5']);
   });
+  test('daily reminders use a single iOS slot; custom schedules remain weekly', () {
+    final rules = buildReminderPlan([
+      habit(id: 'daily'),
+      habit(id: 'weekly', rhythm: HabitRhythm.custom, days: {2, 4}),
+    ], enabled: true);
+    final triggers = compactReminderRules(rules);
+    expect(triggers, hasLength(3));
+    expect(triggers.first.daily, isTrue);
+    expect(triggers.first.rule.habitId, 'daily');
+    expect(triggers.skip(1).every((t) => !t.daily), isTrue);
+  });
+
 }
