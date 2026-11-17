@@ -217,7 +217,7 @@ class ProfileScreen extends ConsumerWidget {
                               scale: s,
                               icon: Icons.vibration_rounded,
                               title: 'Sound & Haptic Spark',
-                              subtitle: 'Tactile celebration on completion',
+                              subtitle: 'Sound and vibration when you complete a habit',
                               height: 71,
                               switchValue: soundOn,
                               onToggle: onToggleSound,

@@ -37,3 +37,5 @@ Product goal: a polished, honestly described, usable trial version to show a com
 - Device-local civil-day arithmetic and date refresh are covered by automated transition tests; broader physical-device and cross-device/timezone sync testing remains for release.
 
 Profile photo checkpoint: local gallery choice, replace/remove and shared fallback are implemented. Test on physical Android and iPhone before release; local photos are not account-scoped or synced, which must be resolved with backend/account design.
+
+Completion feedback checkpoint: bundled chime + vibration on reaching today's target; controlled together in Profile. User requested end-to-end mobile device tests at the end after backend. Mascot design and encouragement are planned before backend, with non-judgmental late reminders and celebration; notification and completion feedback behavior requires final device verification.

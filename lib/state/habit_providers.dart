@@ -1,4 +1,7 @@
+import 'dart:async';
 import 'calendar_day_provider.dart';
+import 'completion_feedback_provider.dart';
+import 'settings_providers.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../data/local/habit_store.dart';
@@ -64,6 +67,7 @@ class HabitsController extends AsyncNotifier<HabitsSnapshot> {
     final targetDay = dayOnly(day ?? DateTime.now());
     final key = dayKey(targetDay);
     final targetAmount = _targetOf(habit, targetDay);
+    final wasDone = current.isCompleted(habitId, targetDay);
     final clamped = amount.clamp(0, targetAmount);
 
     final amounts = <String, Map<String, int>>{
@@ -88,6 +92,16 @@ class HabitsController extends AsyncNotifier<HabitsSnapshot> {
     final next = current.copyWith(log: log, amounts: amounts);
     state = AsyncData(next);
     await _repo.save(next);
+    // Celebrate a user action crossing today's goal, not initial data loads,
+    // partial progress, undo, old dates or target changes. Preference covers
+    // both audio and haptics; unavailable devices fail quietly.
+    if (!wasDone && clamped >= targetAmount && targetDay == dayOnly(DateTime.now()) &&
+        ref.exists(settingsProvider)) {
+      final settings = ref.read(settingsProvider);
+      if (settings.loaded && settings.soundOn) {
+        unawaited(ref.read(completionFeedbackProvider).play().catchError((Object _) {}));
+      }
+    }
   }
 
   /// Steps the logged amount by [delta], clamped to the habit target.

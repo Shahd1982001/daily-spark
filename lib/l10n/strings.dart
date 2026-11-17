@@ -143,6 +143,7 @@ class Strings {
     'Morning & evening gentle cues': 'تذكيرات لطيفة صباحاً ومساءً',
     'Sound & Haptic Spark': 'الصوت والاهتزاز',
     'Tactile celebration on completion': 'احتفال لمسّي عند الإنجاز',
+    'Sound and vibration when you complete a habit': 'صوت واهتزاز عند إكمال العادة',
     'Appearance & Theme': 'المظهر والسمة',
     'Midnight': 'ليلي',
     'Warm Light': 'نهاري',
