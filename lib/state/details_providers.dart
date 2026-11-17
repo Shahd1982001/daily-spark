@@ -1,3 +1,4 @@
+import 'calendar_day_provider.dart';
 import 'package:daily_spark/l10n/strings.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -22,7 +23,7 @@ final detailsHabitProvider = Provider<Habit?>((ref) {
       selectedId == null ? null : snapshot.habitById(selectedId);
   if (selected != null && !selected.isArchived) return selected;
 
-  final today = snapshot.scheduledOn(DateTime.now());
+  final today = snapshot.scheduledOn(ref.watch(calendarDayProvider));
   return today.isNotEmpty ? today.first : snapshot.activeHabits.first;
 });
 
@@ -77,7 +78,7 @@ String groupDigits(int value) {
         run = 0;
       }
     }
-    day = day.add(const Duration(days: 1));
+    day = addCalendarDays(day, 1);
   }
   return (length: best, endedOn: endedOn);
 }
@@ -227,7 +228,7 @@ final habitDetailProvider = Provider<HabitDetail?>((ref) {
   final snapshot = ref.watch(habitsProvider).valueOrNull;
   if (habit == null || snapshot == null) return null;
 
-  final today = dayOnly(DateTime.now());
+  final today = ref.watch(calendarDayProvider);
   final created = dayOnly(habit.createdAt);
   final days = snapshot.daysFor(habit.id);
   final done = days.map(dayOnly).toSet();
@@ -246,19 +247,21 @@ final habitDetailProvider = Provider<HabitDetail?>((ref) {
   var previousWindowCompleted = 0;
   var day = created.isAfter(today) ? today : created;
   while (!day.isAfter(today)) {
-    final offset = today.difference(day).inDays;
+    final offset = calendarDaysBetween(day, today);
     if (habit.isScheduledOn(day)) {
       scheduledLifetime++;
       if (done.contains(day)) {
         completedLifetime++;
-        totalAmount += snapshot.amountFor(habit.id, day);
+        if (habit.planOn(day).targetUnit == habit.targetUnit) {
+          totalAmount += snapshot.amountFor(habit.id, day);
+        }
       }
       if (offset < 30 && done.contains(day)) windowCompleted++;
       if (offset >= 30 && offset < 60 && done.contains(day)) {
         previousWindowCompleted++;
       }
     }
-    day = day.add(const Duration(days: 1));
+    day = addCalendarDays(day, 1);
   }
 
   final consistency = scheduledLifetime == 0
@@ -313,7 +316,7 @@ final habitDetailProvider = Provider<HabitDetail?>((ref) {
     monthLabel: monthName(monthStart.month),
     year: monthStart.year,
     trendDelta: windowCompleted - previousWindowCompleted,
-    daysSinceStart: today.difference(created).inDays + 1,
+    daysSinceStart: calendarDaysBetween(created, today) + 1,
   );
 });
 
@@ -326,7 +329,7 @@ int _windowPercent(
   var scheduled = 0;
   var completed = 0;
   for (var i = 0; i < days; i++) {
-    final day = today.subtract(Duration(days: i));
+    final day = addCalendarDays(today, -i);
     if (day.isBefore(dayOnly(habit.createdAt))) break;
     if (!habit.isScheduledOn(day)) continue;
     scheduled++;

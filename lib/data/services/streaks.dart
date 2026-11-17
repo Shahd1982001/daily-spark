@@ -10,14 +10,16 @@ int streakFor(
   Habit habit,
   Set<DateTime> completedDays, {
   required DateTime today,
-  int lookBackDays = 400,
+  int? lookBackDays,
 }) {
   final done = completedDays.map(dayOnly).toSet();
   var streak = 0;
   var day = dayOnly(today);
   final created = dayOnly(habit.createdAt);
 
-  for (var i = 0; i < lookBackDays; i++) {
+  final availableDays = (calendarDaysBetween(created, day) + 1).clamp(0, 1000000);
+  final limit = lookBackDays == null ? availableDays : lookBackDays.clamp(0, availableDays);
+  for (var i = 0; i < limit; i++) {
     if (day.isBefore(created)) break;
 
     final scheduled = habit.isScheduledOn(day);
@@ -32,7 +34,7 @@ int streakFor(
         break;
       }
     }
-    day = day.subtract(const Duration(days: 1));
+    day = addCalendarDays(day, -1);
   }
   return streak;
 }
@@ -55,7 +57,7 @@ int completionPercent(
       scheduled++;
       if (done.contains(day)) completed++;
     }
-    day = day.subtract(const Duration(days: 1));
+    day = addCalendarDays(day, -1);
   }
   if (scheduled == 0) return 0;
   return ((completed / scheduled) * 100).round();

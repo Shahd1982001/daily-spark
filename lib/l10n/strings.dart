@@ -191,6 +191,10 @@ class Strings {
         'الفرز والتصفية — في قطعة لاحقة ✦',
 
     // Arabic coverage: screen copy, dynamic templates, dates and units.
+    'Cancel': 'إلغاء',
+    'Continue': 'متابعة',
+    'Change goal unit?': 'تغيير وحدة الهدف؟',
+    'Today’s progress will start from zero because the unit changed. Previous days stay saved.': 'سيبدأ تقدّم اليوم من الصفر لأن وحدة الهدف تغيرت، وستبقى بيانات الأيام السابقة محفوظة.',
     'Sort habits': 'ترتيب العادات',
     'Original order': 'الترتيب الأصلي',
     'Newest first': 'الأحدث أولاً',

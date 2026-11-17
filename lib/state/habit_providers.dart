@@ -1,3 +1,4 @@
+import 'calendar_day_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../data/local/habit_store.dart';
@@ -47,7 +48,7 @@ class HabitsController extends AsyncNotifier<HabitsSnapshot> {
     if (current == null || habit == null || habit.isArchived) return;
     final day_ = dayOnly(day ?? DateTime.now());
     final done = current.isCompleted(habitId, day_);
-    await setAmount(habitId, done ? 0 : _targetOf(habit), day: day_);
+    await setAmount(habitId, done ? 0 : _targetOf(habit, day_), day: day_);
   }
 
   /// Logs progress on an amount-based habit (today by default).
@@ -62,7 +63,7 @@ class HabitsController extends AsyncNotifier<HabitsSnapshot> {
 
     final targetDay = dayOnly(day ?? DateTime.now());
     final key = dayKey(targetDay);
-    final targetAmount = _targetOf(habit);
+    final targetAmount = _targetOf(habit, targetDay);
     final clamped = amount.clamp(0, targetAmount);
 
     final amounts = <String, Map<String, int>>{
@@ -102,8 +103,8 @@ class HabitsController extends AsyncNotifier<HabitsSnapshot> {
     );
   }
 
-  static int _targetOf(Habit habit) =>
-      habit.targetAmount <= 0 ? 1 : habit.targetAmount;
+  static int _targetOf(Habit habit, DateTime day) =>
+      habit.planOn(day).targetAmount <= 0 ? 1 : habit.planOn(day).targetAmount;
 
   Future<void> addHabit(Habit habit) async {
     final current = state.valueOrNull ?? HabitsSnapshot.empty;
@@ -112,12 +113,44 @@ class HabitsController extends AsyncNotifier<HabitsSnapshot> {
     await _repo.save(next);
   }
 
-  Future<void> updateHabit(Habit habit) async {
+  Future<void> updateHabit(Habit habit, {DateTime? effectiveAt}) async {
     final current = state.valueOrNull ?? HabitsSnapshot.empty;
+    final old = current.habitById(habit.id);
+    if (old == null) return;
+    final day = dayOnly(effectiveAt ?? DateTime.now());
+    final changesPlan = old.rhythm != habit.rhythm ||
+        old.days.length != habit.days.length || !old.days.containsAll(habit.days) ||
+        old.targetAmount != habit.targetAmount || old.targetUnit != habit.targetUnit;
+    var updated = habit;
+    var amounts = current.amounts;
+    var log = current.log;
+    if (changesPlan) {
+      final history = old.planHistory.isEmpty
+          ? [HabitPlan(effectiveFrom: dayOnly(old.createdAt), rhythm: old.rhythm,
+              days: Set<int>.from(old.days), targetAmount: old.targetAmount,
+              targetUnit: old.targetUnit)]
+          : [...old.planHistory];
+      history.removeWhere((plan) => dayOnly(plan.effectiveFrom) == day);
+      history.add(HabitPlan(effectiveFrom: day, rhythm: habit.rhythm,
+          days: Set<int>.from(habit.days), targetAmount: habit.targetAmount,
+          targetUnit: habit.targetUnit));
+      history.sort((a, b) => a.effectiveFrom.compareTo(b.effectiveFrom));
+      updated = habit.copyWith(planHistory: history);
+      if (old.targetAmount != habit.targetAmount || old.targetUnit != habit.targetUnit) {
+        amounts = {for (final entry in current.amounts.entries)
+          entry.key: Map<String, int>.from(entry.value)};
+        log = {for (final entry in current.log.entries) entry.key: {...entry.value}};
+        final oldAmount = current.amountFor(habit.id, day);
+        final todayAmount = old.targetUnit != habit.targetUnit ? 0 : oldAmount;
+        amounts.putIfAbsent(habit.id, () => {})[dayKey(day)] = todayAmount;
+        final completed = log.putIfAbsent(habit.id, () => {});
+        completed.removeWhere((date) => dayOnly(date) == day);
+        if (todayAmount >= (habit.targetAmount <= 0 ? 1 : habit.targetAmount)) completed.add(day);
+      }
+    }
     final next = current.copyWith(
-      habits: [
-        for (final h in current.habits) if (h.id == habit.id) habit else h,
-      ],
+      habits: [for (final h in current.habits) if (h.id == habit.id) updated else h],
+      amounts: amounts, log: log,
     );
     state = AsyncData(next);
     await _repo.save(next);
@@ -173,7 +206,7 @@ class HabitsController extends AsyncNotifier<HabitsSnapshot> {
 final todayHabitsProvider = Provider<List<Habit>>((ref) {
   final snapshot = ref.watch(habitsProvider).valueOrNull;
   if (snapshot == null) return const [];
-  return snapshot.scheduledOn(DateTime.now());
+  return snapshot.scheduledOn(ref.watch(calendarDayProvider));
 });
 
 /// `3 of 5` style summary for today.
@@ -192,7 +225,7 @@ final todaySummaryProvider = Provider<TodaySummary>((ref) {
   final snapshot = ref.watch(habitsProvider).valueOrNull;
   final habits = ref.watch(todayHabitsProvider);
   if (snapshot == null) return const TodaySummary(completed: 0, total: 0);
-  final now = DateTime.now();
+  final now = ref.watch(calendarDayProvider);
   return TodaySummary(
     completed: snapshot.completedOn(now),
     total: habits.length,
@@ -204,7 +237,7 @@ final habitTodayAmountProvider =
     Provider.family<int, String>((ref, habitId) {
   final snapshot = ref.watch(habitsProvider).valueOrNull;
   if (snapshot == null) return 0;
-  return snapshot.amountFor(habitId, DateTime.now());
+  return snapshot.amountFor(habitId, ref.watch(calendarDayProvider));
 });
 
 /// Streak for one habit, as shown on cards (`12d`).
@@ -215,7 +248,7 @@ final habitStreakProvider = Provider.family<int, String>((ref, habitId) {
   return streakFor(
     habit,
     snapshot.daysFor(habitId),
-    today: DateTime.now(),
+    today: ref.watch(calendarDayProvider),
   );
 });
 
@@ -235,10 +268,10 @@ const _weekdayShort = ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'];
 /// habit scheduled that day was completed.
 final lastSevenDaysProvider = Provider<List<DayStat>>((ref) {
   final snapshot = ref.watch(habitsProvider).valueOrNull;
-  final today = dayOnly(DateTime.now());
+  final today = ref.watch(calendarDayProvider);
   final days = <DayStat>[];
   for (var offset = 6; offset >= 0; offset--) {
-    final day = today.subtract(Duration(days: offset));
+    final day = addCalendarDays(today, -offset);
     final scheduled = snapshot?.scheduledOn(day).length ?? 0;
     final completed = snapshot?.completedOn(day) ?? 0;
     days.add(DayStat(
@@ -256,11 +289,14 @@ String weekdayLabel(DateTime day) => _weekdayShort[day.weekday - 1];
 /// Consecutive days where the whole routine was completed (today stays open).
 final routineStreakProvider = Provider<int>((ref) {
   final snapshot = ref.watch(habitsProvider).valueOrNull;
-  if (snapshot == null) return 0;
-  final today = dayOnly(DateTime.now());
+  if (snapshot == null || snapshot.habits.isEmpty) return 0;
+  final today = ref.watch(calendarDayProvider);
+  final earliest = snapshot.habits.map((h) => dayOnly(h.createdAt))
+      .reduce((a, b) => a.isBefore(b) ? a : b);
+  final availableDays = calendarDaysBetween(earliest, today) + 1;
   var streak = 0;
-  for (var i = 0; i < 400; i++) {
-    final day = today.subtract(Duration(days: i));
+  for (var i = 0; i < availableDays; i++) {
+    final day = addCalendarDays(today, -i);
     final scheduled = snapshot.scheduledOn(day).length;
     if (scheduled == 0) {
       if (i == 0) continue;
@@ -308,7 +344,7 @@ final routineRecordProvider = Provider<int>((ref) {
       run = 0;
       continue;
     }
-    run = (day.difference(previous).inDays == 1) ? run + 1 : 1;
+    run = (calendarDaysBetween(previous, day) == 1) ? run + 1 : 1;
     previous = day;
     if (run > bestRun) bestRun = run;
   }

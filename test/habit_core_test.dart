@@ -26,6 +26,7 @@ Habit _habit({
     );
 
 void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
   group('calendar keys', () {
     test('dayKey is stable and zero padded', () {
       expect(dayKey(DateTime(2026, 1, 5, 23, 59)), '2026-01-05');

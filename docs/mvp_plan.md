@@ -31,3 +31,7 @@ Product goal: a polished, honestly described, usable trial version to show a com
 ## 7. Release-readiness checklist
 - End-to-end journeys from first launch to creating, tracking and recovering habits; test multiple devices/platforms after target platforms are chosen, keyboard/accessibility, performance and reliability.
 - Prepare a concise company demo, test instructions and known limitations. Call it an MVP only after core scenarios work reliably; this is not a claim of production certification.
+
+### Point 2 checkpoint — historical plans and calendar
+- Plan changes are versioned from the edit date; before-feature edits cannot be recovered retroactively. A unit change resets the current day after confirmation, leaving earlier units and logs intact.
+- Device-local civil-day arithmetic and date refresh are covered by automated transition tests; broader physical-device and cross-device/timezone sync testing remains for release.

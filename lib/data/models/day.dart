@@ -9,6 +9,15 @@ import 'package:daily_spark/l10n/strings.dart';
 /// Truncates [value] to local midnight.
 DateTime dayOnly(DateTime value) => DateTime(value.year, value.month, value.day);
 
+/// Calendar arithmetic (not 24-hour durations), safe over DST transitions.
+DateTime addCalendarDays(DateTime day, int count) =>
+    DateTime(day.year, day.month, day.day + count);
+
+/// Difference in civil dates, independent of 23/25-hour local days.
+int calendarDaysBetween(DateTime start, DateTime end) =>
+    DateTime.utc(end.year, end.month, end.day)
+        .difference(DateTime.utc(start.year, start.month, start.day)).inDays;
+
 /// Stable storage key for a calendar day: `2026-11-12`.
 String dayKey(DateTime value) {
   final d = dayOnly(value);

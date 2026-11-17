@@ -11,6 +11,7 @@ import 'package:daily_spark/data/models/habit.dart';
 import 'package:daily_spark/screens/home/widgets/habit_card_style.dart'
     show habitAccentColours, habitIcon, habitTimeLabel;
 import 'package:daily_spark/state/add_habit_providers.dart';
+import 'package:daily_spark/state/habit_providers.dart';
 
 /// Add / Edit Habit — the form is bound to [habitDraftProvider], so every tap
 /// (symbol, aura, rhythm, days, dosage, reminder) is a real state change and
@@ -86,6 +87,20 @@ class _AddHabitScreenState extends ConsumerState<AddHabitScreen> {
 
   Future<void> _save() async {
     final messenger = ScaffoldMessenger.of(context);
+    final draft = ref.read(habitDraftProvider);
+    final id = ref.read(editingHabitIdProvider);
+    final original = id == null ? null : ref.read(habitsProvider).valueOrNull?.habitById(id);
+    if (draft.isValid && original != null && original.targetUnit != draft.unit) {
+      final confirmed = await showDialog<bool>(context: context, builder: (dialogContext) => AlertDialog(
+        title: Text(tr('Change goal unit?')),
+        content: Text(tr('Today’s progress will start from zero because the unit changed. Previous days stay saved.')),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(dialogContext, false), child: Text(tr('Cancel'))),
+          TextButton(onPressed: () => Navigator.pop(dialogContext, true), child: Text(tr('Continue'))),
+        ],
+      ));
+      if (confirmed != true || !mounted) return;
+    }
     final habit = await ref.read(habitDraftProvider.notifier).save();
     if (habit == null) {
       messenger
@@ -93,9 +108,9 @@ class _AddHabitScreenState extends ConsumerState<AddHabitScreen> {
         ..showSnackBar(
           SnackBar(
             content: Text(
-              ref.read(habitDraftProvider).hasTitle
+              tr(ref.read(habitDraftProvider).hasTitle
                   ? 'Pick at least one day for a custom rhythm'
-                  : 'Give your ritual a name first',
+                  : 'Give your ritual a name first'),
             ),
             behavior: SnackBarBehavior.floating,
           ),

@@ -1,3 +1,4 @@
+import 'package:daily_spark/state/calendar_day_provider.dart';
 import 'package:daily_spark/l10n/habit_sentence.dart';
 import 'dart:async';
 
@@ -619,6 +620,7 @@ class _PreviewShellState extends ConsumerState<PreviewShell> {
 
   @override
   Widget build(BuildContext context) {
+    ref.watch(calendarDayProvider); // Refresh visible dates after midnight/resume.
     // Adopt the persisted theme once it loads (?theme=… still forces it).
     ref.listen(settingsProvider, (prev, next) {
       if (!_themeForced && !_themeTouched && next.loaded) {

@@ -37,6 +37,36 @@ enum HabitAccent {
       );
 }
 
+/// Scheduled days and target that came into effect on a calendar day.
+class HabitPlan {
+  const HabitPlan({required this.effectiveFrom, required this.rhythm,
+    required this.days, required this.targetAmount, required this.targetUnit});
+  final DateTime effectiveFrom;
+  final HabitRhythm rhythm;
+  final Set<int> days;
+  final int targetAmount;
+  final String targetUnit;
+
+  Map<String, dynamic> toJson() => {
+    'effectiveFrom': effectiveFrom.toIso8601String(),
+    'rhythm': rhythm.name, 'days': days.toList()..sort(),
+    'targetAmount': targetAmount, 'targetUnit': targetUnit,
+  };
+
+  static HabitPlan? fromJson(Object? raw) {
+    if (raw is! Map) return null;
+    final date = DateTime.tryParse(raw['effectiveFrom'] as String? ?? '');
+    final unit = raw['targetUnit'];
+    final amount = raw['targetAmount'];
+    final days = raw['days'];
+    if (date == null || unit is! String || amount is! num || days is! List) return null;
+    return HabitPlan(effectiveFrom: date,
+      rhythm: HabitRhythm.fromName(raw['rhythm'] as String?),
+      days: days.whereType<num>().map((n) => n.toInt()).toSet(),
+      targetAmount: amount.toInt(), targetUnit: unit);
+  }
+}
+
 /// Calendar interval during which a habit was paused: [start, end).
 class HabitPause {
   const HabitPause(this.start, this.end);
@@ -80,6 +110,7 @@ class Habit {
     required this.createdAt,
     this.archivedAt,
     this.pauseHistory = const [],
+    this.planHistory = const [],
   });
 
   final String id;
@@ -105,8 +136,25 @@ class Habit {
   final DateTime createdAt;
   final DateTime? archivedAt;
   final List<HabitPause> pauseHistory;
+  final List<HabitPlan> planHistory;
 
   bool get isArchived => archivedAt != null;
+
+  /// Previous settings are read from their effective date; legacy records
+  /// without history retain the settings they had when this feature launched.
+  HabitPlan planOn(DateTime day) {
+    final date = _calendarDay(day);
+    HabitPlan? match;
+    for (final candidate in planHistory) {
+      final effective = _calendarDay(candidate.effectiveFrom);
+      if (!effective.isAfter(date) &&
+          (match == null || !effective.isBefore(_calendarDay(match.effectiveFrom)))) {
+        match = candidate;
+      }
+    }
+    return match ?? HabitPlan(effectiveFrom: createdAt, rhythm: rhythm,
+        days: days, targetAmount: targetAmount, targetUnit: targetUnit);
+  }
 
   /// Is this habit expected on [day]?
   bool isScheduledOn(DateTime day) {
@@ -117,11 +165,12 @@ class Habit {
       if (!date.isBefore(_calendarDay(pause.start)) && date.isBefore(_calendarDay(pause.end))) return false;
     }
     final weekday = day.weekday;
-    return switch (rhythm) {
+    final plan = planOn(date);
+    return switch (plan.rhythm) {
       HabitRhythm.everyDay => true,
       HabitRhythm.weekdays => weekday <= 5,
       HabitRhythm.weekends => weekday >= 6,
-      HabitRhythm.custom => days.contains(weekday),
+      HabitRhythm.custom => plan.days.contains(weekday),
     };
   }
 
@@ -142,6 +191,7 @@ class Habit {
     DateTime? archivedAt,
     bool clearArchived = false,
     List<HabitPause>? pauseHistory,
+    List<HabitPlan>? planHistory,
   }) {
     return Habit(
       id: id,
@@ -160,6 +210,7 @@ class Habit {
       createdAt: createdAt,
       archivedAt: clearArchived ? null : (archivedAt ?? this.archivedAt),
       pauseHistory: pauseHistory ?? this.pauseHistory,
+      planHistory: planHistory ?? this.planHistory,
     );
   }
 
@@ -180,6 +231,7 @@ class Habit {
         'createdAt': createdAt.toIso8601String(),
         'archivedAt': archivedAt?.toIso8601String(),
         'pauseHistory': pauseHistory.map((p) => p.toJson()).toList(),
+        'planHistory': planHistory.map((p) => p.toJson()).toList(),
       };
 
   factory Habit.fromJson(Map<String, dynamic> json) => Habit(
@@ -202,6 +254,7 @@ class Habit {
             DateTime.now(),
         archivedAt: DateTime.tryParse(json['archivedAt'] as String? ?? ''),
         pauseHistory: ((json['pauseHistory'] as List?) ?? const []).map(HabitPause.fromJson).whereType<HabitPause>().toList(),
+        planHistory: ((json['planHistory'] as List?) ?? const []).map(HabitPlan.fromJson).whereType<HabitPlan>().toList(),
       );
 
   @override

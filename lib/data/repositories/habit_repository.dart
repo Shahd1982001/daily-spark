@@ -52,7 +52,7 @@ class HabitsSnapshot {
     final stored = amounts[habitId]?[dayKey(day)];
     if (stored != null) return stored;
     return isCompleted(habitId, day)
-        ? (habitById(habitId)?.targetAmount ?? 1)
+        ? (habitById(habitId)?.planOn(day).targetAmount ?? 1)
         : 0;
   }
 

@@ -92,6 +92,37 @@ void main() {
     expect(find.text('1000 ml'), findsOneWidget);
   });
 
+  testWidgets('changing unit warns and cancel keeps current progress', (tester) async {
+    await pumpForm(tester);
+    await tester.enterText(find.byType(TextField).first, 'Read');
+    await tester.tap(find.text('Ignite This Habit'));
+    await tester.pumpAndSettle();
+    final habit = container.read(habitsProvider).value!.habits.single;
+    await container.read(habitsProvider.notifier).setAmount(habit.id, 10);
+    container.read(editingHabitIdProvider.notifier).state = habit.id;
+    await tester.pumpWidget(UncontrolledProviderScope(
+      container: container,
+      child: SparkThemeScope(palette: SparkPalette.light,
+        child: MaterialApp(home: AddHabitScreen(key: ValueKey(habit.id)))),
+    ));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byIcon(Icons.water_drop_outlined).first);
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Save Changes'));
+    await tester.pumpAndSettle();
+    expect(find.text('Change goal unit?'), findsOneWidget);
+    await tester.tap(find.text('Cancel'));
+    await tester.pumpAndSettle();
+    expect(container.read(habitsProvider).value!.amountFor(habit.id, DateTime.now()), 10);
+    expect(container.read(habitsProvider).value!.habitById(habit.id)!.targetUnit, 'pages');
+    await tester.tap(find.text('Save Changes'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Continue'));
+    await tester.pumpAndSettle();
+    expect(container.read(habitsProvider).value!.amountFor(habit.id, DateTime.now()), 0);
+    expect(container.read(habitsProvider).value!.habitById(habit.id)!.targetUnit, 'ml');
+  });
+
   testWidgets('edit mode prefills the form and saves in place',
       (tester) async {
     await pumpForm(tester);

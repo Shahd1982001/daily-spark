@@ -1,3 +1,4 @@
+import 'calendar_day_provider.dart';
 import 'package:daily_spark/l10n/strings.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -61,8 +62,8 @@ int _daysForRange(ProgressRange range, DateTime today, DateTime? earliest) {
       return 30;
     case ProgressRange.all:
       if (earliest == null) return 7;
-      final span = dayOnly(today).difference(dayOnly(earliest)).inDays + 1;
-      return span.clamp(1, 400);
+      final span = calendarDaysBetween(earliest, today) + 1;
+      return span < 1 ? 1 : span;
   }
 }
 
@@ -71,7 +72,7 @@ final rangeStatsProvider = Provider<RangeStats>((ref) {
   final range = ref.watch(progressRangeProvider);
   if (snapshot == null || snapshot.habits.isEmpty) return RangeStats.empty;
 
-  final today = dayOnly(DateTime.now());
+  final today = ref.watch(calendarDayProvider);
   DateTime? earliest;
   for (final habit in snapshot.habits) {
     final created = dayOnly(habit.createdAt);
@@ -88,7 +89,7 @@ final rangeStatsProvider = Provider<RangeStats>((ref) {
     var habitScheduled = 0;
     var habitCompleted = 0;
     for (var i = 0; i < days; i++) {
-      final day = today.subtract(Duration(days: i));
+      final day = addCalendarDays(today, -i);
       if (habit.isScheduledOn(day)) {
         habitScheduled++;
         if (done.contains(day)) habitCompleted++;
@@ -130,10 +131,10 @@ class RhythmDay {
 /// Last 7 days, oldest first — the Weekly Rhythm bars.
 final weeklyRhythmProvider = Provider<List<RhythmDay>>((ref) {
   final snapshot = ref.watch(habitsProvider).valueOrNull;
-  final today = dayOnly(DateTime.now());
+  final today = ref.watch(calendarDayProvider);
   final days = <RhythmDay>[];
   for (var offset = 6; offset >= 0; offset--) {
-    final day = today.subtract(Duration(days: offset));
+    final day = addCalendarDays(today, -offset);
     final scheduled = snapshot?.scheduledOn(day).length ?? 0;
     final completed = snapshot?.completedOn(day) ?? 0;
     days.add(RhythmDay(
@@ -173,7 +174,7 @@ final personalBestProvider = Provider<int>((ref) {
   var best = 1;
   var run = 1;
   for (var i = 1; i < sorted.length; i++) {
-    if (sorted[i].difference(sorted[i - 1]).inDays == 1) {
+    if (calendarDaysBetween(sorted[i - 1], sorted[i]) == 1) {
       run++;
       if (run > best) best = run;
     } else {
@@ -196,11 +197,11 @@ final totalCompletionsProvider = Provider<int>((ref) {
 final consistencyScoreProvider = Provider<int>((ref) {
   final snapshot = ref.watch(habitsProvider).valueOrNull;
   if (snapshot == null || snapshot.habits.isEmpty) return 0;
-  final today = dayOnly(DateTime.now());
+  final today = ref.watch(calendarDayProvider);
   var scheduled = 0;
   var completed = 0;
   for (var i = 0; i < 14; i++) {
-    final day = today.subtract(Duration(days: i));
+    final day = addCalendarDays(today, -i);
     scheduled += snapshot.scheduledOn(day).length;
     completed += snapshot.completedOn(day);
   }
