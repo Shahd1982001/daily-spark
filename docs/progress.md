@@ -474,3 +474,7 @@ name, email, password — plus the session (`none / guest / account`).
 ### Sit preview v3 — feet forward, still a draft
 - User rejected v2 as unnatural and selected a seated pose with the feet forward. Made a separate v3 experiment with 24 exported frames, original face/body art retained at fixed scale, feet emerging forward as the body lowers. The transition is computationally generated between pose elements, not 24 independently hand-drawn poses, so its naturalness must be judged by the user; no claim of final quality.
 - No app behavior changed. The stand-up movement and other idle actions remain pending. Browser smoke test confirms frames change and replay works.
+
+### Separate jump-to-sit experiment
+- User proposed jumping and landing seated instead of the rejected direct sit transition. Built `web_extra/spark-jump-sit-preview.html` as a standalone draft: original-size registered frames, a small preparatory bend, a parabolic jump and landing with the feet forward. It uses the previously drafted seated-pose elements and offline compositing/interpolation, not independently drawn frames; awaiting the user's review.
+- The preview and its builder are separate from the app. No existing in-app behavior changed. Browser smoke test verifies replay/frame updates; a frame audit shows constant canvas size and the same start/end floor line.
