@@ -462,3 +462,7 @@ name, email, password — plus the session (`none / guest / account`).
 ### Resting group, movement 2: looking left and right
 - Added six eye-only look frames drawn from the original artwork, displayed in a sequence that looks left, returns to center, looks right and returns. This is an eye glance, not a head turn; ask the user to approve it. Body/size/canvas/alpha remain unchanged, and the approved blink alternates with the look sequence.
 - Tests cover both directions, stable size/position and reduced motion; browser loaded all six files without page errors. User review required before adding sitting or subsequent motions.
+
+### Separate sit preview (not integrated)
+- At the user's request, new motion work goes into a separate preview, and is not added to the app until the whole set has been approved. The sit prototype is a self-contained `web_extra/spark-sit-preview.html`, with twelve offline-generated in-between PNGs and the original face/body kept at the same scale. The endpoint is an experimental seated pose; interpolation is a draft and needs the user's review.
+- The existing in-app blink/look remains unchanged. Sit-to-stand and the rest of the group are not done; treat the preview as unapproved. The replay button and frame loading were checked in a browser. The separate HTML is published alongside the app without changing app behavior.
