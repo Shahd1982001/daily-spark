@@ -2,9 +2,9 @@ import 'dart:convert';
 import 'package:daily_spark/data/services/reminder_notifications.dart';
 import 'package:daily_spark/data/services/reminder_plan.dart';
 import 'package:daily_spark/state/avatar_provider.dart';
-import 'package:daily_spark/state/mascot_providers.dart';
 import 'package:daily_spark/state/spark_alert_preference.dart';
 import 'package:daily_spark/design_system/widgets/spark_mascot.dart';
+import 'package:daily_spark/design_system/widgets/spark_pet.dart';
 import 'package:flutter/foundation.dart' show kIsWeb, defaultTargetPlatform, TargetPlatform;
 import 'package:image_picker/image_picker.dart';
 import 'package:daily_spark/state/calendar_day_provider.dart';
@@ -68,11 +68,35 @@ enum _Stage {
   profile,
 }
 
+/// Keep the pet behind system dialogs/sheets so it never covers their actions.
+class _PetNavigatorObserver extends NavigatorObserver {
+  _PetNavigatorObserver(this.visible);
+  final ValueNotifier<bool> visible;
+  final _popups = <Route<dynamic>>{};
+  bool disposed = false;
+  void _update() { if (!disposed) visible.value = _popups.isNotEmpty; }
+  @override
+  void didPush(Route<dynamic> route, Route<dynamic>? previousRoute) {
+    if (route is PopupRoute) { _popups.add(route); _update(); }
+  }
+  @override
+  void didPop(Route<dynamic> route, Route<dynamic>? previousRoute) {
+    if (_popups.remove(route)) _update();
+  }
+  @override
+  void didRemove(Route<dynamic> route, Route<dynamic>? previousRoute) {
+    if (_popups.remove(route)) _update();
+  }
+  void dispose() { disposed = true; }
+}
+
 class _PreviewShellState extends ConsumerState<PreviewShell> with WidgetsBindingObserver {
   final _reminderNotifications = ReminderNotifications();
   Timer? _reminderTimer;
   String? _reminderFingerprint;
   final _messengerKey = GlobalKey<ScaffoldMessengerState>();
+  final _popupOpen = ValueNotifier<bool>(false);
+  late final _petObserver = _PetNavigatorObserver(_popupOpen);
 
   /// Lets modal sheets/dialogs open from shell-level handlers: the State's own
   /// context sits above `MaterialApp` and has no Navigator.
@@ -160,6 +184,8 @@ class _PreviewShellState extends ConsumerState<PreviewShell> with WidgetsBinding
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
+    _petObserver.dispose();
+    _popupOpen.dispose();
     _reminderTimer?.cancel();
     _timer?.cancel();
     for (final c in [_loginEmail, _loginPass, _suName, _suEmail, _suPass, _suConfirm]) {
@@ -326,27 +352,6 @@ class _PreviewShellState extends ConsumerState<PreviewShell> with WidgetsBinding
     _messengerKey.currentState
       ?..clearSnackBars()
       ..showSnackBar(SnackBar(content: Text(tr(message))));
-  }
-
-  void _showCelebration() {
-    final streak = ref.read(routineStreakProvider);
-    final message = streak >= 3
-        ? tr('Amazing! Your streak is {n} days ✨', {'n': '$streak'})
-        : tr('You did it! Every little step counts ✨');
-    _messengerKey.currentState
-      ?..hideCurrentSnackBar()
-      ..showSnackBar(SnackBar(
-        behavior: SnackBarBehavior.floating,
-        duration: const Duration(seconds: 3),
-        backgroundColor: p.surface,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
-        content: Row(children: [
-          const SparkMascot(size: 68, animate: true, celebrating: true),
-          const SizedBox(width: 12),
-          Expanded(child: figmaText(message, translate: false, size: 14,
-              weight: FontWeight.w600, color: p.ink)),
-        ]),
-      ));
   }
 
   /// A local preference only until actual late alerts are implemented. The
@@ -831,9 +836,6 @@ class _PreviewShellState extends ConsumerState<PreviewShell> with WidgetsBinding
   Widget build(BuildContext context) {
     ref.watch(calendarDayProvider); // Refresh visible dates after midnight/resume.
     // Adopt the persisted theme once it loads (?theme=… still forces it).
-    ref.listen(completionCelebrationProvider, (previous, next) {
-      if (previous != null && next > previous) _showCelebration();
-    });
     ref.listen(habitsProvider, (_, __) => _queueReminderSync());
     ref.listen(localeProvider, (_, __) => _queueReminderSync());
     ref.listen(settingsProvider, (prev, next) {
@@ -850,6 +852,7 @@ class _PreviewShellState extends ConsumerState<PreviewShell> with WidgetsBinding
       debugShowCheckedModeBanner: false,
       scaffoldMessengerKey: _messengerKey,
       navigatorKey: _navKey,
+      navigatorObservers: [_petObserver],
       locale: ref.watch(localeProvider),
       supportedLocales: const [Locale('en'), Locale('ar')],
       localizationsDelegates: const [
@@ -862,7 +865,12 @@ class _PreviewShellState extends ConsumerState<PreviewShell> with WidgetsBinding
       themeMode: _isDark ? ThemeMode.dark : ThemeMode.light,
       builder: (context, child) => SparkThemeScope(
         palette: palette,
-        child: child ?? const SizedBox.shrink(),
+        child: Stack(children: [
+          child ?? const SizedBox.shrink(),
+          if (_mainStages.contains(_stage) && MediaQuery.viewInsetsOf(context).bottom == 0)
+            ValueListenableBuilder<bool>(valueListenable: _popupOpen,
+              builder: (context, open, _) => open ? const SizedBox.shrink() : const SparkPet()),
+        ]),
       ),
       home: switch (_stage) {
         _Stage.splash => SplashScreen(onTap: () {

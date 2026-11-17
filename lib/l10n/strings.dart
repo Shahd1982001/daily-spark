@@ -192,6 +192,11 @@ class Strings {
         'الفرز والتصفية — في قطعة لاحقة ✦',
 
     // Arabic coverage: screen copy, dynamic templates, dates and units.
+    'Spark, your little companion': 'سبارك، رفيقك الصغير',
+    'Tap to comfort or play. Drag to move.': 'المسها للعب أو المواساة، واسحبها لتحريكها.',
+    'Yay! You did it! ✨': 'يا سلام! أحسنت ✨',
+    'Thank you! Let us try again together 💛': 'شكراً! لنحاول من جديد معاً 💛',
+    'Hehe! I am happy you are here ✨': 'هيهي! أنا سعيدة بوجودك ✨',
     'Start with one small step. I am here for you.': 'ابدأ بخطوة صغيرة، أنا هنا معك.',
     'Every little step counts. You have got this!': 'كل خطوة صغيرة تفرق، أنت قدّها!',
     'Spark late alerts': 'تنبيهات سبارك للتأخير',

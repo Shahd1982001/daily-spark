@@ -12,7 +12,7 @@ parts={
  'left_foot':[(145,491),(252,511),(252,593),(136,593)],
  'right_foot':[(294,511),(401,491),(410,593),(294,593)],
 }
-for mood,source in [('happy','spark.png'),('concerned','spark_concerned.png')]:
+for mood,source in [('happy','spark.png'),('concerned','spark_concerned.png'),('laugh','spark_laugh.png')]:
  image=Image.open(root/source).convert('RGBA'); w,h=image.size
  sx=w/546; sy=h/600
  body=image.copy()
@@ -27,6 +27,8 @@ for mood,source in [('happy','spark.png'),('concerned','spark_concerned.png')]:
   alpha=np.asarray(body.getchannel('A')).copy(); alpha[np.asarray(mask)>0]=0
   body.putalpha(Image.fromarray(alpha))
  body.save(root/f'{mood}_body.png',optimize=True)
+ if mood == 'laugh':
+  continue  # Laughing illustration already has closed smiling eyes.
  # Create a naturally closed-eye body from the original eye area and draw two
  # short eyelids. The eye mask is surrounded by body colour on all sides.
  rgba=np.asarray(body).copy(); bgr=cv2.cvtColor(rgba[:,:,:3],cv2.COLOR_RGB2BGR); mask=np.zeros((h,w),np.uint8)
