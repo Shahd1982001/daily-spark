@@ -85,7 +85,18 @@ void main() {
     expect(frame('wave_mid') || frame('wave_alt'), isTrue);
     await tester.pump(const Duration(seconds: 5));
     await tester.pump(const Duration(milliseconds: 500));
-    expect(frame('walk_step') || frame('walk_other') || frame('walk_reverse_step'), isTrue);
+    expect(tester.widgetList<Image>(find.byType(Image)).any((image) => image.image is AssetImage && (image.image as AssetImage).assetName.contains('/walk_cycle_')), isTrue);
+    final seenFrames = <String>{};
+    for (var i = 0; i < 18; i++) {
+      await tester.pump(const Duration(milliseconds: 80));
+      for (final image in tester.widgetList<Image>(find.byType(Image))) {
+        if (image.image is AssetImage) {
+          final path = (image.image as AssetImage).assetName;
+          if (path.contains('/walk_cycle_')) seenFrames.add(path);
+        }
+      }
+    }
+    expect(seenFrames.length, 16);
     var sawBack = false, sawJump = false, sawHeart = false;
     for (var i = 0; i < 110; i++) {
       await tester.pump(const Duration(milliseconds: 200));

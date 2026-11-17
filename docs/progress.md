@@ -442,3 +442,7 @@ name, email, password — plus the session (`none / guest / account`).
 ### Spark frame-sequence first pass
 - Added hand-selected image frames for walking and waving, and a timed idle sequence with two jumps, turning to show her back, and presenting a heart. Cookie chewing alternates two frames. Preloads the frames and preserves reduced-motion, drag, floor, comfort, and treats.
 - This is a first pass, not a full high-frame-count character animation: generated poses can vary and the cake, falling and comfort still need additional matching frames. User requested every motion as image sequences; continue those in a later turn. Native device validation remains outstanding.
+
+### Spark walk-cycle experiment
+- Added 16 registered walk-cycle PNG frames, preloaded and played at 12.5 fps in both directions, instead of alternating the previous three independently generated poses. The cycle is rendered offline from one side image and separated leg layers; it is an interpolated rig, not 16 hand-drawn poses or a finalized natural walk. The user should review it before the other actions are expanded.
+- A browser smoke test found no page errors, and tests cover the sequence and reduced-motion behavior. Gentle placement vs falling, random comfort requests and naming remain future work; the existing behavior has not yet been changed for these.

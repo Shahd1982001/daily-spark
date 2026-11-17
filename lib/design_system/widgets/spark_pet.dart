@@ -24,6 +24,7 @@ class SparkPet extends ConsumerStatefulWidget {
 
 class _SparkPetState extends ConsumerState<SparkPet> with TickerProviderStateMixin {
   late final AnimationController _walk = AnimationController(vsync: this, duration: const Duration(seconds: 5));
+  late final AnimationController _walkCycle = AnimationController(vsync: this, duration: const Duration(milliseconds: 1280));
   late final AnimationController _fall = AnimationController(vsync: this, duration: const Duration(milliseconds: 700));
   late final AnimationController _life = AnimationController(vsync: this, duration: const Duration(milliseconds: 700));
   late final AnimationController _idleMotion = AnimationController(vsync: this, duration: const Duration(milliseconds: 4800));
@@ -47,6 +48,7 @@ class _SparkPetState extends ConsumerState<SparkPet> with TickerProviderStateMix
     _walk.addStatusListener((status) {
       if (status != AnimationStatus.completed || _action != _PetAction.walking || !mounted) return;
       _fromX = _toX;
+      _walkCycle.stop();
       _scheduleIdle();
     });
     _fall.addStatusListener((status) {
@@ -59,7 +61,7 @@ class _SparkPetState extends ConsumerState<SparkPet> with TickerProviderStateMix
     super.didChangeDependencies();
     if (!_framesCached) {
       _framesCached = true;
-      for (final name in const ['walk_step', 'walk_other', 'walk_reverse_step', 'wave_mid', 'wave_alt', 'jump', 'back_quarter', 'back', 'heart', 'cookie_open', 'cookie_bite']) {
+      for (final name in [...List.generate(16, (i) => 'walk_cycle_${i.toString().padLeft(2, '0')}'), ...const ['wave_mid', 'wave_alt', 'jump', 'back_quarter', 'back', 'heart', 'cookie_open', 'cookie_bite']]) {
         precacheImage(AssetImage('assets/mascot/frames/$name.png'), context);
       }
     }
@@ -69,7 +71,7 @@ class _SparkPetState extends ConsumerState<SparkPet> with TickerProviderStateMix
       if (reduced) {
         _fromX = _x;
         _y = _currentY;
-        _walk.stop(); _fall.stop(); _life.stop(); _idleMotion.stop();
+        _walk.stop(); _walkCycle.stop(); _fall.stop(); _life.stop(); _idleMotion.stop();
         _idleTimer?.cancel(); _idleTimer = null;
         if (_action == _PetAction.falling) { _y = 1; _hurt = true; }
         _action = _PetAction.idle;
@@ -80,7 +82,7 @@ class _SparkPetState extends ConsumerState<SparkPet> with TickerProviderStateMix
     }
   }
   @override
-  void dispose() { _messageTimer?.cancel(); _idleTimer?.cancel(); _walk.dispose(); _fall.dispose(); _life.dispose(); _idleMotion.dispose(); super.dispose(); }
+  void dispose() { _messageTimer?.cancel(); _idleTimer?.cancel(); _walk.dispose(); _walkCycle.dispose(); _fall.dispose(); _life.dispose(); _idleMotion.dispose(); super.dispose(); }
 
   void _scheduleIdle() {
     _idleTimer?.cancel();
@@ -102,6 +104,7 @@ class _SparkPetState extends ConsumerState<SparkPet> with TickerProviderStateMix
     }
     _toX = _stops[_stop++ % _stops.length];
     setState(() => _action = _PetAction.walking);
+    _walkCycle.repeat();
     _walk.forward(from: 0);
   }
 
@@ -171,7 +174,7 @@ class _SparkPetState extends ConsumerState<SparkPet> with TickerProviderStateMix
       final ground = (constraints.maxHeight - (widget.progressBar ? 86 : 76) * scale - size).clamp(0.0, constraints.maxHeight);
       final ceiling = math.min(media.padding.top + 64, ground);
       final travelY = (ground - ceiling).clamp(0.0, double.infinity);
-      return AnimatedBuilder(animation: Listenable.merge([_walk, _fall, _life, _idleMotion]), builder: (context, _) {
+      return AnimatedBuilder(animation: Listenable.merge([_walk, _walkCycle, _fall, _life, _idleMotion]), builder: (context, _) {
         final x = _x;
         final y = _currentY;
         Widget art;
@@ -187,8 +190,8 @@ class _SparkPetState extends ConsumerState<SparkPet> with TickerProviderStateMix
         } else if (sad || _action == _PetAction.held || _action == _PetAction.falling) {
           art = SparkMascot(size: size, animate: true, concerned: sad);
         } else if (_action == _PetAction.walking) {
-          const frames = ['walk_step', 'walk_other', 'walk_reverse_step', 'walk_other'];
-          final frame = frames[(_life.value * frames.length).floor().clamp(0, frames.length - 1)];
+          final index = (_walkCycle.value * 16).floor().clamp(0, 15);
+          final frame = 'walk_cycle_${index.toString().padLeft(2, '0')}';
           art = Transform.flip(flipX: _toX > _fromX, child: _sprite(frame, size));
         } else if (_action == _PetAction.waving) {
           final t = _idleMotion.value;
@@ -229,7 +232,7 @@ class _SparkPetState extends ConsumerState<SparkPet> with TickerProviderStateMix
                   onTap: () => _interact(missed, sad),
                   onPanStart: (_) {
                     _fromX = _x; _y = _currentY;
-                    _walk.stop(); _fall.stop(); _idleMotion.stop(); _idleTimer?.cancel(); _idleTimer = null;
+                    _walk.stop(); _walkCycle.stop(); _fall.stop(); _idleMotion.stop(); _idleTimer?.cancel(); _idleTimer = null;
                     setState(() => _action = _PetAction.held);
                   },
                   onPanUpdate: (details) => setState(() {
