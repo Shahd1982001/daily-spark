@@ -24,7 +24,11 @@ right = layer((y >= curve - 12) & (x > 245) & (x < 361) & (y > 495))
 for i in range(16):
     step = math.sin(2 * math.pi * i / 16)
     canvas = Image.new('RGBA', source.size)
-    canvas.alpha_composite(right.rotate(10 * step, resample=Image.Resampling.BICUBIC, center=(300, 500)))
-    canvas.alpha_composite(left.rotate(-10 * step, resample=Image.Resampling.BICUBIC, center=(150, 500)))
+    # Broader alternating stride and a brief lift make footfalls visible at
+    # phone size; both feet remain behind the unchanged body.
+    r = right.rotate(17 * step, resample=Image.Resampling.BICUBIC, center=(300, 500))
+    l = left.rotate(-17 * step, resample=Image.Resampling.BICUBIC, center=(150, 500))
+    canvas.alpha_composite(r, (round(9 * step), -round(12 * max(0, -step))))
+    canvas.alpha_composite(l, (-round(9 * step), -round(12 * max(0, step))))
     canvas.alpha_composite(body)
     canvas.save(root / 'frames' / f'walk_cycle_{i:02}.png', optimize=True)

@@ -79,32 +79,27 @@ void main() {
     await tester.pumpWidget(UncontrolledProviderScope(container: c,
       child: SparkThemeScope(palette: SparkPalette.light,
         child: const MaterialApp(home: Scaffold(body: SparkPet())))));
-    await tester.pump(const Duration(milliseconds: 700));
-    bool frame(String name) => tester.widgetList<Image>(find.byType(Image)).any((image) =>
-      image.image is AssetImage && (image.image as AssetImage).assetName.endsWith('/$name.png'));
-    expect(frame('wave_mid') || frame('wave_alt'), isTrue);
-    await tester.pump(const Duration(seconds: 5));
-    await tester.pump(const Duration(milliseconds: 500));
-    expect(tester.widgetList<Image>(find.byType(Image)).any((image) => image.image is AssetImage && (image.image as AssetImage).assetName.contains('/walk_cycle_')), isTrue);
-    final seenFrames = <String>{};
-    for (var i = 0; i < 18; i++) {
-      await tester.pump(const Duration(milliseconds: 80));
+    await tester.pump(const Duration(milliseconds: 200));
+    String? currentFrame() {
       for (final image in tester.widgetList<Image>(find.byType(Image))) {
         if (image.image is AssetImage) {
-          final path = (image.image as AssetImage).assetName;
-          if (path.contains('/walk_cycle_')) seenFrames.add(path);
+          final name = (image.image as AssetImage).assetName;
+          if (name.contains('/frames/')) return name;
         }
       }
+      return null;
     }
-    expect(seenFrames.length, 16);
-    var sawBack = false, sawJump = false, sawHeart = false;
-    for (var i = 0; i < 110; i++) {
-      await tester.pump(const Duration(milliseconds: 200));
-      sawJump = sawJump || frame('jump');
-      sawBack = sawBack || frame('back');
-      sawHeart = sawHeart || frame('heart');
+    final seen = <String>{};
+    for (var i = 0; i < 360; i++) {
+      await tester.pump(const Duration(milliseconds: 80));
+      final frame = currentFrame();
+      if (frame != null) seen.add(frame);
     }
-    expect(sawJump && sawBack && sawHeart, isTrue);
+    expect(seen.where((s) => s.contains('/walk_cycle_')).length, 16);
+    expect(seen.any((s) => s.endsWith('/wave_mid.png') || s.endsWith('/wave_alt.png')), isTrue);
+    expect(seen.any((s) => s.endsWith('/jump.png')), isTrue);
+    expect(seen.any((s) => s.endsWith('/back.png')), isTrue);
+    expect(seen.any((s) => s.endsWith('/heart.png')), isTrue);
   });
 
 }

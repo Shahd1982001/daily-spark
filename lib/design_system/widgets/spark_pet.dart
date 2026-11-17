@@ -77,7 +77,9 @@ class _SparkPetState extends ConsumerState<SparkPet> with TickerProviderStateMix
         _action = _PetAction.idle;
       } else {
         _life.repeat();
-        _scheduleIdle();
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (mounted && !_reducedMotion && _action == _PetAction.idle) _beginWalking();
+        });
       }
     }
   }
@@ -93,7 +95,12 @@ class _SparkPetState extends ConsumerState<SparkPet> with TickerProviderStateMix
       0 => _PetAction.turnAndHeart, 1 => _PetAction.waving, _ => _PetAction.idle,
     });
     _idleMotion.forward(from: 0);
-    _idleTimer = Timer(const Duration(milliseconds: 4800), _beginWalking);
+    final pause = switch (_action) {
+      _PetAction.idle => const Duration(milliseconds: 1600),
+      _PetAction.waving => const Duration(milliseconds: 3200),
+      _ => const Duration(milliseconds: 4800),
+    };
+    _idleTimer = Timer(pause, _beginWalking);
   }
 
   void _beginWalking() {

@@ -446,3 +446,6 @@ name, email, password — plus the session (`none / guest / account`).
 ### Spark walk-cycle experiment
 - Added 16 registered walk-cycle PNG frames, preloaded and played at 12.5 fps in both directions, instead of alternating the previous three independently generated poses. The cycle is rendered offline from one side image and separated leg layers; it is an interpolated rig, not 16 hand-drawn poses or a finalized natural walk. The user should review it before the other actions are expanded.
 - A browser smoke test found no page errors, and tests cover the sequence and reduced-motion behavior. Gentle placement vs falling, random comfort requests and naming remain future work; the existing behavior has not yet been changed for these.
+
+### Walk visibility follow-up
+- User reported the first walk was not visibly moving. Shortened the initial wait by starting the walk immediately, shortened the ordinary pauses, and increased the stride. Browser screenshots confirm horizontal displacement and the walk assets load, but the gait is still generated from one rig rather than drawn as 16 distinct poses; it is not yet approved as a natural walk. Reduced-motion system settings intentionally disable automatic movement.
