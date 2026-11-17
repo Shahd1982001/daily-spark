@@ -487,3 +487,8 @@ name, email, password — plus the session (`none / guest / account`).
 ### Jump preview with opaque limb silhouettes
 - User reported backgrounds around raised arms, wanted arms to straighten as they rise, and rejected leg fade-in, requesting an old-style frame sequence. Built a separate experiment using transparent arm cutouts, an illustrated straighter raised-arm pose, and registered frames whose foot silhouettes morph without introducing a second leg via an opacity fade. Original face/body/scale remain unchanged.
 - These are computationally interpolated silhouettes, not 44 individually hand-drawn frames or a claim of classic animation quality; intermediate limb shapes may still need redrawing. The preview is unapproved and not in the app. Browser replay/frame-loading smoke test passed, and checked output corners are transparent.
+
+### Jump storyboard revision from user annotations
+- User annotated phone screenshots: arms move upward during the jump; legs move outward in the air; the seated leg pose must not appear while airborne; arms return down and sitting occurs only after touching the ground. Made a standalone draft `spark-jump-story-preview.html` following that sequence, with an airborne leg reference and separate seated stage. Corrected the preview's ground line and prevented the top of the mascot from being clipped; feet start/end at the same floor height.
+- The body/face keep their original scale. This remains a computationally interpolated draft, not a hand-drawn professional final: some intermediate arm joints/leg edges may need further redrawing, and user approval is pending. No app integration or app code changed.
+- Browser smoke test checks frame changes and replay; the prior preview page remains available unchanged.
