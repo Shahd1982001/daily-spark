@@ -438,3 +438,7 @@ name, email, password — plus the session (`none / guest / account`).
 - Spark now walks above the navigation bar, pauses, waves, shows a heart and turns; drag and release above the bar to see her fall and become upset, then tap to comfort her. Reduced-motion settings skip the fall animation.
 - Completing today's target earns a randomly selected cookie or cake, once per habit per day; tap Spark to feed the oldest treat. Inventory is local and demo inventory is temporary. Missed-day mood remains separate from fall mood.
 - No backend or smart notification delivery was added. Treat and habit saves are separate local writes; treat write failure does not undo habit progress, so a failed write can lose that reward. Native devices still need testing.
+
+### Spark frame-sequence first pass
+- Added hand-selected image frames for walking and waving, and a timed idle sequence with two jumps, turning to show her back, and presenting a heart. Cookie chewing alternates two frames. Preloads the frames and preserves reduced-motion, drag, floor, comfort, and treats.
+- This is a first pass, not a full high-frame-count character animation: generated poses can vary and the cake, falling and comfort still need additional matching frames. User requested every motion as image sequences; continue those in a later turn. Native device validation remains outstanding.

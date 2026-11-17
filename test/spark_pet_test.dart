@@ -68,4 +68,32 @@ void main() {
     await tester.pump(const Duration(seconds: 5));
   });
 
+  testWidgets('frame sequences advance from wave to walking and idle turn', (tester) async {
+    SharedPreferences.setMockInitialValues({});
+    tester.view.physicalSize = const Size(390, 844);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    final c = ProviderContainer(overrides: [habitStoreProvider.overrideWithValue(MemoryHabitStore())]);
+    addTearDown(c.dispose);
+    await c.read(habitsProvider.future);
+    await tester.pumpWidget(UncontrolledProviderScope(container: c,
+      child: SparkThemeScope(palette: SparkPalette.light,
+        child: const MaterialApp(home: Scaffold(body: SparkPet())))));
+    await tester.pump(const Duration(milliseconds: 700));
+    bool frame(String name) => tester.widgetList<Image>(find.byType(Image)).any((image) =>
+      image.image is AssetImage && (image.image as AssetImage).assetName.endsWith('/$name.png'));
+    expect(frame('wave_mid') || frame('wave_alt'), isTrue);
+    await tester.pump(const Duration(seconds: 5));
+    await tester.pump(const Duration(milliseconds: 500));
+    expect(frame('walk_step') || frame('walk_other') || frame('walk_reverse_step'), isTrue);
+    var sawBack = false, sawJump = false, sawHeart = false;
+    for (var i = 0; i < 110; i++) {
+      await tester.pump(const Duration(milliseconds: 200));
+      sawJump = sawJump || frame('jump');
+      sawBack = sawBack || frame('back');
+      sawHeart = sawHeart || frame('heart');
+    }
+    expect(sawJump && sawBack && sawHeart, isTrue);
+  });
+
 }
