@@ -561,3 +561,6 @@ name, email, password — plus the session (`none / guest / account`).
 
 ### Shock expression (standalone)
 - User liked surprise and requested a shock expression next. Created separate draft with higher brows and a wider open mouth than surprise; original eye artwork and body retained. Procedurally generated, awaiting approval; not integrated. Playback/replay smoke test passed.
+
+### Surprise with tilt, single raised brow and question marks
+- User approved shock and asked to refine surprise by tilting the head, raising one eyebrow and showing question marks; anger is next after user reviews this. Created standalone procedural preview with upper-silhouette tilt and temporary separate question marks; app unchanged, awaiting approval. Playback and replay smoke-tested.
