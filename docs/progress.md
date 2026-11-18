@@ -512,3 +512,7 @@ name, email, password — plus the session (`none / guest / account`).
 ### Complete dark hand outlines (separate preview)
 - User requested full, bold outlines around each raised hand, as well as the continuous body outline. Added a dark outline behind the arm silhouette, with the original body layered over the attachment; kept the existing path and rest pose. This remains an experimental procedural adjustment for user review, not a finished hand-drawn frame sequence and not integrated in the app.
 - Browser playback and replay smoke checks passed.
+
+### Inner edge of raised hands
+- User clarified using IMG_9672.jpeg that the missing dark line is on the inner/lower edge of each raised hand, not the already dark exterior. Built a separate procedural preview painting the inner rim of the existing silhouette; retained the fixed body contour and arm arc. Awaiting visual approval; not added to the app.
+- Preview playback and replay smoke-tested.
