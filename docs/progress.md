@@ -583,3 +583,6 @@ name, email, password — plus the session (`none / guest / account`).
 
 ### Relief expression and later tearful sadness
 - User approved scared expression and requested continuing the group; after the group they want a separate sad-with-tear expression, preserving the original sad expression. Created a standalone gentle relief draft with closed eyes, visible lashes and small smile; body remains fixed. Pending approval, not integrated. Browser playback/replay smoke tested.
+
+### Excited/celebration expression (standalone)
+- User approved relief and requested the next expression. Created standalone digitally generated excitement draft with original wide eyes, open smile and temporary sparkles; hands remain deferred, not integrated, pending review. Browser playback/replay smoke tested. Separate tearful sadness remains queued next after the group.
