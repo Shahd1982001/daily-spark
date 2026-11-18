@@ -577,3 +577,6 @@ name, email, password — plus the session (`none / guest / account`).
 
 ### Sad expression (standalone)
 - After user approved wide-eyed shyness, user chose sad as the next expression. Created separate digitally generated draft with gently worried brows and a small frown, preserving original eyes and body. Pending user review; not integrated. Browser playback/replay smoke tested.
+
+### Scared expression (standalone)
+- User approved sadness and requested the next expression, fear. Created separate digital draft with worried raised brows, small trembling mouth, and a temporary sweat-drop cue; body and eye artwork retained. Hand motion remains deferred; awaiting user review and not integrated. Browser playback/replay smoke tested.
