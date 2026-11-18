@@ -532,3 +532,7 @@ name, email, password — plus the session (`none / guest / account`).
 ### Happy expression with slight right tilt (standalone)
 - User suggested tilting the head right slightly during the happy expression. Since Spark's head and body are one silhouette, experimented with a four-degree clockwise tilt of the joined upper body and arms about the lower body while keeping feet on the same floor; smile and subtle glints retained. Fixed canvas; procedural draft, not hand-drawn, waiting for user feedback and not integrated.
 - Browser playback and replay smoke checks passed.
+
+### Happy closed-eye open-smile preview
+- User rejected the head tilt and requested eyes closing and mouth opening in a smile instead. Created separate preview using approved blink eye drawings and a digitally drawn opening smile, with fixed original body, canvas and alpha. This expression is experimental, not a hand-drawn production animation; awaiting approval and not integrated into app.
+- Browser replay/playback and identical frame alpha checked.
