@@ -589,3 +589,6 @@ name, email, password — plus the session (`none / guest / account`).
 
 ### Sadness with one tear (standalone)
 - User approved excited celebration and requested the planned separate tearful sadness. Created a standalone digital variant based on the approved sad expression with a single small temporary tear; the original sad preview remains intact. Pending user review, not integrated. Browser playback/replay smoke tested.
+
+### Sleepy expression (standalone)
+- User approved tearful sadness and chose the suggested sleepy, love and pride expressions one at a time, starting sleepy. Created separate digitally generated draft with closing eyes and visible lashes, small yawn and temporary z symbols. Awaiting review, not integrated. Browser playback/replay smoke tested. Love then pride remain next.
