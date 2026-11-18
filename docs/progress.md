@@ -516,3 +516,8 @@ name, email, password — plus the session (`none / guest / account`).
 ### Inner edge of raised hands
 - User clarified using IMG_9672.jpeg that the missing dark line is on the inner/lower edge of each raised hand, not the already dark exterior. Built a separate procedural preview painting the inner rim of the existing silhouette; retained the fixed body contour and arm arc. Awaiting visual approval; not added to the app.
 - Preview playback and replay smoke-tested.
+
+### Jump with wider legs and open-legged landing (standalone draft)
+- User set aside the hand-outline issue and shared IMG_9668–9671 as references: legs open further while jumping and land sitting with legs in the same open direction, combined with the previously approved hand arc.
+- Added a separate combined preview: legs spread and stay open through ground contact; torso settles after contact, hands travel along the approved arc. Original body and face remain fixed, frame canvas constant. This remains a procedural pose/interpolation draft, not a hand-drawn sequence; requires user's visual approval and is not in the app.
+- Playback and replay passed in browser.
