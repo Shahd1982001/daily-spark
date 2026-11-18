@@ -528,3 +528,7 @@ name, email, password — plus the session (`none / guest / account`).
 ### Light happy expression (standalone)
 - User chose to start easier motions one at a time, beginning with a light happy expression. Added separate preview of a wider smile and subtle pupil highlights on the original mascot, fixed body and original silhouette; 52 digitally generated frames, not hand-drawn production animation. User review pending; not integrated into app.
 - Browser playback and replay passed, and frame alpha and canvas size remain identical.
+
+### Happy expression with slight right tilt (standalone)
+- User suggested tilting the head right slightly during the happy expression. Since Spark's head and body are one silhouette, experimented with a four-degree clockwise tilt of the joined upper body and arms about the lower body while keeping feet on the same floor; smile and subtle glints retained. Fixed canvas; procedural draft, not hand-drawn, waiting for user feedback and not integrated.
+- Browser playback and replay smoke checks passed.
