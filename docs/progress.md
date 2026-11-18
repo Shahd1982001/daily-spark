@@ -567,3 +567,7 @@ name, email, password — plus the session (`none / guest / account`).
 
 ### Cute angry expression (standalone)
 - User approved surprise with question marks and requested cute anger with a reddened face. Created separate digitally generated draft with warm red face, inward brows and small pout; original eyes/body preserved. Awaiting review; not integrated. Browser playback/replay smoke tested.
+
+### Shy expression (standalone)
+- User enthusiastically approved cute anger and requested shyness next. Created separate digital draft with half-lidded eyes, a gentle closed smile, slightly deeper cheek color, and subtle upper-silhouette tilt. Not integrated, awaiting user review. Playback/replay smoke tested.
+- Hand actions (including clenched hands in front for anger) remain deferred until expression work is complete, per user.
