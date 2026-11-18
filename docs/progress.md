@@ -504,3 +504,7 @@ name, email, password — plus the session (`none / guest / account`).
 ### Fuller raised-hand shape (preview only)
 - User liked the hand path but said the raised hand looks curved/incomplete and wants a fuller, straighter shape. Added a separate experiment widening/straightening the original arm cross-sections as they rise, retaining the approved arc and original rest pose. This is a procedural shape adjustment, not a newly hand-illustrated finished arm; it may still not match the user's intention and awaits their review.
 - No app change. Replay and frame advance checked in browser; frame bounds and transparent corners checked to avoid clipping.
+
+### Preserve original body outline while hands rise
+- User noticed the dark bold body outline was interrupted around the arm attachments. Created a separate outline preview using the original contour in the fixed body layer and extracting only the arm region outside it; cleaned transparent-edge RGB to reduce light fringing. The previously approved arm path and original body scale are retained.
+- Still a procedural frame study, not integrated into the app or user-approved. Browser replay and frame advancement passed; static canvas and transparent corners checked.
