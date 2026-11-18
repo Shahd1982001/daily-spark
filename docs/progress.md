@@ -551,3 +551,6 @@ name, email, password — plus the session (`none / guest / account`).
 ### Wink with sparkle (standalone)
 - User chose wink next and requested a visual cue during it. Built a separate single-eye wink preview from the approved blink drawings, with closed-eye lashes and a temporary small gold sparkle; other eye and body remain original. Waiting for user review; not integrated.
 - Browser playback/replay smoke test passed.
+
+### Wink with smile-style tilt (standalone)
+- User requested the wink also include the slight head tilt from the happy expression. Added the same localized 2.5 degree upper-silhouette bend, timed with the wink, keeping the sparkle. Head/body are one continuous shape, so this is an approximation; user review pending and not integrated. Browser playback and replay smoke tested.
