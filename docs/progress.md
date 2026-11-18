@@ -574,3 +574,6 @@ name, email, password — plus the session (`none / guest / account`).
 
 ### Shy expression with wide eyes (standalone)
 - User clarified shy should have wide eyes, noticeable blush, gently curved brows and small smile, rather than the prior half-lidded look. Created a separate digital preview preserving the original wide eyes; awaiting review, not integrated. Browser playback/replay smoke tested.
+
+### Sad expression (standalone)
+- After user approved wide-eyed shyness, user chose sad as the next expression. Created separate digitally generated draft with gently worried brows and a small frown, preserving original eyes and body. Pending user review; not integrated. Browser playback/replay smoke tested.
