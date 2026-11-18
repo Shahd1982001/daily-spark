@@ -521,3 +521,6 @@ name, email, password — plus the session (`none / guest / account`).
 - User set aside the hand-outline issue and shared IMG_9668–9671 as references: legs open further while jumping and land sitting with legs in the same open direction, combined with the previously approved hand arc.
 - Added a separate combined preview: legs spread and stay open through ground contact; torso settles after contact, hands travel along the approved arc. Original body and face remain fixed, frame canvas constant. This remains a procedural pose/interpolation draft, not a hand-drawn sequence; requires user's visual approval and is not in the app.
 - Playback and replay passed in browser.
+
+### Sit and jump experiments removed at user's request
+- User decided to set aside sitting and jumping and asked to remove those experiments and try something easier. Removed sit/jump preview pages, generators, generated local frames, and their pose-reference experiments. Original mascot, approved blink/look, separate hand studies, app and gallery are preserved. No replacement movement has been chosen yet.
