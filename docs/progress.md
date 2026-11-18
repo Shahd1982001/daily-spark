@@ -554,3 +554,7 @@ name, email, password — plus the session (`none / guest / account`).
 
 ### Wink with smile-style tilt (standalone)
 - User requested the wink also include the slight head tilt from the happy expression. Added the same localized 2.5 degree upper-silhouette bend, timed with the wink, keeping the sparkle. Head/body are one continuous shape, so this is an approximation; user review pending and not integrated. Browser playback and replay smoke tested.
+
+### Surprise expression (standalone)
+- Following the user's approval of the wink-with-tilt, created the next suggested expression as a separate preview: raised eyebrows and small rounded surprised mouth, with original eyes, body and canvas unchanged. Digitally generated draft awaiting user review, not integrated.
+- Browser playback/replay smoke tested.
