@@ -544,3 +544,6 @@ name, email, password — plus the session (`none / guest / account`).
 ### Closed-eye blushing smile refinement (standalone)
 - User loved the preceding expression and requested fully closed eyes and a slightly wider smile. Refined the separate preview, keeping the blush and subtle upper-body tilt, with closed eyes at the peak and a slightly broader mouth. Awaiting user approval, not integrated.
 - Browser playback/replay smoke test passed.
+
+### Closed-eye lashes refinement (standalone)
+- User asked for lashes to remain visible when eyes close. Added curved lash strokes connected to both closed eyelids; retained smile, blush and tilt. Standalone procedural preview awaits review, not added to app. Browser playback/replay smoke tested.
