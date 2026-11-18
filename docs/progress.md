@@ -580,3 +580,6 @@ name, email, password — plus the session (`none / guest / account`).
 
 ### Scared expression (standalone)
 - User approved sadness and requested the next expression, fear. Created separate digital draft with worried raised brows, small trembling mouth, and a temporary sweat-drop cue; body and eye artwork retained. Hand motion remains deferred; awaiting user review and not integrated. Browser playback/replay smoke tested.
+
+### Relief expression and later tearful sadness
+- User approved scared expression and requested continuing the group; after the group they want a separate sad-with-tear expression, preserving the original sad expression. Created a standalone gentle relief draft with closed eyes, visible lashes and small smile; body remains fixed. Pending approval, not integrated. Browser playback/replay smoke tested.
