@@ -508,3 +508,7 @@ name, email, password — plus the session (`none / guest / account`).
 ### Preserve original body outline while hands rise
 - User noticed the dark bold body outline was interrupted around the arm attachments. Created a separate outline preview using the original contour in the fixed body layer and extracting only the arm region outside it; cleaned transparent-edge RGB to reduce light fringing. The previously approved arm path and original body scale are retained.
 - Still a procedural frame study, not integrated into the app or user-approved. Browser replay and frame advancement passed; static canvas and transparent corners checked.
+
+### Complete dark hand outlines (separate preview)
+- User requested full, bold outlines around each raised hand, as well as the continuous body outline. Added a dark outline behind the arm silhouette, with the original body layered over the attachment; kept the existing path and rest pose. This remains an experimental procedural adjustment for user review, not a finished hand-drawn frame sequence and not integrated in the app.
+- Browser playback and replay smoke checks passed.
