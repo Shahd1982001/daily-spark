@@ -496,3 +496,7 @@ name, email, password — plus the session (`none / guest / account`).
 ### Isolated arm-arc direction study
 - User clarified that the lower tip of the arm should travel upward around its attachment in an arc and return, not slide sideways. Made a separate arm-only study with the original arms pivoting in a continuous arc; the body, feet, scale and floor remain fixed. This is an offline composited rotation study, not a completed hand-drawn/straightened arm animation or a claim that her desired path has been approved.
 - No jump, sitting, or app behavior is changed. Browser replay/frame-change smoke test passed; review with user before combining with other movements.
+
+### Refinement of approved hand path (separate preview)
+- User approved the direction of the isolated hand arc and asked to refine it. Made a separate preview with more in-between frames, cleaned light background pixels from the extracted arm edges, and a modest curve adjustment while retaining the original arm's pivot and fingertip path. Added canvas margin so raised arms are not clipped. The original body, feet, and scale remain fixed.
+- Still an offline digitally composited experiment, not hand-drawn production animation, and needs user approval before combining with the jump or integrating in the app. Browser smoke test verifies replay and frame changes; image bounds were checked for clipping.
