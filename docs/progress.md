@@ -558,3 +558,6 @@ name, email, password — plus the session (`none / guest / account`).
 ### Surprise expression (standalone)
 - Following the user's approval of the wink-with-tilt, created the next suggested expression as a separate preview: raised eyebrows and small rounded surprised mouth, with original eyes, body and canvas unchanged. Digitally generated draft awaiting user review, not integrated.
 - Browser playback/replay smoke tested.
+
+### Shock expression (standalone)
+- User liked surprise and requested a shock expression next. Created separate draft with higher brows and a wider open mouth than surprise; original eye artwork and body retained. Procedurally generated, awaiting approval; not integrated. Playback/replay smoke test passed.
