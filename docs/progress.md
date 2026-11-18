@@ -524,3 +524,7 @@ name, email, password — plus the session (`none / guest / account`).
 
 ### Sit and jump experiments removed at user's request
 - User decided to set aside sitting and jumping and asked to remove those experiments and try something easier. Removed sit/jump preview pages, generators, generated local frames, and their pose-reference experiments. Original mascot, approved blink/look, separate hand studies, app and gallery are preserved. No replacement movement has been chosen yet.
+
+### Light happy expression (standalone)
+- User chose to start easier motions one at a time, beginning with a light happy expression. Added separate preview of a wider smile and subtle pupil highlights on the original mascot, fixed body and original silhouette; 52 digitally generated frames, not hand-drawn production animation. User review pending; not integrated into app.
+- Browser playback and replay passed, and frame alpha and canvas size remain identical.
