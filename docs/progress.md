@@ -571,3 +571,6 @@ name, email, password — plus the session (`none / guest / account`).
 ### Shy expression (standalone)
 - User enthusiastically approved cute anger and requested shyness next. Created separate digital draft with half-lidded eyes, a gentle closed smile, slightly deeper cheek color, and subtle upper-silhouette tilt. Not integrated, awaiting user review. Playback/replay smoke tested.
 - Hand actions (including clenched hands in front for anger) remain deferred until expression work is complete, per user.
+
+### Shy expression with wide eyes (standalone)
+- User clarified shy should have wide eyes, noticeable blush, gently curved brows and small smile, rather than the prior half-lidded look. Created a separate digital preview preserving the original wide eyes; awaiting review, not integrated. Browser playback/replay smoke tested.
