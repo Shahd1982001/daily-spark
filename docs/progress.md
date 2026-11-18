@@ -500,3 +500,7 @@ name, email, password — plus the session (`none / guest / account`).
 ### Refinement of approved hand path (separate preview)
 - User approved the direction of the isolated hand arc and asked to refine it. Made a separate preview with more in-between frames, cleaned light background pixels from the extracted arm edges, and a modest curve adjustment while retaining the original arm's pivot and fingertip path. Added canvas margin so raised arms are not clipped. The original body, feet, and scale remain fixed.
 - Still an offline digitally composited experiment, not hand-drawn production animation, and needs user approval before combining with the jump or integrating in the app. Browser smoke test verifies replay and frame changes; image bounds were checked for clipping.
+
+### Fuller raised-hand shape (preview only)
+- User liked the hand path but said the raised hand looks curved/incomplete and wants a fuller, straighter shape. Added a separate experiment widening/straightening the original arm cross-sections as they rise, retaining the approved arc and original rest pose. This is a procedural shape adjustment, not a newly hand-illustrated finished arm; it may still not match the user's intention and awaits their review.
+- No app change. Replay and frame advance checked in browser; frame bounds and transparent corners checked to avoid clipping.
