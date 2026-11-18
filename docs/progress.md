@@ -536,3 +536,7 @@ name, email, password — plus the session (`none / guest / account`).
 ### Happy closed-eye open-smile preview
 - User rejected the head tilt and requested eyes closing and mouth opening in a smile instead. Created separate preview using approved blink eye drawings and a digitally drawn opening smile, with fixed original body, canvas and alpha. This expression is experimental, not a hand-drawn production animation; awaiting approval and not integrated into app.
 - Browser replay/playback and identical frame alpha checked.
+
+### Half-closed eyes, blush and localized head tilt (standalone)
+- User requested half-closed eyes while laughing, lashes retained, blushing and a slight head-only tilt. Added an experimental standalone preview with half-closed eye drawings, lash strokes attached to the moving lids (redrawn rather than exact originals), deeper original cheek color, open smile, and a subtle upper-silhouette bend that tapers away above the feet. Head and body are one continuous shape, so this is an approximation, not a separately articulated head or hand-drawn sequence. Awaiting user approval; not integrated.
+- Browser playback/replay smoke test passed.
