@@ -564,3 +564,6 @@ name, email, password — plus the session (`none / guest / account`).
 
 ### Surprise with tilt, single raised brow and question marks
 - User approved shock and asked to refine surprise by tilting the head, raising one eyebrow and showing question marks; anger is next after user reviews this. Created standalone procedural preview with upper-silhouette tilt and temporary separate question marks; app unchanged, awaiting approval. Playback and replay smoke-tested.
+
+### Cute angry expression (standalone)
+- User approved surprise with question marks and requested cute anger with a reddened face. Created separate digitally generated draft with warm red face, inward brows and small pout; original eyes/body preserved. Awaiting review; not integrated. Browser playback/replay smoke tested.
