@@ -586,3 +586,6 @@ name, email, password — plus the session (`none / guest / account`).
 
 ### Excited/celebration expression (standalone)
 - User approved relief and requested the next expression. Created standalone digitally generated excitement draft with original wide eyes, open smile and temporary sparkles; hands remain deferred, not integrated, pending review. Browser playback/replay smoke tested. Separate tearful sadness remains queued next after the group.
+
+### Sadness with one tear (standalone)
+- User approved excited celebration and requested the planned separate tearful sadness. Created a standalone digital variant based on the approved sad expression with a single small temporary tear; the original sad preview remains intact. Pending user review, not integrated. Browser playback/replay smoke tested.
