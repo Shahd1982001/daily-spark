@@ -598,3 +598,6 @@ name, email, password — plus the session (`none / guest / account`).
 
 ### Pride expression (standalone)
 - User approved love and requested next expression. Created separate digital pride draft with contented partially lowered lids, small confident smile and temporary sparkle. Awaiting review, not integrated. Fatigue remains queued after group. Browser playback/replay smoke tested.
+
+### Tired expression (standalone)
+- User approved pride and asked for the previously queued fatigue expression. Created separate digital draft with heavy eyelids, a small tired mouth and a drop of sweat, distinct from the sleepy yawn and z symbols. Pending approval and not integrated. Browser playback/replay smoke tested.
