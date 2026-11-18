@@ -540,3 +540,7 @@ name, email, password — plus the session (`none / guest / account`).
 ### Half-closed eyes, blush and localized head tilt (standalone)
 - User requested half-closed eyes while laughing, lashes retained, blushing and a slight head-only tilt. Added an experimental standalone preview with half-closed eye drawings, lash strokes attached to the moving lids (redrawn rather than exact originals), deeper original cheek color, open smile, and a subtle upper-silhouette bend that tapers away above the feet. Head and body are one continuous shape, so this is an approximation, not a separately articulated head or hand-drawn sequence. Awaiting user approval; not integrated.
 - Browser playback/replay smoke test passed.
+
+### Closed-eye blushing smile refinement (standalone)
+- User loved the preceding expression and requested fully closed eyes and a slightly wider smile. Refined the separate preview, keeping the blush and subtle upper-body tilt, with closed eyes at the peak and a slightly broader mouth. Awaiting user approval, not integrated.
+- Browser playback/replay smoke test passed.
