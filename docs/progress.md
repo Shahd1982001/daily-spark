@@ -547,3 +547,7 @@ name, email, password — plus the session (`none / guest / account`).
 
 ### Closed-eye lashes refinement (standalone)
 - User asked for lashes to remain visible when eyes close. Added curved lash strokes connected to both closed eyelids; retained smile, blush and tilt. Standalone procedural preview awaits review, not added to app. Browser playback/replay smoke tested.
+
+### Wink with sparkle (standalone)
+- User chose wink next and requested a visual cue during it. Built a separate single-eye wink preview from the approved blink drawings, with closed-eye lashes and a temporary small gold sparkle; other eye and body remain original. Waiting for user review; not integrated.
+- Browser playback/replay smoke test passed.
