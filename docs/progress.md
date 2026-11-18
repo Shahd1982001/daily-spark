@@ -595,3 +595,6 @@ name, email, password — plus the session (`none / guest / account`).
 
 ### Love expression and fatigue queue
 - User requested a distinct tired/fatigued expression after the group (separate from sleepy). Continued chosen sequence with a standalone love draft: soft smile, original wide eyes, blush and temporary floating hearts. Awaiting review; not integrated. Pride remains next, fatigue after group. Browser playback/replay smoke tested.
+
+### Pride expression (standalone)
+- User approved love and requested next expression. Created separate digital pride draft with contented partially lowered lids, small confident smile and temporary sparkle. Awaiting review, not integrated. Fatigue remains queued after group. Browser playback/replay smoke tested.
