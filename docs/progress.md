@@ -613,3 +613,6 @@ name, email, password — plus the session (`none / guest / account`).
 
 ### Angry hands: three-pose motion study
 - User could not judge the direction from a still and asked to try all poses moving before considering drawing annotations. Created a standalone rough stepped sequence of the original angry pose, intermediate concept and approved fists, then return. Explicitly only three illustrated key poses: not smooth, no interpolated/ghost limb frames, intermediate and proportions still need improvement. Playback/replay smoke tested; not integrated; user review pending.
+
+### Angry hand frame sheet for annotation
+- User requested a group of frames to mark up. Published a separate numbered 9-frame sheet including the problematic digitally interpolated frames, openly labelled as defective and not final, so the user can screenshot and annotate movement. Approved final fist key pose unchanged; no app integration.
