@@ -625,3 +625,6 @@ name, email, password — plus the session (`none / guest / account`).
 
 ### Angry hands: distinct illustrated key-pose study
 - User rejected optical-flow/dissolve transition and clarified they want clear individual frames like blink, no overlapping/ghost hands. Generated three distinct AI-illustrated intermediate pose references and composited each arm pose onto the original angry body; published a standalone five-key-pose step-sequence (rest, three intermediate, approved fist and return). There is no crossfade or optical-flow tween. This is not yet smooth; the independently generated arms differ in size/color and show compositing seams, and more consistent drawn in-betweens/cleanup are needed. Not integrated; user review pending. Playback/replay browser tested.
+
+### Angry hand hold then instant happiness (standalone)
+- User clarified to focus on clenching only: hold the angry fists for a while then directly switch to a happy state and stay there, with no reverse hand motion. Created separate preview using five existing distinct key poses, ~2.5 second clenched hold, instant switch to the approved happy expression and indefinite hold. Intermediate illustrations remain rough/not smooth, not integrated. Browser verified hold, instant transition, persistent happy state and replay; reduced-motion defaults to happy.
