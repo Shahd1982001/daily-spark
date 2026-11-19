@@ -610,3 +610,6 @@ name, email, password — plus the session (`none / guest / account`).
 
 ### Angry hands: intermediate pose study
 - User approved tighter-fist final concept and agreed to work through in-between poses. Generated two reference attempts and composited one static intermediate concept against the original expression; it has larger arms/bulges and imperfect seams versus the original mascot, so it is explicitly a rough study for feedback, not a finished frame or motion. The approved end pose remains intact and app unchanged. Await user review before continuing.
+
+### Angry hands: three-pose motion study
+- User could not judge the direction from a still and asked to try all poses moving before considering drawing annotations. Created a standalone rough stepped sequence of the original angry pose, intermediate concept and approved fists, then return. Explicitly only three illustrated key poses: not smooth, no interpolated/ghost limb frames, intermediate and proportions still need improvement. Playback/replay smoke tested; not integrated; user review pending.
