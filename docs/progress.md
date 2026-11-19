@@ -619,3 +619,6 @@ name, email, password — plus the session (`none / guest / account`).
 
 ### Expanded angry-hand frame review
 - User requested more frames for a smoother eventual motion but asked not to apply or animate until they say OK. Published a separate 26-frame numbered review sheet with tap-to-enlarge. The extra frames are digital interpolations of three poses and include known warping/ghosting; increasing count alone does not make them final or guarantee smoothness. No new animation deployed or integrated. Browser verified image loading, count and zoom dialog. Await review/annotations.
+
+### Angry-hand interpolated motion preview
+- User reviewed the expanded frame sheet and requested seeing it moving. Published the already-generated standalone computational interpolation preview (68 frames including holds and return). It is not independently illustrated frame animation; known arm ghosting and distortion persist in intermediate frames, so this is for evaluating the motion and identifying problems, not an approved final animation or app integration. Browser playback and replay smoke tested.
