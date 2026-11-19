@@ -604,3 +604,6 @@ name, email, password — plus the session (`none / guest / account`).
 
 ### Angry hands — provisional key-pose study only
 - User chose the first deferred hand action: angry clenched hands held in front. Generated a rough illustrative key-pose concept, composited with the approved angry expression to review the placement before animation. This is only a still study; the generated arm proportions/edges differ from the original and require review and cleanup, and no animation or app integration is done. Original mascot preserved. Await user feedback on the pose before proceeding.
+
+### Angry hands — tighter fist concept
+- User liked the pose/direction but wanted the hands more clenched. Generated a second rough key-pose reference with visible knuckle details, composited with the approved expression, and a standalone comparison with the first concept. This remains a static draft; the arms are still larger than the original and not fully cleaned, and no animation has been made or integrated. Await user feedback before movement.
