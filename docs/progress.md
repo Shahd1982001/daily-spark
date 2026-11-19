@@ -616,3 +616,6 @@ name, email, password — plus the session (`none / guest / account`).
 
 ### Angry hand frame sheet for annotation
 - User requested a group of frames to mark up. Published a separate numbered 9-frame sheet including the problematic digitally interpolated frames, openly labelled as defective and not final, so the user can screenshot and annotate movement. Approved final fist key pose unchanged; no app integration.
+
+### Expanded angry-hand frame review
+- User requested more frames for a smoother eventual motion but asked not to apply or animate until they say OK. Published a separate 26-frame numbered review sheet with tap-to-enlarge. The extra frames are digital interpolations of three poses and include known warping/ghosting; increasing count alone does not make them final or guarantee smoothness. No new animation deployed or integrated. Browser verified image loading, count and zoom dialog. Await review/annotations.
