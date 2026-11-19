@@ -601,3 +601,6 @@ name, email, password — plus the session (`none / guest / account`).
 
 ### Tired expression (standalone)
 - User approved pride and asked for the previously queued fatigue expression. Created separate digital draft with heavy eyelids, a small tired mouth and a drop of sweat, distinct from the sleepy yawn and z symbols. Pending approval and not integrated. Browser playback/replay smoke tested.
+
+### Angry hands — provisional key-pose study only
+- User chose the first deferred hand action: angry clenched hands held in front. Generated a rough illustrative key-pose concept, composited with the approved angry expression to review the placement before animation. This is only a still study; the generated arm proportions/edges differ from the original and require review and cleanup, and no animation or app integration is done. Original mascot preserved. Await user feedback on the pose before proceeding.
