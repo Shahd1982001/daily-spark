@@ -622,3 +622,6 @@ name, email, password — plus the session (`none / guest / account`).
 
 ### Angry-hand interpolated motion preview
 - User reviewed the expanded frame sheet and requested seeing it moving. Published the already-generated standalone computational interpolation preview (68 frames including holds and return). It is not independently illustrated frame animation; known arm ghosting and distortion persist in intermediate frames, so this is for evaluating the motion and identifying problems, not an approved final animation or app integration. Browser playback and replay smoke tested.
+
+### Angry hands: distinct illustrated key-pose study
+- User rejected optical-flow/dissolve transition and clarified they want clear individual frames like blink, no overlapping/ghost hands. Generated three distinct AI-illustrated intermediate pose references and composited each arm pose onto the original angry body; published a standalone five-key-pose step-sequence (rest, three intermediate, approved fist and return). There is no crossfade or optical-flow tween. This is not yet smooth; the independently generated arms differ in size/color and show compositing seams, and more consistent drawn in-betweens/cleanup are needed. Not integrated; user review pending. Playback/replay browser tested.
