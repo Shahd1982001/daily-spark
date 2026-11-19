@@ -607,3 +607,6 @@ name, email, password — plus the session (`none / guest / account`).
 
 ### Angry hands — tighter fist concept
 - User liked the pose/direction but wanted the hands more clenched. Generated a second rough key-pose reference with visible knuckle details, composited with the approved expression, and a standalone comparison with the first concept. This remains a static draft; the arms are still larger than the original and not fully cleaned, and no animation has been made or integrated. Await user feedback before movement.
+
+### Angry hands: intermediate pose study
+- User approved tighter-fist final concept and agreed to work through in-between poses. Generated two reference attempts and composited one static intermediate concept against the original expression; it has larger arms/bulges and imperfect seams versus the original mascot, so it is explicitly a rough study for feedback, not a finished frame or motion. The approved end pose remains intact and app unchanged. Await user review before continuing.
