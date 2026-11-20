@@ -628,3 +628,7 @@ name, email, password — plus the session (`none / guest / account`).
 
 ### Angry hand hold then instant happiness (standalone)
 - User clarified to focus on clenching only: hold the angry fists for a while then directly switch to a happy state and stay there, with no reverse hand motion. Created separate preview using five existing distinct key poses, ~2.5 second clenched hold, instant switch to the approved happy expression and indefinite hold. Intermediate illustrations remain rough/not smooth, not integrated. Browser verified hold, instant transition, persistent happy state and replay; reduced-motion defaults to happy.
+
+### Fist experiments removed; one-hand wave study
+- User asked to abandon and delete all angry fist-hand work, preserving face expressions, then try simpler motions one by one: single-hand wave first, both hands later. Removed fist-hand preview pages, assets and lab work (not the angry face expression or user uploads). Other approved expressions remain untouched.
+- Created a separate one-hand wave study with two separately AI-illustrated raised-arm poses composited beneath the exact original fixed body/opposite arm, plus the original resting pose. Three poses only: stepped and not yet smooth, needs additional consistent drawn in-betweens and user approval. No limb rotation or image crossfade; not integrated. Browser playback/replay smoke tested.
