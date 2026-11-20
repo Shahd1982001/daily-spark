@@ -11,7 +11,7 @@ body=a.copy();body[:,:,3]=np.where(Y>boundary,0,body[:,:,3]);body=Image.fromarra
 # Redraw each independent foot with a clean complete outline, upper edge hidden behind body.
 import cairosvg
 legs=[]
-for x in (330, 595):
+for x in (412, 535):
  svg=f'''<svg xmlns="http://www.w3.org/2000/svg" width="{w}" height="{h}"><defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#a6b992"/><stop offset="1" stop-color="#8b9d7b"/></linearGradient></defs><path d="M {x-48} 895 C {x-49} 922 {x-54} 953 {x-61} 981 C {x-67} 1004 {x-58} 1016 {x-40} 1022 C {x-17} 1030 {x+28} 1032 {x+53} 1026 C {x+73} 1021 {x+77} 1006 {x+65} 993 C {x+58} 985 {x+43} 979 {x+39} 972 L {x+44} 895 Z" fill="url(#g)" stroke="#713622" stroke-width="11" stroke-linejoin="round"/></svg>'''
  legs.append(Image.open(io.BytesIO(cairosvg.svg2png(bytestring=svg.encode()))).convert('RGBA'))
 frames=[];folder=root/'animation_lab/side_walk_right';folder.mkdir(exist_ok=True)
@@ -21,8 +21,8 @@ for i in range(40):
   t=phase+j*math.pi
   # Pivot each whole foot at its upper attachment: forward/back tilt alternates.
   # The support foot is grounded and the other foot rises during its swing.
-  tilt=25*math.cos(t);lift=round(25*max(0,math.sin(t)))
-  layer=Image.new('RGBA',(w+180,h+130));layer.alpha_composite(foot,(90,35));layer=layer.rotate(tilt,Image.Resampling.BICUBIC,center=((330 if j==0 else 595)+90,35+920))
+  tilt=23*math.cos(t);lift=round(25*max(0,math.sin(t)))
+  layer=Image.new('RGBA',(w+180,h+130));layer.alpha_composite(foot,(90,35));layer=layer.rotate(tilt,Image.Resampling.BICUBIC,center=((412 if j==0 else 535)+90,35+920))
   bounds=layer.getbbox();dy=35+1032-bounds[3]-lift
   c.alpha_composite(layer,(0,dy))
  c.alpha_composite(body,(90,35-round(3*(1-math.cos(2*phase))))); arr=np.asarray(c).copy(); n,lab,stats,_=cv2.connectedComponentsWithStats((arr[:,:,3]>35).astype('uint8'),8); largest=1+np.argmax(stats[1:,cv2.CC_STAT_AREA]); keep=cv2.dilate((lab==largest).astype('uint8'),np.ones((3,3),np.uint8))>0; arr[:,:,3]=np.where(keep,arr[:,:,3],0); c=Image.fromarray(arr);c.thumbnail((250,250),Image.Resampling.LANCZOS);bio=io.BytesIO();c.save(bio,'PNG',optimize=True);frames.append('data:image/png;base64,'+base64.b64encode(bio.getvalue()).decode())
