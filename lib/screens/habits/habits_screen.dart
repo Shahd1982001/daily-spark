@@ -192,11 +192,11 @@ class _HabitsScreenState extends ConsumerState<HabitsScreen> {
                                   visible[i].id, DateTime.now()) ??
                               false,
                           nextUp: visible[i].id == nextUpId,
-                          onToggle: () => visible[i].isArchived
+                          onToggle: () => ignoreHabitMutation(visible[i].isArchived
                               ? ref.read(habitsProvider.notifier).restoreHabit(visible[i].id)
-                              : ref.read(habitsProvider.notifier).toggle(visible[i].id),
+                              : ref.read(habitsProvider.notifier).toggle(visible[i].id)),
                           onTap: visible[i].isArchived
-                              ? () => ref.read(habitsProvider.notifier).restoreHabit(visible[i].id)
+                              ? () => ignoreHabitMutation(ref.read(habitsProvider.notifier).restoreHabit(visible[i].id))
                               : () => widget.onHabitTap?.call(visible[i].id),
                         ),
                       ),

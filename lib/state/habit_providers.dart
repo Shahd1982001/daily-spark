@@ -38,8 +38,16 @@ final habitRepositoryProvider = Provider<HabitRepository>(
 );
 
 /// The live app state: habits + completion log. Every screen reads this.
-final habitsProvider =
-    AsyncNotifierProvider<HabitsController, HabitsSnapshot>(HabitsController.new);
+final habitsProvider = AsyncNotifierProvider<HabitsController, HabitsSnapshot>(
+  HabitsController.new,
+);
+
+/// Incremented when a habit write fails so the UI can notify the user.
+final habitSaveFailureProvider = StateProvider<int>((ref) => 0);
+
+/// UI callbacks may ignore the returned future: errors are surfaced via
+/// [habitSaveFailureProvider], rather than as unhandled asynchronous errors.
+void ignoreHabitMutation(Future<void> operation) => operation.ignore();
 
 class HabitsController extends AsyncNotifier<HabitsSnapshot> {
   @override
@@ -47,22 +55,47 @@ class HabitsController extends AsyncNotifier<HabitsSnapshot> {
 
   HabitRepository get _repo => ref.read(habitRepositoryProvider);
 
+  Future<void> _mutationTail = Future.value();
+
+  // Serialize complete read-modify-write operations, not just store writes.
+  Future<void> _serialize(Future<void> Function() operation) {
+    final result = _mutationTail.then((_) => operation());
+    _mutationTail = result.then<void>(
+      (_) {},
+      onError: (Object _, StackTrace __) {},
+    );
+    return result;
+  }
+
+  Future<void> _saveSnapshot(HabitsSnapshot next) async {
+    try {
+      await _repo.save(next);
+    } catch (_) {
+      ref.read(habitSaveFailureProvider.notifier).state++;
+      rethrow;
+    }
+    state = AsyncData(next);
+  }
+
   /// Marks a habit done / not done on [day] (defaults to today).
-  Future<void> toggle(String habitId, {DateTime? day}) async {
+  Future<void> toggle(String habitId, {DateTime? day}) => _serialize(() async {
     final current = state.valueOrNull;
     final habit = current?.habitById(habitId);
     if (current == null || habit == null || habit.isArchived) return;
     final day_ = dayOnly(day ?? DateTime.now());
     final done = current.isCompleted(habitId, day_);
-    await setAmount(habitId, done ? 0 : _targetOf(habit, day_), day: day_);
-  }
+    await _setAmount(habitId, done ? 0 : _targetOf(habit, day_), day: day_);
+  });
 
   /// Logs progress on an amount-based habit (today by default).
   ///
   /// The amount is clamped to `0…target`; reaching the target marks the day
   /// complete, dropping below it clears the completion. Nothing is stored for
   /// amount-less days, so the log stays the single source of truth.
-  Future<void> setAmount(String habitId, int amount, {DateTime? day}) async {
+  Future<void> setAmount(String habitId, int amount, {DateTime? day}) =>
+      _serialize(() => _setAmount(habitId, amount, day: day));
+
+  Future<void> _setAmount(String habitId, int amount, {DateTime? day}) async {
     final current = state.valueOrNull;
     final habit = current?.habitById(habitId);
     if (current == null || habit == null || habit.isArchived) return;
@@ -93,17 +126,22 @@ class HabitsController extends AsyncNotifier<HabitsSnapshot> {
     log[habitId] = days;
 
     final next = current.copyWith(log: log, amounts: amounts);
-    state = AsyncData(next);
-    await _repo.save(next);
+    await _saveSnapshot(next);
     // Celebrate a user action crossing today's goal, not initial data loads,
     // partial progress, undo, old dates or target changes. Preference covers
     // both audio and haptics; unavailable devices fail quietly.
-    if (!wasDone && clamped >= targetAmount && targetDay == dayOnly(DateTime.now())) {
+    if (!wasDone &&
+        clamped >= targetAmount &&
+        targetDay == dayOnly(DateTime.now())) {
       {
         String? rewardName;
         if (sparkCharacterEnabled) {
           try {
-            rewardName = (await ref.read(sparkTreatsProvider.notifier).award(habitId, dayKey(targetDay)))?.name;
+            rewardName =
+                (await ref
+                        .read(sparkTreatsProvider.notifier)
+                        .award(habitId, dayKey(targetDay)))
+                    ?.name;
           } catch (_) {
             // Habit progress remains saved even if treat storage is unavailable.
           }
@@ -114,101 +152,139 @@ class HabitsController extends AsyncNotifier<HabitsSnapshot> {
       if (ref.exists(settingsProvider)) {
         final settings = ref.read(settingsProvider);
         if (settings.loaded && settings.soundOn) {
-          unawaited(ref.read(completionFeedbackProvider).play().catchError((Object _) {}));
+          unawaited(
+            ref
+                .read(completionFeedbackProvider)
+                .play()
+                .catchError((Object _) {}),
+          );
         }
       }
     }
   }
 
   /// Steps the logged amount by [delta], clamped to the habit target.
-  Future<void> stepAmount(String habitId, int delta, {DateTime? day}) async {
-    final current = state.valueOrNull;
-    final habit = current?.habitById(habitId);
-    if (current == null || habit == null) return;
-    final targetDay = dayOnly(day ?? DateTime.now());
-    await setAmount(
-      habitId,
-      current.amountFor(habitId, targetDay) + delta,
-      day: targetDay,
-    );
-  }
+  Future<void> stepAmount(String habitId, int delta, {DateTime? day}) =>
+      _serialize(() async {
+        final current = state.valueOrNull;
+        final habit = current?.habitById(habitId);
+        if (current == null || habit == null) return;
+        final targetDay = dayOnly(day ?? DateTime.now());
+        await _setAmount(
+          habitId,
+          current.amountFor(habitId, targetDay) + delta,
+          day: targetDay,
+        );
+      });
 
   static int _targetOf(Habit habit, DateTime day) =>
       habit.planOn(day).targetAmount <= 0 ? 1 : habit.planOn(day).targetAmount;
 
-  Future<void> addHabit(Habit habit) async {
+  Future<void> addHabit(Habit habit) => _serialize(() async {
     final current = state.valueOrNull;
     if (current == null) throw StateError('Habit data is not loaded');
     final next = current.copyWith(habits: [...current.habits, habit]);
-    state = AsyncData(next);
-    await _repo.save(next);
-  }
+    await _saveSnapshot(next);
+  });
 
-  Future<void> updateHabit(Habit habit, {DateTime? effectiveAt}) async {
+  Future<void> updateHabit(Habit habit, {DateTime? effectiveAt}) =>
+      _serialize(() => _updateHabit(habit, effectiveAt: effectiveAt));
+
+  Future<void> _updateHabit(Habit habit, {DateTime? effectiveAt}) async {
     final current = state.valueOrNull;
     if (current == null) throw StateError('Habit data is not loaded');
     final old = current.habitById(habit.id);
     if (old == null) return;
     final day = dayOnly(effectiveAt ?? DateTime.now());
-    final changesPlan = old.rhythm != habit.rhythm ||
-        old.days.length != habit.days.length || !old.days.containsAll(habit.days) ||
-        old.targetAmount != habit.targetAmount || old.targetUnit != habit.targetUnit;
+    final changesPlan =
+        old.rhythm != habit.rhythm ||
+        old.days.length != habit.days.length ||
+        !old.days.containsAll(habit.days) ||
+        old.targetAmount != habit.targetAmount ||
+        old.targetUnit != habit.targetUnit;
     var updated = habit;
     var amounts = current.amounts;
     var log = current.log;
     if (changesPlan) {
       final history = old.planHistory.isEmpty
-          ? [HabitPlan(effectiveFrom: dayOnly(old.createdAt), rhythm: old.rhythm,
-              days: Set<int>.from(old.days), targetAmount: old.targetAmount,
-              targetUnit: old.targetUnit)]
+          ? [
+              HabitPlan(
+                effectiveFrom: dayOnly(old.createdAt),
+                rhythm: old.rhythm,
+                days: Set<int>.from(old.days),
+                targetAmount: old.targetAmount,
+                targetUnit: old.targetUnit,
+              ),
+            ]
           : [...old.planHistory];
       history.removeWhere((plan) => dayOnly(plan.effectiveFrom) == day);
-      history.add(HabitPlan(effectiveFrom: day, rhythm: habit.rhythm,
-          days: Set<int>.from(habit.days), targetAmount: habit.targetAmount,
-          targetUnit: habit.targetUnit));
+      history.add(
+        HabitPlan(
+          effectiveFrom: day,
+          rhythm: habit.rhythm,
+          days: Set<int>.from(habit.days),
+          targetAmount: habit.targetAmount,
+          targetUnit: habit.targetUnit,
+        ),
+      );
       history.sort((a, b) => a.effectiveFrom.compareTo(b.effectiveFrom));
       updated = habit.copyWith(planHistory: history);
-      if (old.targetAmount != habit.targetAmount || old.targetUnit != habit.targetUnit) {
-        amounts = {for (final entry in current.amounts.entries)
-          entry.key: Map<String, int>.from(entry.value)};
-        log = {for (final entry in current.log.entries) entry.key: {...entry.value}};
+      if (old.targetAmount != habit.targetAmount ||
+          old.targetUnit != habit.targetUnit) {
+        amounts = {
+          for (final entry in current.amounts.entries)
+            entry.key: Map<String, int>.from(entry.value),
+        };
+        log = {
+          for (final entry in current.log.entries) entry.key: {...entry.value},
+        };
         final oldAmount = current.amountFor(habit.id, day);
         final todayAmount = old.targetUnit != habit.targetUnit ? 0 : oldAmount;
         amounts.putIfAbsent(habit.id, () => {})[dayKey(day)] = todayAmount;
         final completed = log.putIfAbsent(habit.id, () => {});
         completed.removeWhere((date) => dayOnly(date) == day);
-        if (todayAmount >= (habit.targetAmount <= 0 ? 1 : habit.targetAmount)) completed.add(day);
+        if (todayAmount >= (habit.targetAmount <= 0 ? 1 : habit.targetAmount))
+          completed.add(day);
       }
     }
     final next = current.copyWith(
-      habits: [for (final h in current.habits) if (h.id == habit.id) updated else h],
-      amounts: amounts, log: log,
+      habits: [
+        for (final h in current.habits)
+          if (h.id == habit.id) updated else h,
+      ],
+      amounts: amounts,
+      log: log,
     );
-    state = AsyncData(next);
-    await _repo.save(next);
+    await _saveSnapshot(next);
   }
 
-  Future<void> archiveHabit(String habitId) async {
+  Future<void> archiveHabit(String habitId) => _serialize(() async {
     final current = state.valueOrNull;
     final habit = current?.habitById(habitId);
     if (current == null || habit == null || habit.isArchived) return;
-    await updateHabit(habit.copyWith(archivedAt: DateTime.now()));
-  }
+    await _updateHabit(habit.copyWith(archivedAt: DateTime.now()));
+  });
 
   /// Restores the habit without losing its log or counting paused days as missed.
-  Future<void> restoreHabit(String habitId, {DateTime? now}) async {
-    final habit = state.valueOrNull?.habitById(habitId);
-    final pausedAt = habit?.archivedAt;
-    if (habit == null || pausedAt == null) return;
-    final restoredAt = now ?? DateTime.now();
-    if (dayOnly(restoredAt).isBefore(dayOnly(pausedAt))) return;
-    await updateHabit(habit.copyWith(
-      clearArchived: true,
-      pauseHistory: [...habit.pauseHistory, HabitPause(pausedAt, restoredAt)],
-    ));
-  }
+  Future<void> restoreHabit(String habitId, {DateTime? now}) =>
+      _serialize(() async {
+        final habit = state.valueOrNull?.habitById(habitId);
+        final pausedAt = habit?.archivedAt;
+        if (habit == null || pausedAt == null) return;
+        final restoredAt = now ?? DateTime.now();
+        if (dayOnly(restoredAt).isBefore(dayOnly(pausedAt))) return;
+        await _updateHabit(
+          habit.copyWith(
+            clearArchived: true,
+            pauseHistory: [
+              ...habit.pauseHistory,
+              HabitPause(pausedAt, restoredAt),
+            ],
+          ),
+        );
+      });
 
-  Future<void> deleteHabit(String habitId) async {
+  Future<void> deleteHabit(String habitId) => _serialize(() async {
     final current = state.valueOrNull;
     if (current == null) throw StateError('Habit data is not loaded');
     final log = <String, Set<DateTime>>{
@@ -220,12 +296,12 @@ class HabitsController extends AsyncNotifier<HabitsSnapshot> {
       log: log,
       amounts: {
         for (final entry in current.amounts.entries)
-          if (entry.key != habitId) entry.key: Map<String, int>.from(entry.value),
+          if (entry.key != habitId)
+            entry.key: Map<String, int>.from(entry.value),
       },
     );
-    state = AsyncData(next);
-    await _repo.save(next);
-  }
+    await _saveSnapshot(next);
+  });
 
   Future<void> reload() async {
     state = const AsyncLoading();
@@ -266,8 +342,7 @@ final todaySummaryProvider = Provider<TodaySummary>((ref) {
 });
 
 /// Amount logged for one habit today (partial progress included).
-final habitTodayAmountProvider =
-    Provider.family<int, String>((ref, habitId) {
+final habitTodayAmountProvider = Provider.family<int, String>((ref, habitId) {
   final snapshot = ref.watch(habitsProvider).valueOrNull;
   if (snapshot == null) return 0;
   return snapshot.amountFor(habitId, ref.watch(calendarDayProvider));
@@ -284,7 +359,6 @@ final habitStreakProvider = Provider.family<int, String>((ref, habitId) {
     today: ref.watch(calendarDayProvider),
   );
 });
-
 
 /// One day of the Home pulse strip.
 class DayStat {
@@ -307,11 +381,13 @@ final lastSevenDaysProvider = Provider<List<DayStat>>((ref) {
     final day = addCalendarDays(today, -offset);
     final scheduled = snapshot?.scheduledOn(day).length ?? 0;
     final completed = snapshot?.completedOn(day) ?? 0;
-    days.add(DayStat(
-      day: day,
-      done: scheduled > 0 && completed >= scheduled,
-      isToday: offset == 0,
-    ));
+    days.add(
+      DayStat(
+        day: day,
+        done: scheduled > 0 && completed >= scheduled,
+        isToday: offset == 0,
+      ),
+    );
   }
   return days;
 });
@@ -324,7 +400,8 @@ final routineStreakProvider = Provider<int>((ref) {
   final snapshot = ref.watch(habitsProvider).valueOrNull;
   if (snapshot == null || snapshot.habits.isEmpty) return 0;
   final today = ref.watch(calendarDayProvider);
-  final earliest = snapshot.habits.map((h) => dayOnly(h.createdAt))
+  final earliest = snapshot.habits
+      .map((h) => dayOnly(h.createdAt))
       .reduce((a, b) => a.isBefore(b) ? a : b);
   final availableDays = calendarDaysBetween(earliest, today) + 1;
   var streak = 0;

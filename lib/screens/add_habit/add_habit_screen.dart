@@ -101,7 +101,13 @@ class _AddHabitScreenState extends ConsumerState<AddHabitScreen> {
       ));
       if (confirmed != true || !mounted) return;
     }
-    final habit = await ref.read(habitDraftProvider.notifier).save();
+    Habit? habit;
+    try {
+      habit = await ref.read(habitDraftProvider.notifier).save();
+    } catch (_) {
+      // The shell shows the save error; keep the draft for another try.
+      return;
+    }
     if (habit == null) {
       messenger
         ..clearSnackBars()

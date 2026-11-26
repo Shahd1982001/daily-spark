@@ -213,6 +213,8 @@ class Strings {
     'Not now': 'ليس الآن',
     'You can change this later in Profile, under Preferences.': 'يمكنك تغيير اختيارك لاحقاً من الملف الشخصي، في التفضيلات.',
     'Could not save your choice. Please try again.': 'تعذّر حفظ اختيارك. حاول مجدداً.',
+    'Could not save your habit changes. Please try again.':
+        'تعذّر حفظ تغييرات العادة. حاولي مجدداً.',
     'Your habits could not be loaded': 'تعذّر تحميل عاداتك',
     'Your saved data has not been erased. Please try again.': 'لم يتم مسح بياناتك المحفوظة. حاولي مجدداً.',
     'You did it! Every little step counts ✨': 'أحسنت! كل خطوة صغيرة تصنع فرقاً ✨',

@@ -838,6 +838,8 @@ class _PreviewShellState extends ConsumerState<PreviewShell> with WidgetsBinding
     ref.watch(calendarDayProvider); // Refresh visible dates after midnight/resume.
     // Adopt the persisted theme once it loads (?theme=… still forces it).
     ref.listen(habitsProvider, (_, __) => _queueReminderSync());
+    ref.listen(habitSaveFailureProvider, (_, __) =>
+        _toast('Could not save your habit changes. Please try again.'));
     ref.listen(localeProvider, (_, __) => _queueReminderSync());
     ref.listen(settingsProvider, (prev, next) {
       _queueReminderSync();

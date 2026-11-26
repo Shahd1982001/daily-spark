@@ -148,9 +148,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                           completed:
                               snapshot?.isCompleted(visible[i].id, DateTime.now()) ??
                                   false,
-                          onToggle: () => ref
+                          onToggle: () => ignoreHabitMutation(ref
                               .read(habitsProvider.notifier)
-                              .toggle(visible[i].id),
+                              .toggle(visible[i].id)),
                           onTap: () => widget.onHabitTap?.call(visible[i].id),
                         ),
                       ),

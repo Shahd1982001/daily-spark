@@ -137,10 +137,10 @@ class HabitDetailsScreen extends ConsumerWidget {
             insight: _insight(detail),
             stepSmall: detail.steps.$1,
             stepLarge: detail.steps.$2,
-            onDecrement: () => rider.stepAmount(habit.id, -detail.steps.$1),
-            onStepSmall: () => rider.stepAmount(habit.id, detail.steps.$1),
-            onStepLarge: () => rider.stepAmount(habit.id, detail.steps.$2),
-            onToggleComplete: () => rider.toggle(habit.id),
+            onDecrement: () => ignoreHabitMutation(rider.stepAmount(habit.id, -detail.steps.$1)),
+            onStepSmall: () => ignoreHabitMutation(rider.stepAmount(habit.id, detail.steps.$1)),
+            onStepLarge: () => ignoreHabitMutation(rider.stepAmount(habit.id, detail.steps.$2)),
+            onToggleComplete: () => ignoreHabitMutation(rider.toggle(habit.id)),
           ),
         ),
         SizedBox(height: 24 * s),
@@ -216,7 +216,11 @@ class HabitDetailsScreen extends ConsumerWidget {
     WidgetRef ref,
     HabitDetail detail,
   ) async {
-    await ref.read(habitsProvider.notifier).archiveHabit(detail.habit.id);
+    try {
+      await ref.read(habitsProvider.notifier).archiveHabit(detail.habit.id);
+    } catch (_) {
+      return; // Keep the screen open; the shell reports the save error.
+    }
     if (!context.mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -284,7 +288,11 @@ class HabitDetailsScreen extends ConsumerWidget {
     );
     if (confirmed != true) return;
 
-    await ref.read(habitsProvider.notifier).deleteHabit(detail.habit.id);
+    try {
+      await ref.read(habitsProvider.notifier).deleteHabit(detail.habit.id);
+    } catch (_) {
+      return; // Do not navigate away when deletion was not saved.
+    }
     if (!context.mounted) return;
     onBack?.call();
   }
