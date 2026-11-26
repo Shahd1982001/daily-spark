@@ -48,6 +48,7 @@ class AppTheme {
       useMaterial3: true,
       brightness: brightness,
       fontFamily: AppText.fontFamily,
+      fontFamilyFallback: const ['IBMPlexSansArabic'],
       colorScheme: scheme,
       scaffoldBackgroundColor: scaffold,
       textTheme: AppTextTheme.of(brightness),

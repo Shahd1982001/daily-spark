@@ -82,7 +82,7 @@ Widget figmaText(
   }
   final text = translate ? tr(rawText) : rawText;
   final style = TextStyle(
-    fontFamily: 'PlusJakartaSans',
+    fontFamily: 'PlusJakartaSans', fontFamilyFallback: const ['IBMPlexSansArabic'],
     fontSize: size,
     fontWeight: weight,
     letterSpacing: letterSpacing,

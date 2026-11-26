@@ -102,7 +102,7 @@ class _SparkPetState extends ConsumerState<SparkPet> {
                   borderRadius: BorderRadius.circular(14),
                   boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: .12), blurRadius: 6)]),
                 child: Text(_message!, textAlign: TextAlign.center,
-                  style: TextStyle(fontFamily: 'PlusJakartaSans', fontSize: 11, height: 1.35,
+                  style: TextStyle(fontFamily: 'PlusJakartaSans', fontFamilyFallback: const ['IBMPlexSansArabic'], fontSize: 11, height: 1.35,
                     fontWeight: FontWeight.w600, decoration: TextDecoration.none, color: p.ink)),
               ))),
           ])),

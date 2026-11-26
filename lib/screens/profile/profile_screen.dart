@@ -1,3 +1,4 @@
+import 'package:daily_spark/config/feature_flags.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -217,7 +218,7 @@ class ProfileScreen extends ConsumerWidget {
                               switchValue: remindersOn,
                               onToggle: onToggleReminders,
                             ),
-                            SettingsRow(
+                            if (sparkCharacterEnabled) SettingsRow(
                               scale: s,
                               icon: Icons.auto_awesome_rounded,
                               title: 'Spark late alerts',

@@ -22,6 +22,16 @@ void main() {
     }
   });
 
+  testWidgets('Arabic glyph fallback is bundled without changing the Latin family', (tester) async {
+    Strings.locale = const Locale('ar');
+    await tester.pumpWidget(MaterialApp(home: Scaffold(body:
+      figmaText('Home', size: 14, weight: FontWeight.w400, color: Colors.black),
+    )));
+    final text = tester.widget<Text>(find.text('الرئيسية'));
+    expect(text.style?.fontFamily, 'PlusJakartaSans');
+    expect(text.style?.fontFamilyFallback, contains('IBMPlexSansArabic'));
+  });
+
   test('dynamic strings interpolate and language switches immediately', () {
     Strings.locale = const Locale('ar');
     final level = tr('Level {level} {title}', {'level': '2', 'title': tr('Builder')});

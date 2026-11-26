@@ -295,7 +295,7 @@ class SignUpScreen extends StatelessWidget {
                         textAlign: TextAlign.center,
                         text: TextSpan(
                           style: TextStyle(
-                            fontFamily: 'PlusJakartaSans',
+                            fontFamily: 'PlusJakartaSans', fontFamilyFallback: const ['IBMPlexSansArabic'],
                             fontSize: 12 * s,
                             height: 19 / 12,
                             letterSpacing: 0.12 * s,
@@ -594,7 +594,7 @@ class _Field extends StatelessWidget {
               initialValue: controller == null ? value : null,
               obscureText: obscure,
               style: TextStyle(
-                fontFamily: 'PlusJakartaSans',
+                fontFamily: 'PlusJakartaSans', fontFamilyFallback: const ['IBMPlexSansArabic'],
                 fontSize: 14 * s,
                 height: 18 / 14,
                 letterSpacing: letterSpacing * s,
@@ -609,7 +609,7 @@ class _Field extends StatelessWidget {
                 contentPadding: EdgeInsets.zero,
                 hintText: (controller != null || isEmpty) && hint != null ? tr(hint!) : null,
                 hintStyle: TextStyle(
-                  fontFamily: 'PlusJakartaSans',
+                  fontFamily: 'PlusJakartaSans', fontFamilyFallback: const ['IBMPlexSansArabic'],
                   fontSize: 14 * s,
                   height: 18 / 14,
                   letterSpacing: 0,
@@ -632,7 +632,7 @@ class _Field extends StatelessWidget {
           child: Text(
             tr(errorText!),
             style: TextStyle(
-              fontFamily: 'PlusJakartaSans',
+              fontFamily: 'PlusJakartaSans', fontFamilyFallback: const ['IBMPlexSansArabic'],
               fontSize: 11 * s,
               color: p.error,
             ),

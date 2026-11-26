@@ -111,7 +111,7 @@ class WelcomeScreen extends StatelessWidget {
                 textAlign: TextAlign.center,
                 text: TextSpan(
                   style: TextStyle(
-                    fontFamily: 'PlusJakartaSans',
+                    fontFamily: 'PlusJakartaSans', fontFamilyFallback: const ['IBMPlexSansArabic'],
                     fontSize: 12 * s,
                     height: 16 / 12,
                     letterSpacing: 0.12 * s,
@@ -208,7 +208,7 @@ class _Emblem extends StatelessWidget {
                       Text(
                         tr('Daily Spark'),
                         style: TextStyle(
-                          fontFamily: 'PlusJakartaSans',
+                          fontFamily: 'PlusJakartaSans', fontFamilyFallback: const ['IBMPlexSansArabic'],
                           fontSize: 6.4,
                           height: 1.1,
                           fontWeight: FontWeight.w700,

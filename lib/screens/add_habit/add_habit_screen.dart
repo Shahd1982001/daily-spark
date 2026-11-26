@@ -560,7 +560,7 @@ class _IdentitySection extends StatelessWidget {
               textCapitalization: TextCapitalization.sentences,
               cursorColor: p.ember,
               style: TextStyle(
-                fontFamily: 'PlusJakartaSans',
+                fontFamily: 'PlusJakartaSans', fontFamilyFallback: const ['IBMPlexSansArabic'],
                 fontSize: 22 * s,
                 height: 28 / 22,
                 fontWeight: FontWeight.w600,
@@ -573,7 +573,7 @@ class _IdentitySection extends StatelessWidget {
                 contentPadding: EdgeInsets.zero,
                 hintText: tr('Name your ritual'),
                 hintStyle: TextStyle(
-                  fontFamily: 'PlusJakartaSans',
+                  fontFamily: 'PlusJakartaSans', fontFamilyFallback: const ['IBMPlexSansArabic'],
                   fontSize: 22 * s,
                   fontWeight: FontWeight.w600,
                   letterSpacing: -0.55 * s,
@@ -593,7 +593,7 @@ class _IdentitySection extends StatelessWidget {
               cursorColor: p.ember,
               maxLines: 1,
               style: TextStyle(
-                fontFamily: 'PlusJakartaSans',
+                fontFamily: 'PlusJakartaSans', fontFamilyFallback: const ['IBMPlexSansArabic'],
                 fontSize: 12 * s,
                 height: 16 / 12,
                 fontWeight: FontWeight.w400,
@@ -606,7 +606,7 @@ class _IdentitySection extends StatelessWidget {
                 contentPadding: EdgeInsets.zero,
                 hintText: tr('What is this ritual for?'),
                 hintStyle: TextStyle(
-                  fontFamily: 'PlusJakartaSans',
+                  fontFamily: 'PlusJakartaSans', fontFamilyFallback: const ['IBMPlexSansArabic'],
                   fontSize: 12 * s,
                   color: p.muted.withValues(alpha: 0.75),
                 ),

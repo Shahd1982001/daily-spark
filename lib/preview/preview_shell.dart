@@ -1,3 +1,4 @@
+import 'package:daily_spark/config/feature_flags.dart';
 import 'dart:convert';
 import 'package:daily_spark/data/services/reminder_notifications.dart';
 import 'package:daily_spark/data/services/reminder_plan.dart';
@@ -327,7 +328,7 @@ class _PreviewShellState extends ConsumerState<PreviewShell> with WidgetsBinding
     });
     _toast(tr('Welcome, {name} ✦', {'name': name.trim()}));
     _go(_Stage.home);
-    await _offerSparkAlerts(force: true);
+    if (sparkCharacterEnabled) await _offerSparkAlerts(force: true);
   }
 
   /// Enters the app without an account.
@@ -336,7 +337,7 @@ class _PreviewShellState extends ConsumerState<PreviewShell> with WidgetsBinding
     if (!mounted) return;
     setState(_history.clear);
     _go(_Stage.home);
-    await _offerSparkAlerts();
+    if (sparkCharacterEnabled) await _offerSparkAlerts();
   }
 
   /// Ends the session and returns to the welcome screen.
@@ -867,7 +868,7 @@ class _PreviewShellState extends ConsumerState<PreviewShell> with WidgetsBinding
         palette: palette,
         child: Stack(children: [
           child ?? const SizedBox.shrink(),
-          if (_mainStages.contains(_stage) && MediaQuery.viewInsetsOf(context).bottom == 0)
+          if (sparkCharacterEnabled && _mainStages.contains(_stage) && MediaQuery.viewInsetsOf(context).bottom == 0)
             ValueListenableBuilder<bool>(valueListenable: _popupOpen,
               builder: (context, open, _) => open || _stage == _Stage.habitDetails ? const SizedBox.shrink() : SparkPet(progressBar: _stage == _Stage.progress)),
         ]),

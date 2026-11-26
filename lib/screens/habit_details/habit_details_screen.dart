@@ -242,7 +242,7 @@ class HabitDetailsScreen extends ConsumerWidget {
         title: Text(
           tr('Delete this ritual?'),
           style: TextStyle(
-            fontFamily: 'PlusJakartaSans',
+            fontFamily: 'PlusJakartaSans', fontFamilyFallback: const ['IBMPlexSansArabic'],
             fontSize: 17,
             fontWeight: FontWeight.w600,
             color: p.ink,
@@ -252,7 +252,7 @@ class HabitDetailsScreen extends ConsumerWidget {
           template: '{title} and its history will be removed permanently.',
           title: detail.habit.title,
           style: TextStyle(
-            fontFamily: 'PlusJakartaSans',
+            fontFamily: 'PlusJakartaSans', fontFamilyFallback: const ['IBMPlexSansArabic'],
             fontSize: 13,
             height: 1.4,
             color: p.body,

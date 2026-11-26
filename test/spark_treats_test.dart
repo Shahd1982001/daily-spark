@@ -1,3 +1,4 @@
+import 'package:daily_spark/config/feature_flags.dart';
 import 'package:daily_spark/data/local/habit_store.dart';
 import 'package:daily_spark/data/models/habit.dart';
 import 'package:daily_spark/state/habit_providers.dart';
@@ -28,5 +29,19 @@ void main() {
     expect(second.read(sparkTreatsProvider).items, isEmpty);
     expect(await second.read(sparkTreatsProvider.notifier).award('a', DateTime.now().toIso8601String().substring(0,10)), isNull);
     second.dispose();
-  });
+  }, skip: !sparkCharacterEnabled);
+
+  test('disabled character does not award treats on completion', () async {
+    SharedPreferences.setMockInitialValues({});
+    final c = ProviderContainer(overrides: [
+      habitStoreProvider.overrideWithValue(MemoryHabitStore()),
+    ]);
+    addTearDown(c.dispose);
+    await c.read(habitsProvider.future);
+    await c.read(habitsProvider.notifier).addHabit(
+      Habit(id: 'disabled', title: 'Read', createdAt: DateTime.now()),
+    );
+    await c.read(habitsProvider.notifier).setAmount('disabled', 1);
+    expect(c.read(sparkTreatsProvider).items, isEmpty);
+  }, skip: sparkCharacterEnabled);
 }

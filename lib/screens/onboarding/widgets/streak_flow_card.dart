@@ -312,7 +312,7 @@ class _WeekRow extends StatelessWidget {
                       Text(
                         tr('Today'),
                         style: TextStyle(
-                          fontFamily: 'PlusJakartaSans',
+                          fontFamily: 'PlusJakartaSans', fontFamilyFallback: const ['IBMPlexSansArabic'],
                           fontSize: 10,
                           fontWeight: FontWeight.w700,
                           height: 2,
@@ -324,7 +324,7 @@ class _WeekRow extends StatelessWidget {
                       Text(
                         _letters[i],
                         style: TextStyle(
-                          fontFamily: 'PlusJakartaSans',
+                          fontFamily: 'PlusJakartaSans', fontFamilyFallback: const ['IBMPlexSansArabic'],
                           fontSize: 10,
                           fontWeight: FontWeight.w500,
                           height: 2,

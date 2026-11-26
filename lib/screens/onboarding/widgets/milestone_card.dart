@@ -142,7 +142,7 @@ class MilestoneCard extends StatelessWidget {
                 tr('CONSISTENCY'),
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  fontFamily: 'PlusJakartaSans',
+                  fontFamily: 'PlusJakartaSans', fontFamilyFallback: const ['IBMPlexSansArabic'],
                   fontSize: 10,
                   fontWeight: FontWeight.w600,
                   letterSpacing: 0.5,
@@ -266,7 +266,7 @@ class _StatCapsule extends StatelessWidget {
           Text(
             label,
             style: TextStyle(
-              fontFamily: 'PlusJakartaSans',
+              fontFamily: 'PlusJakartaSans', fontFamilyFallback: const ['IBMPlexSansArabic'],
               fontSize: 10,
               fontWeight: FontWeight.w500,
               height: 2,
@@ -288,7 +288,7 @@ class _StatCapsule extends StatelessWidget {
               Text(
                 value,
                 style: TextStyle(
-                  fontFamily: 'PlusJakartaSans',
+                  fontFamily: 'PlusJakartaSans', fontFamilyFallback: const ['IBMPlexSansArabic'],
                   fontSize: 18,
                   fontWeight: FontWeight.w700,
                   letterSpacing: -0.18,
@@ -301,7 +301,7 @@ class _StatCapsule extends StatelessWidget {
                 Text(
                   suffix,
                   style: TextStyle(
-                    fontFamily: 'PlusJakartaSans',
+                    fontFamily: 'PlusJakartaSans', fontFamilyFallback: const ['IBMPlexSansArabic'],
                     fontSize: 10,
                     fontWeight: FontWeight.w700,
                     letterSpacing: -0.18,
@@ -316,7 +316,7 @@ class _StatCapsule extends StatelessWidget {
           Text(
             caption,
             style: TextStyle(
-              fontFamily: 'PlusJakartaSans',
+              fontFamily: 'PlusJakartaSans', fontFamilyFallback: const ['IBMPlexSansArabic'],
               fontSize: 10,
               fontWeight: FontWeight.w500,
               height: 2,

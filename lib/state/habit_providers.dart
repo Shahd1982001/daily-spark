@@ -1,3 +1,4 @@
+import 'package:daily_spark/config/feature_flags.dart';
 import 'dart:async';
 import 'calendar_day_provider.dart';
 import 'completion_feedback_provider.dart';
@@ -100,10 +101,12 @@ class HabitsController extends AsyncNotifier<HabitsSnapshot> {
     if (!wasDone && clamped >= targetAmount && targetDay == dayOnly(DateTime.now())) {
       {
         String? rewardName;
-        try {
-          rewardName = (await ref.read(sparkTreatsProvider.notifier).award(habitId, dayKey(targetDay)))?.name;
-        } catch (_) {
-          // Habit progress remains saved even if treat storage is unavailable.
+        if (sparkCharacterEnabled) {
+          try {
+            rewardName = (await ref.read(sparkTreatsProvider.notifier).award(habitId, dayKey(targetDay)))?.name;
+          } catch (_) {
+            // Habit progress remains saved even if treat storage is unavailable.
+          }
         }
         ref.read(completionCelebrationProvider.notifier).state =
             CompletionCelebration(habitId: habitId, rewardName: rewardName);

@@ -486,7 +486,7 @@ class _InputField extends StatelessWidget {
               initialValue: controller == null ? value : null,
               obscureText: obscure,
               style: TextStyle(
-                fontFamily: 'PlusJakartaSans',
+                fontFamily: 'PlusJakartaSans', fontFamilyFallback: const ['IBMPlexSansArabic'],
                 fontSize: 14 * s,
                 height: 18 / 14,
                 letterSpacing: 0,
@@ -501,7 +501,7 @@ class _InputField extends StatelessWidget {
                 contentPadding: EdgeInsets.zero,
                 hintText: (controller != null || isEmpty) && hint != null ? tr(hint!) : null,
                 hintStyle: TextStyle(
-                  fontFamily: 'PlusJakartaSans',
+                  fontFamily: 'PlusJakartaSans', fontFamilyFallback: const ['IBMPlexSansArabic'],
                   fontSize: 14 * s,
                   color: p.muted,
                 ),
@@ -521,7 +521,7 @@ class _InputField extends StatelessWidget {
           child: Text(
             tr(errorText!),
             style: TextStyle(
-              fontFamily: 'PlusJakartaSans',
+              fontFamily: 'PlusJakartaSans', fontFamilyFallback: const ['IBMPlexSansArabic'],
               fontSize: 11 * s,
               color: p.error,
             ),
@@ -714,7 +714,7 @@ class _LegalLinks extends StatelessWidget {
   Widget build(BuildContext context) {
     final s = scale;
     final style = TextStyle(
-      fontFamily: 'PlusJakartaSans',
+      fontFamily: 'PlusJakartaSans', fontFamilyFallback: const ['IBMPlexSansArabic'],
       fontSize: 10 * s,
       height: 12 / 10,
       letterSpacing: 0.4 * s,

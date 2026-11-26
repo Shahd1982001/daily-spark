@@ -35,7 +35,7 @@ class SplashScreen extends StatelessWidget {
                         Text(
                           tr('EST. 2024'),
                           style: TextStyle(
-                            fontFamily: 'PlusJakartaSans',
+                            fontFamily: 'PlusJakartaSans', fontFamilyFallback: const ['IBMPlexSansArabic'],
                             fontSize: 10,
                             height: 1.2,
                             fontWeight: FontWeight.w600,
@@ -56,7 +56,7 @@ class SplashScreen extends StatelessWidget {
                         Text(
                           tr('Sync Ready'),
                           style: TextStyle(
-                            fontFamily: 'PlusJakartaSans',
+                            fontFamily: 'PlusJakartaSans', fontFamilyFallback: const ['IBMPlexSansArabic'],
                             fontSize: 10,
                             height: 1.2,
                             fontWeight: FontWeight.w600,
@@ -80,7 +80,7 @@ class SplashScreen extends StatelessWidget {
                               Text(
                                 tr('Daily Spark'),
                                 style: TextStyle(
-                                  fontFamily: 'PlusJakartaSans',
+                                  fontFamily: 'PlusJakartaSans', fontFamilyFallback: const ['IBMPlexSansArabic'],
                                   fontSize: 26,
                                   height: 32 / 26,
                                   fontWeight: FontWeight.w600,
@@ -92,7 +92,7 @@ class SplashScreen extends StatelessWidget {
                               Text(
                                 tr('Small steps compound daily.'),
                                 style: TextStyle(
-                                  fontFamily: 'PlusJakartaSans',
+                                  fontFamily: 'PlusJakartaSans', fontFamilyFallback: const ['IBMPlexSansArabic'],
                                   fontSize: 14,
                                   height: 20 / 14,
                                   fontWeight: FontWeight.w400,
@@ -113,7 +113,7 @@ class SplashScreen extends StatelessWidget {
                     Text(
                       tr('ARCHITECTURE OF DAILY RITUALS'),
                       style: TextStyle(
-                        fontFamily: 'PlusJakartaSans',
+                        fontFamily: 'PlusJakartaSans', fontFamilyFallback: const ['IBMPlexSansArabic'],
                         fontSize: 10,
                         height: 1.2,
                         fontWeight: FontWeight.w600,
@@ -125,7 +125,7 @@ class SplashScreen extends StatelessWidget {
                     Text(
                       tr('v2.4.0'),
                       style: TextStyle(
-                        fontFamily: 'PlusJakartaSans',
+                        fontFamily: 'PlusJakartaSans', fontFamilyFallback: const ['IBMPlexSansArabic'],
                         fontSize: 10,
                         height: 1.2,
                         fontWeight: FontWeight.w600,
@@ -210,7 +210,7 @@ class _StreakPill extends StatelessWidget {
           Text(
             tr('Igniting Day 14'),
             style: TextStyle(
-              fontFamily: 'PlusJakartaSans',
+              fontFamily: 'PlusJakartaSans', fontFamilyFallback: const ['IBMPlexSansArabic'],
               fontSize: 10,
               height: 12 / 10,
               fontWeight: FontWeight.w500,
