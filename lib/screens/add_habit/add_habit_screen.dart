@@ -40,6 +40,7 @@ class AddHabitScreen extends ConsumerStatefulWidget {
 class _AddHabitScreenState extends ConsumerState<AddHabitScreen> {
   late final TextEditingController _title;
   late final TextEditingController _note;
+  bool _saving = false;
 
   @override
   void initState() {
@@ -86,6 +87,16 @@ class _AddHabitScreenState extends ConsumerState<AddHabitScreen> {
   }
 
   Future<void> _save() async {
+    if (_saving) return;
+    _saving = true;
+    try {
+      await _saveOnce();
+    } finally {
+      _saving = false;
+    }
+  }
+
+  Future<void> _saveOnce() async {
     final messenger = ScaffoldMessenger.of(context);
     final draft = ref.read(habitDraftProvider);
     final id = ref.read(editingHabitIdProvider);
@@ -108,6 +119,7 @@ class _AddHabitScreenState extends ConsumerState<AddHabitScreen> {
       // The shell shows the save error; keep the draft for another try.
       return;
     }
+    if (!mounted) return;
     if (habit == null) {
       messenger
         ..clearSnackBars()

@@ -89,4 +89,26 @@ void main() {
     expect(c.read(habitsProvider).value!.amountFor('a', DateTime.now()), 3);
     expect(HabitsSnapshot.fromJson(store.data!).amountFor('a', DateTime.now()), 3);
   });
+
+  test('reload waits for an in-flight habit write', () async {
+    final store = ControlledStore(snapshot().toJson());
+    final c = ProviderContainer(overrides: [habitStoreProvider.overrideWithValue(store)]);
+    addTearDown(c.dispose);
+    await c.read(habitsProvider.future);
+    final controller = c.read(habitsProvider.notifier);
+    final started = Completer<void>();
+    final hold = Completer<void>();
+    store.started.add(started);
+    store.gate = hold;
+    final first = controller.stepAmount('a', 2);
+    await started.future;
+    final reload = controller.reload();
+    // Queue the second mutation while reload is waiting on the first write.
+    final second = controller.stepAmount('a', 3);
+    hold.complete();
+    await Future.wait([first, reload, second]);
+    expect(c.read(habitsProvider).value!.amountFor('a', DateTime.now()), 5);
+    expect(HabitsSnapshot.fromJson(store.data!).amountFor('a', DateTime.now()), 5);
+  });
+
 }
